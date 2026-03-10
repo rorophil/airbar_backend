@@ -146,7 +146,6 @@ class TransactionEndpoint extends Endpoint {
 
           if (product != null) {
             double stockDeduction = 0.0;
-            int unitsConsumed = 0;
             String movementNote =
                 'Vente - Transaction #${createdTransaction.id}';
 
@@ -169,7 +168,6 @@ class TransactionEndpoint extends Endpoint {
                     // Current unit is sufficient
                     product.currentUnitRemaining =
                         product.currentUnitRemaining! - requiredQuantity;
-                    unitsConsumed = 0;
                     movementNote =
                         'Vente ${cartItem.quantity}×${portion.name} (unité entamée) - Transaction #${createdTransaction.id}';
                   } else {
@@ -183,7 +181,6 @@ class TransactionEndpoint extends Endpoint {
 
                     // Deduct from stock
                     product.stockQuantity -= unitsNeeded;
-                    unitsConsumed = unitsNeeded;
 
                     // Calculate what remains in the last opened unit
                     double totalFromNewUnits =
@@ -204,7 +201,6 @@ class TransactionEndpoint extends Endpoint {
                   }
 
                   product.stockQuantity -= unitsNeeded;
-                  unitsConsumed = unitsNeeded;
 
                   double totalFromUnits =
                       unitsNeeded * product.bulkTotalQuantity!;
