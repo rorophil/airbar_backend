@@ -7,7 +7,7 @@ class StockEndpoint extends Endpoint {
   Future<void> restockProduct(
     Session session,
     int productId,
-    double quantity,
+    int quantity,
     int adminUserId,
     String? notes,
   ) async {
@@ -32,7 +32,7 @@ class StockEndpoint extends Endpoint {
         // Log stock movement
         final stockMovement = StockMovement(
           productId: productId,
-          quantity: quantity,
+          quantity: quantity.toDouble(),
           movementType: MovementType.restock,
           userId: adminUserId,
           timestamp: DateTime.now(),
@@ -51,7 +51,7 @@ class StockEndpoint extends Endpoint {
   Future<void> adjustStock(
     Session session,
     int productId,
-    double newQuantity,
+    int newQuantity,
     int adminUserId,
     String reason,
   ) async {
@@ -79,7 +79,7 @@ class StockEndpoint extends Endpoint {
         // Log stock movement
         final stockMovement = StockMovement(
           productId: productId,
-          quantity: difference,
+          quantity: difference.toDouble(),
           movementType: MovementType.adjustment,
           userId: adminUserId,
           timestamp: DateTime.now(),

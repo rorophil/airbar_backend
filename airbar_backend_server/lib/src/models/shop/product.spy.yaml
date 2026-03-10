@@ -6,15 +6,16 @@ fields:
   description: String?
   price: double
   categoryId: int
-  stockQuantity: double, default=0
-  minStockAlert: double, default=5
+  stockQuantity: int, default=0 # Number of complete unopened units
+  minStockAlert: int, default=5
+  currentUnitRemaining: double? # Quantity remaining in the opened unit (for bulk products)
   imageUrl: String?
   isActive: bool, default=true
   isDeleted: bool, default=false
   # Bulk/retail product fields
   isBulkProduct: bool, default=false
   bulkUnit: String? # e.g., "litres", "kg"
-  bulkTotalQuantity: double? # Total quantity available (e.g., 6 litres)
+  bulkTotalQuantity: double? # Total quantity per unit (e.g., 6 litres per keg)
   createdAt: DateTime
   updatedAt: DateTime
 

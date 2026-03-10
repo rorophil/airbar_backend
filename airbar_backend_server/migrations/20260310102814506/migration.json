@@ -1,0 +1,93 @@
+{
+  "__className__": "serverpod.DatabaseMigration",
+  "actions": [
+    {
+      "__className__": "serverpod.DatabaseMigrationAction",
+      "type": "alterTable",
+      "alterTable": {
+        "__className__": "serverpod.TableMigration",
+        "name": "products",
+        "schema": "public",
+        "addColumns": [
+          {
+            "__className__": "serverpod.ColumnDefinition",
+            "name": "currentUnitRemaining",
+            "columnType": 3,
+            "isNullable": true,
+            "dartType": "double?"
+          },
+          {
+            "__className__": "serverpod.ColumnDefinition",
+            "name": "stockQuantity",
+            "columnType": 6,
+            "isNullable": false,
+            "columnDefault": "0",
+            "dartType": "int"
+          },
+          {
+            "__className__": "serverpod.ColumnDefinition",
+            "name": "minStockAlert",
+            "columnType": 6,
+            "isNullable": false,
+            "columnDefault": "5",
+            "dartType": "int"
+          }
+        ],
+        "deleteColumns": [
+          "stockQuantity",
+          "minStockAlert"
+        ],
+        "modifyColumns": [],
+        "addIndexes": [],
+        "deleteIndexes": [],
+        "addForeignKeys": [],
+        "deleteForeignKeys": [],
+        "warnings": [
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"stockQuantity\" of table \"products\" is modified in a way that it must be deleted and recreated.",
+            "table": "products",
+            "columns": [
+              "stockQuantity"
+            ],
+            "destrucive": true
+          },
+          {
+            "__className__": "serverpod.DatabaseMigrationWarning",
+            "type": "columnDropped",
+            "message": "Column \"minStockAlert\" of table \"products\" is modified in a way that it must be deleted and recreated.",
+            "table": "products",
+            "columns": [
+              "minStockAlert"
+            ],
+            "destrucive": true
+          }
+        ]
+      }
+    }
+  ],
+  "warnings": [
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"stockQuantity\" of table \"products\" is modified in a way that it must be deleted and recreated.",
+      "table": "products",
+      "columns": [
+        "stockQuantity"
+      ],
+      "destrucive": true
+    },
+    {
+      "__className__": "serverpod.DatabaseMigrationWarning",
+      "type": "columnDropped",
+      "message": "Column \"minStockAlert\" of table \"products\" is modified in a way that it must be deleted and recreated.",
+      "table": "products",
+      "columns": [
+        "minStockAlert"
+      ],
+      "destrucive": true
+    }
+  ],
+  "migrationApiVersion": 1
+}

@@ -145,34 +145,78 @@ class TransactionEndpoint extends Endpoint {
           );
 
           if (product != null) {
-            // Calculate actual quantity to deduct from stock
-            double stockDeduction = cartItem.quantity.toDouble();
-            String movementNote =
-                'Vente - Transaction #${createdTransaction.id}';
+            double stockDeduction = 0.0;
+            int unitsConsumed = 0;
+            String movementNote = 'Vente - Transaction #${createdTransaction.id}';
 
-            // For bulk products with portions, deduct the actual portion quantity
-            if (cartItem.productPortionId != null) {
+            // Handle bulk products with portions (unit-based management)
+            if (product.isBulkProduct && cartItem.productPortionId != null) {
               final portion = await protocol.ProductPortion.db.findById(
                 session,
                 cartItem.productPortionId!,
               );
 
-              if (portion != null) {
-                // Multiply cart quantity by portion quantity (e.g., 2 portions × 0.25L = 0.5L)
-                stockDeduction = cartItem.quantity * portion.quantity;
-                movementNote =
-                    'Vente ${portion.name} - Transaction #${createdTransaction.id}';
+              if (portion != null && product.bulkTotalQuantity != null) {
+                // Calculate total quantity needed (e.g., 2 portions × 0.25L = 0.5L)
+                double requiredQuantity = cartItem.quantity * portion.quantity;
+                stockDeduction = requiredQuantity;
+
+                // Check if there's an opened unit
+                if (product.currentUnitRemaining != null && product.currentUnitRemaining! > 0) {
+                  if (product.currentUnitRemaining! >= requiredQuantity) {
+                    // Current unit is sufficient
+                    product.currentUnitRemaining = product.currentUnitRemaining! - requiredQuantity;
+                    unitsConsumed = 0;
+                    movementNote = 'Vente ${cartItem.quantity}×${portion.name} (unité entamée) - Transaction #${createdTransaction.id}';
+                  } else {
+                    // Current unit is insufficient, need to open new unit(s)
+                    double usedFromCurrent = product.currentUnitRemaining!;
+                    double remaining = requiredQuantity - usedFromCurrent;
+
+                    // Calculate how many complete units are needed
+                    int unitsNeeded = (remaining / product.bulkTotalQuantity!).ceil();
+
+                    // Deduct from stock
+                    product.stockQuantity -= unitsNeeded;
+                    unitsConsumed = unitsNeeded;
+
+                    // Calculate what remains in the last opened unit
+                    double totalFromNewUnits = unitsNeeded * product.bulkTotalQuantity!;
+                    product.currentUnitRemaining = totalFromNewUnits - remaining;
+
+                    movementNote = 'Vente ${cartItem.quantity}×${portion.name} ($unitsNeeded unité(s) entamée(s)) - Transaction #${createdTransaction.id}';
+                  }
+                } else {
+                  // No opened unit, need to open new one(s)
+                  int unitsNeeded = (requiredQuantity / product.bulkTotalQuantity!).ceil();
+                  
+                  if (product.stockQuantity < unitsNeeded) {
+                    throw Exception('Stock insuffisant pour ${product.name}');
+                  }
+
+                  product.stockQuantity -= unitsNeeded;
+                  unitsConsumed = unitsNeeded;
+
+                  double totalFromUnits = unitsNeeded * product.bulkTotalQuantity!;
+                  product.currentUnitRemaining = totalFromUnits - requiredQuantity;
+
+                  movementNote = 'Vente ${cartItem.quantity}×${portion.name} ($unitsNeeded unité(s) ouverte(s)) - Transaction #${createdTransaction.id}';
+                }
               }
+            } else {
+              // Regular product (non-bulk) - deduct quantity directly from stock
+              product.stockQuantity -= cartItem.quantity;
+              stockDeduction = cartItem.quantity.toDouble();
+              movementNote = 'Vente ${cartItem.quantity}×${product.name} - Transaction #${createdTransaction.id}';
             }
 
-            product.stockQuantity -= stockDeduction;
             product.updatedAt = DateTime.now();
             await protocol.Product.db.updateRow(session, product);
 
             // Log stock movement with actual deducted quantity
             final stockMovement = protocol.StockMovement(
               productId: product.id!,
-              quantity: stockDeduction.toDouble(),
+              quantity: -stockDeduction,
               movementType: protocol.MovementType.sale,
               userId: userId,
               timestamp: DateTime.now(),
@@ -185,7 +229,7 @@ class TransactionEndpoint extends Endpoint {
             if (product.stockQuantity <= product.minStockAlert) {
               // TODO: Trigger email alert
               session.log(
-                'ALERT: Product ${product.name} stock low: ${product.stockQuantity}',
+                'ALERT: Product ${product.name} stock low: ${product.stockQuantity} unités',
                 level: LogLevel.warning,
               );
             }
@@ -266,21 +310,51 @@ class TransactionEndpoint extends Endpoint {
           );
 
           if (product != null) {
-            product.stockQuantity += item.quantity;
-            product.updatedAt = DateTime.now();
-            await protocol.Product.db.updateRow(session, product);
+            // Restore stock based on product type
+            if (product.isBulkProduct && item.stockDeduction != null) {
+              // For bulk products, restore to current unit remaining
+              product.currentUnitRemaining = (product.currentUnitRemaining ?? 0.0) + item.stockDeduction!;
+              
+              // If current unit exceeds capacity, convert to complete units
+              if (product.bulkTotalQuantity != null && 
+                  product.currentUnitRemaining! >= product.bulkTotalQuantity!) {
+                int completeUnits = (product.currentUnitRemaining! / product.bulkTotalQuantity!).floor();
+                product.stockQuantity += completeUnits;
+                product.currentUnitRemaining = product.currentUnitRemaining! - (completeUnits * product.bulkTotalQuantity!);
+              }
+              
+              product.updatedAt = DateTime.now();
+              await protocol.Product.db.updateRow(session, product);
 
-            // Log stock movement
-            final stockMovement = protocol.StockMovement(
-              productId: product.id!,
-              quantity: item.quantity.toDouble(),
-              movementType: protocol.MovementType.refund,
-              userId: originalTrans.userId,
-              timestamp: DateTime.now(),
-              notes: 'Remboursement - Transaction #$transactionId',
-            );
+              // Log stock movement
+              final stockMovement = protocol.StockMovement(
+                productId: product.id!,
+                quantity: item.stockDeduction!,
+                movementType: protocol.MovementType.refund,
+                userId: originalTrans.userId,
+                timestamp: DateTime.now(),
+                notes: 'Remboursement - Transaction #$transactionId',
+              );
 
-            await protocol.StockMovement.db.insertRow(session, stockMovement);
+              await protocol.StockMovement.db.insertRow(session, stockMovement);
+            } else {
+              // For regular products, restore quantity directly
+              product.stockQuantity += item.quantity;
+              product.updatedAt = DateTime.now();
+              await protocol.Product.db.updateRow(session, product);
+
+              // Log stock movement
+              final stockMovement = protocol.StockMovement(
+                productId: product.id!,
+                quantity: item.quantity.toDouble(),
+                movementType: protocol.MovementType.refund,
+                userId: originalTrans.userId,
+                timestamp: DateTime.now(),
+                notes: 'Remboursement - Transaction #$transactionId',
+              );
+
+              await protocol.StockMovement.db.insertRow(session, stockMovement);
+            }
           }
         }
 

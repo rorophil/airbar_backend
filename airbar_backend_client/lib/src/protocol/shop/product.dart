@@ -19,8 +19,9 @@ abstract class Product implements _i1.SerializableModel {
     this.description,
     required this.price,
     required this.categoryId,
-    double? stockQuantity,
-    double? minStockAlert,
+    int? stockQuantity,
+    int? minStockAlert,
+    this.currentUnitRemaining,
     this.imageUrl,
     bool? isActive,
     bool? isDeleted,
@@ -29,8 +30,8 @@ abstract class Product implements _i1.SerializableModel {
     this.bulkTotalQuantity,
     required this.createdAt,
     required this.updatedAt,
-  }) : stockQuantity = stockQuantity ?? 0.0,
-       minStockAlert = minStockAlert ?? 5.0,
+  }) : stockQuantity = stockQuantity ?? 0,
+       minStockAlert = minStockAlert ?? 5,
        isActive = isActive ?? true,
        isDeleted = isDeleted ?? false,
        isBulkProduct = isBulkProduct ?? false;
@@ -41,8 +42,9 @@ abstract class Product implements _i1.SerializableModel {
     String? description,
     required double price,
     required int categoryId,
-    double? stockQuantity,
-    double? minStockAlert,
+    int? stockQuantity,
+    int? minStockAlert,
+    double? currentUnitRemaining,
     String? imageUrl,
     bool? isActive,
     bool? isDeleted,
@@ -60,8 +62,10 @@ abstract class Product implements _i1.SerializableModel {
       description: jsonSerialization['description'] as String?,
       price: (jsonSerialization['price'] as num).toDouble(),
       categoryId: jsonSerialization['categoryId'] as int,
-      stockQuantity: (jsonSerialization['stockQuantity'] as num?)?.toDouble(),
-      minStockAlert: (jsonSerialization['minStockAlert'] as num?)?.toDouble(),
+      stockQuantity: jsonSerialization['stockQuantity'] as int?,
+      minStockAlert: jsonSerialization['minStockAlert'] as int?,
+      currentUnitRemaining: (jsonSerialization['currentUnitRemaining'] as num?)
+          ?.toDouble(),
       imageUrl: jsonSerialization['imageUrl'] as String?,
       isActive: jsonSerialization['isActive'] as bool?,
       isDeleted: jsonSerialization['isDeleted'] as bool?,
@@ -91,9 +95,11 @@ abstract class Product implements _i1.SerializableModel {
 
   int categoryId;
 
-  double stockQuantity;
+  int stockQuantity;
 
-  double minStockAlert;
+  int minStockAlert;
+
+  double? currentUnitRemaining;
 
   String? imageUrl;
 
@@ -120,8 +126,9 @@ abstract class Product implements _i1.SerializableModel {
     String? description,
     double? price,
     int? categoryId,
-    double? stockQuantity,
-    double? minStockAlert,
+    int? stockQuantity,
+    int? minStockAlert,
+    double? currentUnitRemaining,
     String? imageUrl,
     bool? isActive,
     bool? isDeleted,
@@ -142,6 +149,8 @@ abstract class Product implements _i1.SerializableModel {
       'categoryId': categoryId,
       'stockQuantity': stockQuantity,
       'minStockAlert': minStockAlert,
+      if (currentUnitRemaining != null)
+        'currentUnitRemaining': currentUnitRemaining,
       if (imageUrl != null) 'imageUrl': imageUrl,
       'isActive': isActive,
       'isDeleted': isDeleted,
@@ -168,8 +177,9 @@ class _ProductImpl extends Product {
     String? description,
     required double price,
     required int categoryId,
-    double? stockQuantity,
-    double? minStockAlert,
+    int? stockQuantity,
+    int? minStockAlert,
+    double? currentUnitRemaining,
     String? imageUrl,
     bool? isActive,
     bool? isDeleted,
@@ -186,6 +196,7 @@ class _ProductImpl extends Product {
          categoryId: categoryId,
          stockQuantity: stockQuantity,
          minStockAlert: minStockAlert,
+         currentUnitRemaining: currentUnitRemaining,
          imageUrl: imageUrl,
          isActive: isActive,
          isDeleted: isDeleted,
@@ -206,8 +217,9 @@ class _ProductImpl extends Product {
     Object? description = _Undefined,
     double? price,
     int? categoryId,
-    double? stockQuantity,
-    double? minStockAlert,
+    int? stockQuantity,
+    int? minStockAlert,
+    Object? currentUnitRemaining = _Undefined,
     Object? imageUrl = _Undefined,
     bool? isActive,
     bool? isDeleted,
@@ -225,6 +237,9 @@ class _ProductImpl extends Product {
       categoryId: categoryId ?? this.categoryId,
       stockQuantity: stockQuantity ?? this.stockQuantity,
       minStockAlert: minStockAlert ?? this.minStockAlert,
+      currentUnitRemaining: currentUnitRemaining is double?
+          ? currentUnitRemaining
+          : this.currentUnitRemaining,
       imageUrl: imageUrl is String? ? imageUrl : this.imageUrl,
       isActive: isActive ?? this.isActive,
       isDeleted: isDeleted ?? this.isDeleted,

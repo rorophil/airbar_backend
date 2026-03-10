@@ -590,8 +590,8 @@ class EndpointProduct extends _i2.EndpointRef {
     String? description,
     double price,
     int categoryId,
-    double stockQuantity,
-    double minStockAlert,
+    int stockQuantity,
+    int minStockAlert,
     String? imageUrl, {
     required bool isBulkProduct,
     String? bulkUnit,
@@ -620,12 +620,12 @@ class EndpointProduct extends _i2.EndpointRef {
     String? description,
     double price,
     int categoryId,
-    double minStockAlert,
+    int minStockAlert,
     String? imageUrl, {
     bool? isBulkProduct,
     String? bulkUnit,
     double? bulkTotalQuantity,
-    double? stockQuantity,
+    int? stockQuantity,
   }) => caller.callServerEndpoint<_i10.Product>(
     'product',
     'updateProduct',
@@ -671,7 +671,7 @@ class EndpointProduct extends _i2.EndpointRef {
   /// Can be used to increase or decrease stock
   _i3.Future<_i10.Product> updateStock(
     int productId,
-    double newStockQuantity,
+    int newStockQuantity,
   ) => caller.callServerEndpoint<_i10.Product>(
     'product',
     'updateStock',
@@ -769,7 +769,7 @@ class EndpointStock extends _i2.EndpointRef {
   /// Restock product (admin only)
   _i3.Future<void> restockProduct(
     int productId,
-    double quantity,
+    int quantity,
     int adminUserId,
     String? notes,
   ) => caller.callServerEndpoint<void>(
@@ -786,7 +786,7 @@ class EndpointStock extends _i2.EndpointRef {
   /// Adjust stock (inventory correction, admin only)
   _i3.Future<void> adjustStock(
     int productId,
-    double newQuantity,
+    int newQuantity,
     int adminUserId,
     String reason,
   ) => caller.callServerEndpoint<void>(

@@ -68,8 +68,8 @@ class ProductEndpoint extends Endpoint {
     String? description,
     double price,
     int categoryId,
-    double stockQuantity,
-    double minStockAlert,
+    int stockQuantity,
+    int minStockAlert,
     String? imageUrl, {
     bool isBulkProduct = false,
     String? bulkUnit,
@@ -121,12 +121,12 @@ class ProductEndpoint extends Endpoint {
     String? description,
     double price,
     int categoryId,
-    double minStockAlert,
+    int minStockAlert,
     String? imageUrl, {
     bool? isBulkProduct,
     String? bulkUnit,
     double? bulkTotalQuantity,
-    double? stockQuantity,
+    int? stockQuantity,
   }) async {
     try {
       final product = await Product.db.findById(session, productId);
@@ -228,7 +228,7 @@ class ProductEndpoint extends Endpoint {
   Future<Product> updateStock(
     Session session,
     int productId,
-    double newStockQuantity,
+    int newStockQuantity,
   ) async {
     try {
       final product = await Product.db.findById(session, productId);
