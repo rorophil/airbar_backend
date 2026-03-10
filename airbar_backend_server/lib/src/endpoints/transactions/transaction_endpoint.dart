@@ -87,7 +87,8 @@ class TransactionEndpoint extends Endpoint {
               cartItem.productPortionId != null &&
               product.bulkTotalQuantity != null) {
             // For bulk products: calculate total available in units (e.g., liters)
-            availableStock = (product.stockQuantity * product.bulkTotalQuantity!) +
+            availableStock =
+                (product.stockQuantity * product.bulkTotalQuantity!) +
                 (product.currentUnitRemaining ?? 0);
           } else {
             // For regular products: use stockQuantity directly
