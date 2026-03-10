@@ -82,9 +82,21 @@ class TransactionEndpoint extends Endpoint {
           }
 
           // Verify stock with actual required quantity
-          if (product.stockQuantity < requiredStockQuantity) {
+          double availableStock;
+          if (product.isBulkProduct &&
+              cartItem.productPortionId != null &&
+              product.bulkTotalQuantity != null) {
+            // For bulk products: calculate total available in units (e.g., liters)
+            availableStock = (product.stockQuantity * product.bulkTotalQuantity!) +
+                (product.currentUnitRemaining ?? 0);
+          } else {
+            // For regular products: use stockQuantity directly
+            availableStock = product.stockQuantity.toDouble();
+          }
+
+          if (availableStock < requiredStockQuantity) {
             throw Exception(
-              'Stock insuffisant pour ${productName}. Disponible: ${product.stockQuantity}, Requis: ${requiredStockQuantity.toStringAsFixed(2)}',
+              'Stock insuffisant pour ${productName}. Disponible: ${availableStock.toStringAsFixed(2)}, Requis: ${requiredStockQuantity.toStringAsFixed(2)}',
             );
           }
 
