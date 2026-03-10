@@ -1,0 +1,18 @@
+# Transaction model
+class: Transaction
+table: transactions
+fields:
+  userId: int
+  type: TransactionType
+  totalAmount: double
+  timestamp: DateTime
+  notes: String?
+  refundedTransactionId: int?
+
+indexes:
+  transactions_user_idx:
+    fields: userId
+  transactions_timestamp_idx:
+    fields: timestamp
+  transactions_type_idx:
+    fields: type

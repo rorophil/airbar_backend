@@ -1,0 +1,11 @@
+# Product category model
+class: ProductCategory
+table: product_categories
+fields:
+  name: String
+  description: String?
+  iconName: String?
+  displayOrder: int, default=0
+  isActive: bool, default=true
+  createdAt: DateTime
+  updatedAt: DateTime

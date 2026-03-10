@@ -1,0 +1,17 @@
+# Transaction item model (snapshot of product at purchase time)
+class: TransactionItem
+table: transaction_items
+fields:
+  transactionId: int
+  productId: int
+  productName: String
+  quantity: int  # Number of items/portions purchased
+  unitPrice: double
+  subtotal: double
+  stockDeduction: double?, default=0  # Actual stock deducted (for bulk products with portions)
+
+indexes:
+  transaction_items_transaction_idx:
+    fields: transactionId
+  transaction_items_product_idx:
+    fields: productId

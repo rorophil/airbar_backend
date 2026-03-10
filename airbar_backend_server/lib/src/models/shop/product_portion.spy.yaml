@@ -1,0 +1,19 @@
+# ProductPortion model
+# Represents a portion of a bulk product (e.g., 25cl, 33cl, 50cl for a beer keg)
+class: ProductPortion
+table: product_portions
+fields:
+  productId: int
+  name: String # e.g., "25cl", "33cl", "50cl"
+  quantity: double # Quantity in base unit (e.g., 0.25, 0.33, 0.50 for litres)
+  price: double # Price for this portion
+  displayOrder: int, default=0 # Order to display portions
+  isActive: bool, default=true
+  createdAt: DateTime
+  updatedAt: DateTime
+
+indexes:
+  product_portions_product_idx:
+    fields: productId
+  product_portions_active_idx:
+    fields: isActive, displayOrder

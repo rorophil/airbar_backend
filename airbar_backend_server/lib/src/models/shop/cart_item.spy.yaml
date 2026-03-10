@@ -1,0 +1,13 @@
+# Cart item model for real-time cart synchronization
+class: CartItem
+table: cart_items
+fields:
+  userId: int
+  productId: int
+  productPortionId: int?
+  quantity: int, default=1
+  addedAt: DateTime
+
+indexes:
+  cart_user_idx:
+    fields: userId

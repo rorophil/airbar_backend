@@ -1,0 +1,25 @@
+# Product model
+class: Product
+table: products
+fields:
+  name: String
+  description: String?
+  price: double
+  categoryId: int
+  stockQuantity: double, default=0
+  minStockAlert: double, default=5
+  imageUrl: String?
+  isActive: bool, default=true
+  isDeleted: bool, default=false
+  # Bulk/retail product fields
+  isBulkProduct: bool, default=false
+  bulkUnit: String? # e.g., "litres", "kg"
+  bulkTotalQuantity: double? # Total quantity available (e.g., 6 litres)
+  createdAt: DateTime
+  updatedAt: DateTime
+
+indexes:
+  products_category_idx:
+    fields: categoryId
+  products_deleted_idx:
+    fields: isDeleted, isActive

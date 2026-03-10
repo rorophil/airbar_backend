@@ -1,0 +1,18 @@
+# Stock movement model for complete traceability
+class: StockMovement
+table: stock_movements
+fields:
+  productId: int
+  quantity: double
+  movementType: MovementType
+  userId: int
+  timestamp: DateTime
+  notes: String?
+
+indexes:
+  stock_movements_product_idx:
+    fields: productId
+  stock_movements_timestamp_idx:
+    fields: timestamp
+  stock_movements_user_idx:
+    fields: userId

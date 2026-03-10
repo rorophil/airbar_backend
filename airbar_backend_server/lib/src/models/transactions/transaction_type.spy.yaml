@@ -1,0 +1,6 @@
+# Transaction type enum
+enum: TransactionType
+values:
+  - purchase
+  - credit
+  - refund

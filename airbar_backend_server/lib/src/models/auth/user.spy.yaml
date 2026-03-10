@@ -1,0 +1,19 @@
+# User model
+class: User
+table: users
+fields:
+  email: String
+  passwordHash: String
+  role: UserRole
+  balance: double, default=0.0
+  pin: String
+  firstName: String
+  lastName: String
+  isActive: bool, default=true
+  createdAt: DateTime
+  updatedAt: DateTime
+
+indexes:
+  users_email_idx:
+    fields: email
+    unique: true

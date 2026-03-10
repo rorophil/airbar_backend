@@ -1,0 +1,38 @@
+# Dart/Pub related
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+doc/api/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Serverpod specific
+**/config/passwords.yaml
+**/config/firebase_service_account_key.json
+**/generated/
+**/test/integration/test_tools/
+
+# Logs
+*.log
+backend_log.txt
+
+# Coverage
+coverage/
+*.lcov
+
+# Build outputs
+**/web/app/

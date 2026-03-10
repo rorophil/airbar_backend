@@ -1,0 +1,13 @@
+name: _
+publish_to: none
+
+environment:
+  sdk: '^3.8.0'
+
+workspace:
+  - airbar_backend_client
+  - airbar_backend_server
+  - airbar_backend_flutter
+dependency_overrides:
+  flutter_secure_storage: ^10.0.0
+

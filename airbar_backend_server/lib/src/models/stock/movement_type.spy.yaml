@@ -1,0 +1,7 @@
+# Movement type enum for stock tracking
+enum: MovementType
+values:
+  - restock
+  - sale
+  - adjustment
+  - refund
