@@ -147,7 +147,8 @@ class TransactionEndpoint extends Endpoint {
           if (product != null) {
             double stockDeduction = 0.0;
             int unitsConsumed = 0;
-            String movementNote = 'Vente - Transaction #${createdTransaction.id}';
+            String movementNote =
+                'Vente - Transaction #${createdTransaction.id}';
 
             // Handle bulk products with portions (unit-based management)
             if (product.isBulkProduct && cartItem.productPortionId != null) {
@@ -162,34 +163,42 @@ class TransactionEndpoint extends Endpoint {
                 stockDeduction = requiredQuantity;
 
                 // Check if there's an opened unit
-                if (product.currentUnitRemaining != null && product.currentUnitRemaining! > 0) {
+                if (product.currentUnitRemaining != null &&
+                    product.currentUnitRemaining! > 0) {
                   if (product.currentUnitRemaining! >= requiredQuantity) {
                     // Current unit is sufficient
-                    product.currentUnitRemaining = product.currentUnitRemaining! - requiredQuantity;
+                    product.currentUnitRemaining =
+                        product.currentUnitRemaining! - requiredQuantity;
                     unitsConsumed = 0;
-                    movementNote = 'Vente ${cartItem.quantity}×${portion.name} (unité entamée) - Transaction #${createdTransaction.id}';
+                    movementNote =
+                        'Vente ${cartItem.quantity}×${portion.name} (unité entamée) - Transaction #${createdTransaction.id}';
                   } else {
                     // Current unit is insufficient, need to open new unit(s)
                     double usedFromCurrent = product.currentUnitRemaining!;
                     double remaining = requiredQuantity - usedFromCurrent;
 
                     // Calculate how many complete units are needed
-                    int unitsNeeded = (remaining / product.bulkTotalQuantity!).ceil();
+                    int unitsNeeded = (remaining / product.bulkTotalQuantity!)
+                        .ceil();
 
                     // Deduct from stock
                     product.stockQuantity -= unitsNeeded;
                     unitsConsumed = unitsNeeded;
 
                     // Calculate what remains in the last opened unit
-                    double totalFromNewUnits = unitsNeeded * product.bulkTotalQuantity!;
-                    product.currentUnitRemaining = totalFromNewUnits - remaining;
+                    double totalFromNewUnits =
+                        unitsNeeded * product.bulkTotalQuantity!;
+                    product.currentUnitRemaining =
+                        totalFromNewUnits - remaining;
 
-                    movementNote = 'Vente ${cartItem.quantity}×${portion.name} ($unitsNeeded unité(s) entamée(s)) - Transaction #${createdTransaction.id}';
+                    movementNote =
+                        'Vente ${cartItem.quantity}×${portion.name} ($unitsNeeded unité(s) entamée(s)) - Transaction #${createdTransaction.id}';
                   }
                 } else {
                   // No opened unit, need to open new one(s)
-                  int unitsNeeded = (requiredQuantity / product.bulkTotalQuantity!).ceil();
-                  
+                  int unitsNeeded =
+                      (requiredQuantity / product.bulkTotalQuantity!).ceil();
+
                   if (product.stockQuantity < unitsNeeded) {
                     throw Exception('Stock insuffisant pour ${product.name}');
                   }
@@ -197,17 +206,21 @@ class TransactionEndpoint extends Endpoint {
                   product.stockQuantity -= unitsNeeded;
                   unitsConsumed = unitsNeeded;
 
-                  double totalFromUnits = unitsNeeded * product.bulkTotalQuantity!;
-                  product.currentUnitRemaining = totalFromUnits - requiredQuantity;
+                  double totalFromUnits =
+                      unitsNeeded * product.bulkTotalQuantity!;
+                  product.currentUnitRemaining =
+                      totalFromUnits - requiredQuantity;
 
-                  movementNote = 'Vente ${cartItem.quantity}×${portion.name} ($unitsNeeded unité(s) ouverte(s)) - Transaction #${createdTransaction.id}';
+                  movementNote =
+                      'Vente ${cartItem.quantity}×${portion.name} ($unitsNeeded unité(s) ouverte(s)) - Transaction #${createdTransaction.id}';
                 }
               }
             } else {
               // Regular product (non-bulk) - deduct quantity directly from stock
               product.stockQuantity -= cartItem.quantity;
               stockDeduction = cartItem.quantity.toDouble();
-              movementNote = 'Vente ${cartItem.quantity}×${product.name} - Transaction #${createdTransaction.id}';
+              movementNote =
+                  'Vente ${cartItem.quantity}×${product.name} - Transaction #${createdTransaction.id}';
             }
 
             product.updatedAt = DateTime.now();
@@ -313,16 +326,21 @@ class TransactionEndpoint extends Endpoint {
             // Restore stock based on product type
             if (product.isBulkProduct && item.stockDeduction != null) {
               // For bulk products, restore to current unit remaining
-              product.currentUnitRemaining = (product.currentUnitRemaining ?? 0.0) + item.stockDeduction!;
-              
+              product.currentUnitRemaining =
+                  (product.currentUnitRemaining ?? 0.0) + item.stockDeduction!;
+
               // If current unit exceeds capacity, convert to complete units
-              if (product.bulkTotalQuantity != null && 
+              if (product.bulkTotalQuantity != null &&
                   product.currentUnitRemaining! >= product.bulkTotalQuantity!) {
-                int completeUnits = (product.currentUnitRemaining! / product.bulkTotalQuantity!).floor();
+                int completeUnits =
+                    (product.currentUnitRemaining! / product.bulkTotalQuantity!)
+                        .floor();
                 product.stockQuantity += completeUnits;
-                product.currentUnitRemaining = product.currentUnitRemaining! - (completeUnits * product.bulkTotalQuantity!);
+                product.currentUnitRemaining =
+                    product.currentUnitRemaining! -
+                    (completeUnits * product.bulkTotalQuantity!);
               }
-              
+
               product.updatedAt = DateTime.now();
               await protocol.Product.db.updateRow(session, product);
 
