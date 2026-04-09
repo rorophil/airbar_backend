@@ -381,6 +381,40 @@ class EndpointUser extends _i2.EndpointRef {
         {'userId': userId},
       );
 
+  /// Reactivate user (admin only)
+  _i3.Future<void> reactivateUser(int userId) =>
+      caller.callServerEndpoint<void>(
+        'user',
+        'reactivateUser',
+        {'userId': userId},
+      );
+
+  /// Reset user password (admin only)
+  _i3.Future<void> resetPassword(
+    int userId,
+    String newPassword,
+  ) => caller.callServerEndpoint<void>(
+    'user',
+    'resetPassword',
+    {
+      'userId': userId,
+      'newPassword': newPassword,
+    },
+  );
+
+  /// Reset user PIN code (admin only)
+  _i3.Future<void> resetPin(
+    int userId,
+    String newPin,
+  ) => caller.callServerEndpoint<void>(
+    'user',
+    'resetPin',
+    {
+      'userId': userId,
+      'newPin': newPin,
+    },
+  );
+
   /// Delete user (hard delete, admin only)
   _i3.Future<void> deleteUser(int userId) => caller.callServerEndpoint<void>(
     'user',

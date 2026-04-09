@@ -127,6 +127,75 @@ class UserEndpoint extends Endpoint {
     }
   }
 
+  /// Reactivate user (admin only)
+  Future<void> reactivateUser(Session session, int userId) async {
+    try {
+      final user = await protocol.User.db.findById(session, userId);
+
+      if (user == null) {
+        throw Exception('Utilisateur non trouvé');
+      }
+
+      user.isActive = true;
+      user.updatedAt = DateTime.now();
+
+      await protocol.User.db.updateRow(session, user);
+    } catch (e) {
+      session.log('Reactivate user error: $e', level: LogLevel.warning);
+      rethrow;
+    }
+  }
+
+  /// Reset user password (admin only)
+  Future<void> resetPassword(
+    Session session,
+    int userId,
+    String newPassword,
+  ) async {
+    try {
+      final user = await protocol.User.db.findById(session, userId);
+
+      if (user == null) {
+        throw Exception('Utilisateur non trouvé');
+      }
+
+      // Update password
+      user.passwordHash = _hashPassword(newPassword);
+      user.updatedAt = DateTime.now();
+
+      await protocol.User.db.updateRow(session, user);
+      session.log('Password reset for user ${user.id}', level: LogLevel.info);
+    } catch (e) {
+      session.log('Reset password error: $e', level: LogLevel.warning);
+      rethrow;
+    }
+  }
+
+  /// Reset user PIN code (admin only)
+  Future<void> resetPin(
+    Session session,
+    int userId,
+    String newPin,
+  ) async {
+    try {
+      final user = await protocol.User.db.findById(session, userId);
+
+      if (user == null) {
+        throw Exception('Utilisateur non trouvé');
+      }
+
+      // Update PIN
+      user.pin = _hashPassword(newPin);
+      user.updatedAt = DateTime.now();
+
+      await protocol.User.db.updateRow(session, user);
+      session.log('PIN reset for user ${user.id}', level: LogLevel.info);
+    } catch (e) {
+      session.log('Reset PIN error: $e', level: LogLevel.warning);
+      rethrow;
+    }
+  }
+
   /// Delete user (hard delete, admin only)
   Future<void> deleteUser(Session session, int userId) async {
     try {

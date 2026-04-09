@@ -15,27 +15,40 @@ class AuthEndpoint extends Endpoint {
       );
 
       if (users.isEmpty) {
-        throw Exception('Utilisateur non trouvé');
+        session.log(
+          'Login failed: user not found for email $email',
+          level: LogLevel.info,
+        );
+        return null;
       }
 
       final user = users.first;
 
       // Check if user is active
       if (!user.isActive) {
-        throw Exception('Compte désactivé');
+        session.log(
+          'Login failed: account is inactive for user ${user.id}',
+          level: LogLevel.info,
+        );
+        return null;
       }
 
       // Verify password
       final passwordHash = _hashPassword(password);
       if (user.passwordHash != passwordHash) {
-        throw Exception('Mot de passe incorrect');
+        session.log(
+          'Login failed: incorrect password for user ${user.id}',
+          level: LogLevel.info,
+        );
+        return null;
       }
 
       // Return user without sensitive data
+      session.log('Login successful for user ${user.id}', level: LogLevel.info);
       return user;
     } catch (e) {
       session.log('Login error: $e', level: LogLevel.warning);
-      rethrow;
+      return null;
     }
   }
 
