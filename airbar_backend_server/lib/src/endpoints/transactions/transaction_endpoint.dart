@@ -81,24 +81,26 @@ class TransactionEndpoint extends Endpoint {
             }
           }
 
-          // Verify stock with actual required quantity
-          double availableStock;
-          if (product.isBulkProduct &&
-              cartItem.productPortionId != null &&
-              product.bulkTotalQuantity != null) {
-            // For bulk products: calculate total available in units (e.g., liters)
-            availableStock =
-                (product.stockQuantity * product.bulkTotalQuantity!) +
-                (product.currentUnitRemaining ?? 0);
-          } else {
-            // For regular products: use stockQuantity directly
-            availableStock = product.stockQuantity.toDouble();
-          }
+          // Verify stock with actual required quantity (only if stock tracking is enabled)
+          if (product.trackStock) {
+            double availableStock;
+            if (product.isBulkProduct &&
+                cartItem.productPortionId != null &&
+                product.bulkTotalQuantity != null) {
+              // For bulk products: calculate total available in units (e.g., liters)
+              availableStock =
+                  (product.stockQuantity * product.bulkTotalQuantity!) +
+                  (product.currentUnitRemaining ?? 0);
+            } else {
+              // For regular products: use stockQuantity directly
+              availableStock = product.stockQuantity.toDouble();
+            }
 
-          if (availableStock < requiredStockQuantity) {
-            throw Exception(
-              'Stock insuffisant pour ${productName}. Disponible: ${availableStock.toStringAsFixed(2)}, Requis: ${requiredStockQuantity.toStringAsFixed(2)}',
-            );
+            if (availableStock < requiredStockQuantity) {
+              throw Exception(
+                'Stock insuffisant pour ${productName}. Disponible: ${availableStock.toStringAsFixed(2)}, Requis: ${requiredStockQuantity.toStringAsFixed(2)}',
+              );
+            }
           }
 
           final subtotal = unitPrice * cartItem.quantity;
@@ -150,14 +152,14 @@ class TransactionEndpoint extends Endpoint {
           await protocol.TransactionItem.db.insertRow(session, item);
         }
 
-        // 7. Update stock and create stock movements
+        // 7. Update stock and create stock movements (only for products with stock tracking)
         for (final cartItem in cartItems) {
           final product = await protocol.Product.db.findById(
             session,
             cartItem.productId,
           );
 
-          if (product != null) {
+          if (product != null && product.trackStock) {
             double stockDeduction = 0.0;
             String movementNote =
                 'Vente - Transaction #${createdTransaction.id}';
@@ -324,14 +326,14 @@ class TransactionEndpoint extends Endpoint {
           where: (t) => t.transactionId.equals(transactionId),
         );
 
-        // 4. Restore stock
+        // 4. Restore stock (only for products with stock tracking)
         for (final item in items) {
           final product = await protocol.Product.db.findById(
             session,
             item.productId,
           );
 
-          if (product != null) {
+          if (product != null && product.trackStock) {
             // Restore stock based on product type
             if (product.isBulkProduct && item.stockDeduction != null) {
               // For bulk products, restore to current unit remaining

@@ -24,6 +24,12 @@ class StockEndpoint extends Endpoint {
           throw Exception('Produit non trouvé');
         }
 
+        if (!product.trackStock) {
+          throw Exception(
+            'Ce produit n\'a pas de gestion de stock activée',
+          );
+        }
+
         // Update stock
         product.stockQuantity += quantity;
         product.updatedAt = DateTime.now();
@@ -66,6 +72,12 @@ class StockEndpoint extends Endpoint {
 
         if (product == null) {
           throw Exception('Produit non trouvé');
+        }
+
+        if (!product.trackStock) {
+          throw Exception(
+            'Ce produit n\'a pas de gestion de stock activée',
+          );
         }
 
         // Calculate difference

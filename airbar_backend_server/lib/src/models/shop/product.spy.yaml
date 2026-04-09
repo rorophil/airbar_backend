@@ -12,6 +12,7 @@ fields:
   imageUrl: String?
   isActive: bool, default=true
   isDeleted: bool, default=false
+  trackStock: bool, default=true # If false, stock management is disabled for this product
   # Bulk/retail product fields
   isBulkProduct: bool, default=false
   bulkUnit: String? # e.g., "litres", "kg"

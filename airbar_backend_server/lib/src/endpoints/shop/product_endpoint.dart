@@ -75,6 +75,7 @@ class ProductEndpoint extends Endpoint {
     String? bulkUnit,
     double? bulkTotalQuantity,
     double? currentUnitRemaining,
+    bool trackStock = true,
   }) async {
     try {
       if (price < 0) {
@@ -104,6 +105,7 @@ class ProductEndpoint extends Endpoint {
         bulkUnit: bulkUnit,
         bulkTotalQuantity: bulkTotalQuantity,
         currentUnitRemaining: currentUnitRemaining,
+        trackStock: trackStock,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
@@ -130,6 +132,7 @@ class ProductEndpoint extends Endpoint {
     double? bulkTotalQuantity,
     int? stockQuantity,
     double? currentUnitRemaining,
+    bool? trackStock,
   }) async {
     try {
       final product = await Product.db.findById(session, productId);
@@ -170,6 +173,9 @@ class ProductEndpoint extends Endpoint {
       }
       if (currentUnitRemaining != null) {
         product.currentUnitRemaining = currentUnitRemaining;
+      }
+      if (trackStock != null) {
+        product.trackStock = trackStock;
       }
       product.updatedAt = DateTime.now();
 

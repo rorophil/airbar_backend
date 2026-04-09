@@ -25,6 +25,7 @@ abstract class Product implements _i1.SerializableModel {
     this.imageUrl,
     bool? isActive,
     bool? isDeleted,
+    bool? trackStock,
     bool? isBulkProduct,
     this.bulkUnit,
     this.bulkTotalQuantity,
@@ -34,6 +35,7 @@ abstract class Product implements _i1.SerializableModel {
        minStockAlert = minStockAlert ?? 5,
        isActive = isActive ?? true,
        isDeleted = isDeleted ?? false,
+       trackStock = trackStock ?? true,
        isBulkProduct = isBulkProduct ?? false;
 
   factory Product({
@@ -48,6 +50,7 @@ abstract class Product implements _i1.SerializableModel {
     String? imageUrl,
     bool? isActive,
     bool? isDeleted,
+    bool? trackStock,
     bool? isBulkProduct,
     String? bulkUnit,
     double? bulkTotalQuantity,
@@ -69,6 +72,7 @@ abstract class Product implements _i1.SerializableModel {
       imageUrl: jsonSerialization['imageUrl'] as String?,
       isActive: jsonSerialization['isActive'] as bool?,
       isDeleted: jsonSerialization['isDeleted'] as bool?,
+      trackStock: jsonSerialization['trackStock'] as bool?,
       isBulkProduct: jsonSerialization['isBulkProduct'] as bool?,
       bulkUnit: jsonSerialization['bulkUnit'] as String?,
       bulkTotalQuantity: (jsonSerialization['bulkTotalQuantity'] as num?)
@@ -107,6 +111,8 @@ abstract class Product implements _i1.SerializableModel {
 
   bool isDeleted;
 
+  bool trackStock;
+
   bool isBulkProduct;
 
   String? bulkUnit;
@@ -132,6 +138,7 @@ abstract class Product implements _i1.SerializableModel {
     String? imageUrl,
     bool? isActive,
     bool? isDeleted,
+    bool? trackStock,
     bool? isBulkProduct,
     String? bulkUnit,
     double? bulkTotalQuantity,
@@ -154,6 +161,7 @@ abstract class Product implements _i1.SerializableModel {
       if (imageUrl != null) 'imageUrl': imageUrl,
       'isActive': isActive,
       'isDeleted': isDeleted,
+      'trackStock': trackStock,
       'isBulkProduct': isBulkProduct,
       if (bulkUnit != null) 'bulkUnit': bulkUnit,
       if (bulkTotalQuantity != null) 'bulkTotalQuantity': bulkTotalQuantity,
@@ -183,6 +191,7 @@ class _ProductImpl extends Product {
     String? imageUrl,
     bool? isActive,
     bool? isDeleted,
+    bool? trackStock,
     bool? isBulkProduct,
     String? bulkUnit,
     double? bulkTotalQuantity,
@@ -200,6 +209,7 @@ class _ProductImpl extends Product {
          imageUrl: imageUrl,
          isActive: isActive,
          isDeleted: isDeleted,
+         trackStock: trackStock,
          isBulkProduct: isBulkProduct,
          bulkUnit: bulkUnit,
          bulkTotalQuantity: bulkTotalQuantity,
@@ -223,6 +233,7 @@ class _ProductImpl extends Product {
     Object? imageUrl = _Undefined,
     bool? isActive,
     bool? isDeleted,
+    bool? trackStock,
     bool? isBulkProduct,
     Object? bulkUnit = _Undefined,
     Object? bulkTotalQuantity = _Undefined,
@@ -243,6 +254,7 @@ class _ProductImpl extends Product {
       imageUrl: imageUrl is String? ? imageUrl : this.imageUrl,
       isActive: isActive ?? this.isActive,
       isDeleted: isDeleted ?? this.isDeleted,
+      trackStock: trackStock ?? this.trackStock,
       isBulkProduct: isBulkProduct ?? this.isBulkProduct,
       bulkUnit: bulkUnit is String? ? bulkUnit : this.bulkUnit,
       bulkTotalQuantity: bulkTotalQuantity is double?

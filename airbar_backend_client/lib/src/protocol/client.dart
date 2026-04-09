@@ -597,6 +597,7 @@ class EndpointProduct extends _i2.EndpointRef {
     String? bulkUnit,
     double? bulkTotalQuantity,
     double? currentUnitRemaining,
+    required bool trackStock,
   }) => caller.callServerEndpoint<_i10.Product>(
     'product',
     'createProduct',
@@ -612,6 +613,7 @@ class EndpointProduct extends _i2.EndpointRef {
       'bulkUnit': bulkUnit,
       'bulkTotalQuantity': bulkTotalQuantity,
       'currentUnitRemaining': currentUnitRemaining,
+      'trackStock': trackStock,
     },
   );
 
@@ -629,6 +631,7 @@ class EndpointProduct extends _i2.EndpointRef {
     double? bulkTotalQuantity,
     int? stockQuantity,
     double? currentUnitRemaining,
+    bool? trackStock,
   }) => caller.callServerEndpoint<_i10.Product>(
     'product',
     'updateProduct',
@@ -645,6 +648,7 @@ class EndpointProduct extends _i2.EndpointRef {
       'bulkTotalQuantity': bulkTotalQuantity,
       'stockQuantity': stockQuantity,
       'currentUnitRemaining': currentUnitRemaining,
+      'trackStock': trackStock,
     },
   );
 
