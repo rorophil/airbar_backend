@@ -430,24 +430,32 @@ class TransactionEndpoint extends Endpoint {
   /// Get all transactions (admin only, with pagination)
   Future<List<protocol.Transaction>> getAllTransactions(
     Session session, {
-    int limit = 20,
+    int limit = 50,
     int offset = 0,
     protocol.TransactionType? type,
+    DateTime? startDate,
+    DateTime? endDate,
   }) async {
     try {
-      if (type != null) {
-        return await protocol.Transaction.db.find(
-          session,
-          where: (t) => t.type.equals(type),
-          orderBy: (t) => t.timestamp,
-          orderDescending: true,
-          limit: limit,
-          offset: offset,
-        );
+      // Build where clause
+      dynamic whereClause;
+
+      if (type != null && startDate != null && endDate != null) {
+        // Filter by type AND date range
+        whereClause = (protocol.TransactionTable t) =>
+            t.type.equals(type) & t.timestamp.between(startDate, endDate);
+      } else if (type != null) {
+        // Filter by type only
+        whereClause = (protocol.TransactionTable t) => t.type.equals(type);
+      } else if (startDate != null && endDate != null) {
+        // Filter by date range only
+        whereClause = (protocol.TransactionTable t) =>
+            t.timestamp.between(startDate, endDate);
       }
 
       return await protocol.Transaction.db.find(
         session,
+        where: whereClause,
         orderBy: (t) => t.timestamp,
         orderDescending: true,
         limit: limit,

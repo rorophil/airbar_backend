@@ -939,6 +939,8 @@ class EndpointTransaction extends _i2.EndpointRef {
     required int limit,
     required int offset,
     _i14.TransactionType? type,
+    DateTime? startDate,
+    DateTime? endDate,
   }) => caller.callServerEndpoint<List<_i7.Transaction>>(
     'transaction',
     'getAllTransactions',
@@ -946,6 +948,8 @@ class EndpointTransaction extends _i2.EndpointRef {
       'limit': limit,
       'offset': offset,
       'type': type,
+      'startDate': startDate,
+      'endDate': endDate,
     },
   );
 
