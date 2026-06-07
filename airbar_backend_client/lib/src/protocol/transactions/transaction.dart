@@ -12,32 +12,39 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import '../transactions/transaction_type.dart' as _i2;
+import '../transactions/payment_method.dart' as _i3;
 
 abstract class Transaction implements _i1.SerializableModel {
   Transaction._({
     this.id,
-    required this.userId,
+    this.userId,
     required this.type,
     required this.totalAmount,
     required this.timestamp,
     this.notes,
     this.refundedTransactionId,
+    this.sellerId,
+    this.paymentMethod,
+    this.balanceAfter,
   });
 
   factory Transaction({
     int? id,
-    required int userId,
+    int? userId,
     required _i2.TransactionType type,
     required double totalAmount,
     required DateTime timestamp,
     String? notes,
     int? refundedTransactionId,
+    int? sellerId,
+    _i3.PaymentMethod? paymentMethod,
+    double? balanceAfter,
   }) = _TransactionImpl;
 
   factory Transaction.fromJson(Map<String, dynamic> jsonSerialization) {
     return Transaction(
       id: jsonSerialization['id'] as int?,
-      userId: jsonSerialization['userId'] as int,
+      userId: jsonSerialization['userId'] as int?,
       type: _i2.TransactionType.fromJson((jsonSerialization['type'] as String)),
       totalAmount: (jsonSerialization['totalAmount'] as num).toDouble(),
       timestamp: _i1.DateTimeJsonExtension.fromJson(
@@ -45,6 +52,13 @@ abstract class Transaction implements _i1.SerializableModel {
       ),
       notes: jsonSerialization['notes'] as String?,
       refundedTransactionId: jsonSerialization['refundedTransactionId'] as int?,
+      sellerId: jsonSerialization['sellerId'] as int?,
+      paymentMethod: jsonSerialization['paymentMethod'] == null
+          ? null
+          : _i3.PaymentMethod.fromJson(
+              (jsonSerialization['paymentMethod'] as String),
+            ),
+      balanceAfter: (jsonSerialization['balanceAfter'] as num?)?.toDouble(),
     );
   }
 
@@ -53,7 +67,7 @@ abstract class Transaction implements _i1.SerializableModel {
   /// the id will be null.
   int? id;
 
-  int userId;
+  int? userId;
 
   _i2.TransactionType type;
 
@@ -64,6 +78,12 @@ abstract class Transaction implements _i1.SerializableModel {
   String? notes;
 
   int? refundedTransactionId;
+
+  int? sellerId;
+
+  _i3.PaymentMethod? paymentMethod;
+
+  double? balanceAfter;
 
   /// Returns a shallow copy of this [Transaction]
   /// with some or all fields replaced by the given arguments.
@@ -76,19 +96,25 @@ abstract class Transaction implements _i1.SerializableModel {
     DateTime? timestamp,
     String? notes,
     int? refundedTransactionId,
+    int? sellerId,
+    _i3.PaymentMethod? paymentMethod,
+    double? balanceAfter,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       '__className__': 'Transaction',
       if (id != null) 'id': id,
-      'userId': userId,
+      if (userId != null) 'userId': userId,
       'type': type.toJson(),
       'totalAmount': totalAmount,
       'timestamp': timestamp.toJson(),
       if (notes != null) 'notes': notes,
       if (refundedTransactionId != null)
         'refundedTransactionId': refundedTransactionId,
+      if (sellerId != null) 'sellerId': sellerId,
+      if (paymentMethod != null) 'paymentMethod': paymentMethod?.toJson(),
+      if (balanceAfter != null) 'balanceAfter': balanceAfter,
     };
   }
 
@@ -103,12 +129,15 @@ class _Undefined {}
 class _TransactionImpl extends Transaction {
   _TransactionImpl({
     int? id,
-    required int userId,
+    int? userId,
     required _i2.TransactionType type,
     required double totalAmount,
     required DateTime timestamp,
     String? notes,
     int? refundedTransactionId,
+    int? sellerId,
+    _i3.PaymentMethod? paymentMethod,
+    double? balanceAfter,
   }) : super._(
          id: id,
          userId: userId,
@@ -117,6 +146,9 @@ class _TransactionImpl extends Transaction {
          timestamp: timestamp,
          notes: notes,
          refundedTransactionId: refundedTransactionId,
+         sellerId: sellerId,
+         paymentMethod: paymentMethod,
+         balanceAfter: balanceAfter,
        );
 
   /// Returns a shallow copy of this [Transaction]
@@ -125,16 +157,19 @@ class _TransactionImpl extends Transaction {
   @override
   Transaction copyWith({
     Object? id = _Undefined,
-    int? userId,
+    Object? userId = _Undefined,
     _i2.TransactionType? type,
     double? totalAmount,
     DateTime? timestamp,
     Object? notes = _Undefined,
     Object? refundedTransactionId = _Undefined,
+    Object? sellerId = _Undefined,
+    Object? paymentMethod = _Undefined,
+    Object? balanceAfter = _Undefined,
   }) {
     return Transaction(
       id: id is int? ? id : this.id,
-      userId: userId ?? this.userId,
+      userId: userId is int? ? userId : this.userId,
       type: type ?? this.type,
       totalAmount: totalAmount ?? this.totalAmount,
       timestamp: timestamp ?? this.timestamp,
@@ -142,6 +177,11 @@ class _TransactionImpl extends Transaction {
       refundedTransactionId: refundedTransactionId is int?
           ? refundedTransactionId
           : this.refundedTransactionId,
+      sellerId: sellerId is int? ? sellerId : this.sellerId,
+      paymentMethod: paymentMethod is _i3.PaymentMethod?
+          ? paymentMethod
+          : this.paymentMethod,
+      balanceAfter: balanceAfter is double? ? balanceAfter : this.balanceAfter,
     );
   }
 }

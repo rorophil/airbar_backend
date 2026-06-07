@@ -296,6 +296,11 @@ class TransactionEndpoint extends Endpoint {
           throw Exception('Seuls les achats peuvent être remboursés');
         }
 
+        // Verify userId is not null (should always be present for purchases)
+        if (originalTrans.userId == null) {
+          throw Exception('Transaction invalide : utilisateur manquant');
+        }
+
         // Check if already refunded
         final existingRefunds = await protocol.Transaction.db.find(
           session,
@@ -309,7 +314,7 @@ class TransactionEndpoint extends Endpoint {
         // 2. Get user and credit account
         final user = await protocol.User.db.findById(
           session,
-          originalTrans.userId,
+          originalTrans.userId!,
         );
 
         if (user == null) {
@@ -360,7 +365,7 @@ class TransactionEndpoint extends Endpoint {
                 productId: product.id!,
                 quantity: item.stockDeduction!,
                 movementType: protocol.MovementType.refund,
-                userId: originalTrans.userId,
+                userId: originalTrans.userId!,
                 timestamp: DateTime.now(),
                 notes: 'Remboursement - Transaction #$transactionId',
               );
@@ -377,7 +382,7 @@ class TransactionEndpoint extends Endpoint {
                 productId: product.id!,
                 quantity: item.quantity.toDouble(),
                 movementType: protocol.MovementType.refund,
-                userId: originalTrans.userId,
+                userId: originalTrans.userId!,
                 timestamp: DateTime.now(),
                 notes: 'Remboursement - Transaction #$transactionId',
               );

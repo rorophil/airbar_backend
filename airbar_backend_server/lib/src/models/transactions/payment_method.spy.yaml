@@ -1,0 +1,5 @@
+# Payment method enum for cash sales
+enum: PaymentMethod
+values:
+  - cash   # Paiement en espèces
+  - card   # Paiement par carte bancaire

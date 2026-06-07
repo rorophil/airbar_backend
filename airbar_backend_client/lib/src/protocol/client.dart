@@ -20,23 +20,27 @@ import 'package:airbar_backend_client/src/protocol/auth/user.dart' as _i5;
 import 'package:airbar_backend_client/src/protocol/auth/user_role.dart' as _i6;
 import 'package:airbar_backend_client/src/protocol/transactions/transaction.dart'
     as _i7;
-import 'package:airbar_backend_client/src/protocol/shop/cart_item.dart' as _i8;
-import 'package:airbar_backend_client/src/protocol/shop/product_category.dart'
+import 'package:airbar_backend_client/src/protocol/cashier/cash_sale_item_data.dart'
+    as _i8;
+import 'package:airbar_backend_client/src/protocol/transactions/payment_method.dart'
     as _i9;
-import 'package:airbar_backend_client/src/protocol/shop/product.dart' as _i10;
-import 'package:airbar_backend_client/src/protocol/shop/product_portion.dart'
+import 'package:airbar_backend_client/src/protocol/shop/cart_item.dart' as _i10;
+import 'package:airbar_backend_client/src/protocol/shop/product_category.dart'
     as _i11;
-import 'package:airbar_backend_client/src/protocol/stock/stock_movement.dart'
-    as _i12;
-import 'package:airbar_backend_client/src/protocol/stock/movement_type.dart'
+import 'package:airbar_backend_client/src/protocol/shop/product.dart' as _i12;
+import 'package:airbar_backend_client/src/protocol/shop/product_portion.dart'
     as _i13;
-import 'package:airbar_backend_client/src/protocol/transactions/transaction_type.dart'
+import 'package:airbar_backend_client/src/protocol/stock/stock_movement.dart'
     as _i14;
-import 'package:airbar_backend_client/src/protocol/transactions/transaction_item.dart'
+import 'package:airbar_backend_client/src/protocol/stock/movement_type.dart'
     as _i15;
-import 'package:airbar_backend_client/src/protocol/greetings/greeting.dart'
+import 'package:airbar_backend_client/src/protocol/transactions/transaction_type.dart'
     as _i16;
-import 'protocol.dart' as _i17;
+import 'package:airbar_backend_client/src/protocol/transactions/transaction_item.dart'
+    as _i17;
+import 'package:airbar_backend_client/src/protocol/greetings/greeting.dart'
+    as _i18;
+import 'protocol.dart' as _i19;
 
 /// By extending [EmailIdpBaseEndpoint], the email identity provider endpoints
 /// are made available on the server and enable the corresponding sign-in widget
@@ -438,6 +442,51 @@ class EndpointUser extends _i2.EndpointRef {
   );
 }
 
+/// Endpoint for cashier operations (cash sales to non-members)
+/// {@category Endpoint}
+class EndpointCashier extends _i2.EndpointRef {
+  EndpointCashier(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'cashier';
+
+  /// Process cash sale - Create cashSale transaction for non-member customer
+  /// [sellerId] - ID of the member processing the sale
+  /// [items] - List of items being sold
+  /// [paymentMethod] - How the customer is paying (cash or card)
+  /// [pin] - Seller's PIN for verification
+  _i3.Future<_i7.Transaction> processCashSale(
+    int sellerId,
+    List<_i8.CashSaleItemData> items,
+    _i9.PaymentMethod paymentMethod,
+    String pin,
+  ) => caller.callServerEndpoint<_i7.Transaction>(
+    'cashier',
+    'processCashSale',
+    {
+      'sellerId': sellerId,
+      'items': items,
+      'paymentMethod': paymentMethod,
+      'pin': pin,
+    },
+  );
+
+  /// Get transactions for a specific seller (to track sales made by a member)
+  _i3.Future<List<_i7.Transaction>> getSellerTransactions(
+    int sellerId, {
+    required int limit,
+    required int offset,
+  }) => caller.callServerEndpoint<List<_i7.Transaction>>(
+    'cashier',
+    'getSellerTransactions',
+    {
+      'sellerId': sellerId,
+      'limit': limit,
+      'offset': offset,
+    },
+  );
+}
+
 /// Endpoint for shopping cart management (real-time sync)
 /// {@category Endpoint}
 class EndpointCart extends _i2.EndpointRef {
@@ -447,20 +496,20 @@ class EndpointCart extends _i2.EndpointRef {
   String get name => 'cart';
 
   /// Get user's cart
-  _i3.Future<List<_i8.CartItem>> getCart(int userId) =>
-      caller.callServerEndpoint<List<_i8.CartItem>>(
+  _i3.Future<List<_i10.CartItem>> getCart(int userId) =>
+      caller.callServerEndpoint<List<_i10.CartItem>>(
         'cart',
         'getCart',
         {'userId': userId},
       );
 
   /// Add item to cart
-  _i3.Future<_i8.CartItem> addToCart(
+  _i3.Future<_i10.CartItem> addToCart(
     int userId,
     int productId,
     int quantity, {
     int? productPortionId,
-  }) => caller.callServerEndpoint<_i8.CartItem>(
+  }) => caller.callServerEndpoint<_i10.CartItem>(
     'cart',
     'addToCart',
     {
@@ -472,12 +521,12 @@ class EndpointCart extends _i2.EndpointRef {
   );
 
   /// Update cart item quantity
-  _i3.Future<_i8.CartItem> updateCartItem(
+  _i3.Future<_i10.CartItem> updateCartItem(
     int userId,
     int productId,
     int quantity, {
     int? productPortionId,
-  }) => caller.callServerEndpoint<_i8.CartItem>(
+  }) => caller.callServerEndpoint<_i10.CartItem>(
     'cart',
     'updateCartItem',
     {
@@ -520,28 +569,28 @@ class EndpointCategory extends _i2.EndpointRef {
   String get name => 'category';
 
   /// Get all categories and ensure "Sans catégorie" exists
-  _i3.Future<List<_i9.ProductCategory>> getCategories() =>
-      caller.callServerEndpoint<List<_i9.ProductCategory>>(
+  _i3.Future<List<_i11.ProductCategory>> getCategories() =>
+      caller.callServerEndpoint<List<_i11.ProductCategory>>(
         'category',
         'getCategories',
         {},
       );
 
   /// Get active categories only
-  _i3.Future<List<_i9.ProductCategory>> getActiveCategories() =>
-      caller.callServerEndpoint<List<_i9.ProductCategory>>(
+  _i3.Future<List<_i11.ProductCategory>> getActiveCategories() =>
+      caller.callServerEndpoint<List<_i11.ProductCategory>>(
         'category',
         'getActiveCategories',
         {},
       );
 
   /// Create category (admin only)
-  _i3.Future<_i9.ProductCategory> createCategory(
+  _i3.Future<_i11.ProductCategory> createCategory(
     String name,
     String? description,
     String? iconName,
     int displayOrder,
-  ) => caller.callServerEndpoint<_i9.ProductCategory>(
+  ) => caller.callServerEndpoint<_i11.ProductCategory>(
     'category',
     'createCategory',
     {
@@ -553,13 +602,13 @@ class EndpointCategory extends _i2.EndpointRef {
   );
 
   /// Update category (admin only)
-  _i3.Future<_i9.ProductCategory> updateCategory(
+  _i3.Future<_i11.ProductCategory> updateCategory(
     int categoryId,
     String name,
     String? description,
     String? iconName,
     int displayOrder,
-  ) => caller.callServerEndpoint<_i9.ProductCategory>(
+  ) => caller.callServerEndpoint<_i11.ProductCategory>(
     'category',
     'updateCategory',
     {
@@ -590,10 +639,10 @@ class EndpointProduct extends _i2.EndpointRef {
   String get name => 'product';
 
   /// Get all products
-  _i3.Future<List<_i10.Product>> getAllProducts({
+  _i3.Future<List<_i12.Product>> getAllProducts({
     bool? activeOnly,
     required bool includeDeleted,
-  }) => caller.callServerEndpoint<List<_i10.Product>>(
+  }) => caller.callServerEndpoint<List<_i12.Product>>(
     'product',
     'getAllProducts',
     {
@@ -603,23 +652,23 @@ class EndpointProduct extends _i2.EndpointRef {
   );
 
   /// Get products by category
-  _i3.Future<List<_i10.Product>> getProductsByCategory(int categoryId) =>
-      caller.callServerEndpoint<List<_i10.Product>>(
+  _i3.Future<List<_i12.Product>> getProductsByCategory(int categoryId) =>
+      caller.callServerEndpoint<List<_i12.Product>>(
         'product',
         'getProductsByCategory',
         {'categoryId': categoryId},
       );
 
   /// Get product by ID
-  _i3.Future<_i10.Product?> getProductById(int productId) =>
-      caller.callServerEndpoint<_i10.Product?>(
+  _i3.Future<_i12.Product?> getProductById(int productId) =>
+      caller.callServerEndpoint<_i12.Product?>(
         'product',
         'getProductById',
         {'productId': productId},
       );
 
   /// Create product (admin only)
-  _i3.Future<_i10.Product> createProduct(
+  _i3.Future<_i12.Product> createProduct(
     String name,
     String? description,
     double price,
@@ -632,7 +681,7 @@ class EndpointProduct extends _i2.EndpointRef {
     double? bulkTotalQuantity,
     double? currentUnitRemaining,
     required bool trackStock,
-  }) => caller.callServerEndpoint<_i10.Product>(
+  }) => caller.callServerEndpoint<_i12.Product>(
     'product',
     'createProduct',
     {
@@ -652,7 +701,7 @@ class EndpointProduct extends _i2.EndpointRef {
   );
 
   /// Update product (admin only)
-  _i3.Future<_i10.Product> updateProduct(
+  _i3.Future<_i12.Product> updateProduct(
     int productId,
     String name,
     String? description,
@@ -666,7 +715,7 @@ class EndpointProduct extends _i2.EndpointRef {
     int? stockQuantity,
     double? currentUnitRemaining,
     bool? trackStock,
-  }) => caller.callServerEndpoint<_i10.Product>(
+  }) => caller.callServerEndpoint<_i12.Product>(
     'product',
     'updateProduct',
     {
@@ -697,10 +746,10 @@ class EndpointProduct extends _i2.EndpointRef {
 
   /// Toggle product active status (admin only)
   /// Activate or deactivate without deleting
-  _i3.Future<_i10.Product> toggleActiveStatus(
+  _i3.Future<_i12.Product> toggleActiveStatus(
     int productId,
     bool isActive,
-  ) => caller.callServerEndpoint<_i10.Product>(
+  ) => caller.callServerEndpoint<_i12.Product>(
     'product',
     'toggleActiveStatus',
     {
@@ -711,10 +760,10 @@ class EndpointProduct extends _i2.EndpointRef {
 
   /// Update product stock quantity (admin only)
   /// Can be used to increase or decrease stock
-  _i3.Future<_i10.Product> updateStock(
+  _i3.Future<_i12.Product> updateStock(
     int productId,
     int newStockQuantity,
-  ) => caller.callServerEndpoint<_i10.Product>(
+  ) => caller.callServerEndpoint<_i12.Product>(
     'product',
     'updateStock',
     {
@@ -733,10 +782,10 @@ class EndpointProductPortion extends _i2.EndpointRef {
   String get name => 'productPortion';
 
   /// Get all portions for a product
-  _i3.Future<List<_i11.ProductPortion>> getProductPortions(
+  _i3.Future<List<_i13.ProductPortion>> getProductPortions(
     int productId, {
     required bool activeOnly,
-  }) => caller.callServerEndpoint<List<_i11.ProductPortion>>(
+  }) => caller.callServerEndpoint<List<_i13.ProductPortion>>(
     'productPortion',
     'getProductPortions',
     {
@@ -746,21 +795,21 @@ class EndpointProductPortion extends _i2.EndpointRef {
   );
 
   /// Get portion by ID
-  _i3.Future<_i11.ProductPortion?> getPortionById(int portionId) =>
-      caller.callServerEndpoint<_i11.ProductPortion?>(
+  _i3.Future<_i13.ProductPortion?> getPortionById(int portionId) =>
+      caller.callServerEndpoint<_i13.ProductPortion?>(
         'productPortion',
         'getPortionById',
         {'portionId': portionId},
       );
 
   /// Create product portion (admin only)
-  _i3.Future<_i11.ProductPortion> createPortion(
+  _i3.Future<_i13.ProductPortion> createPortion(
     int productId,
     String name,
     double quantity,
     double price, {
     required int displayOrder,
-  }) => caller.callServerEndpoint<_i11.ProductPortion>(
+  }) => caller.callServerEndpoint<_i13.ProductPortion>(
     'productPortion',
     'createPortion',
     {
@@ -773,13 +822,13 @@ class EndpointProductPortion extends _i2.EndpointRef {
   );
 
   /// Update product portion (admin only)
-  _i3.Future<_i11.ProductPortion> updatePortion(
+  _i3.Future<_i13.ProductPortion> updatePortion(
     int portionId,
     String name,
     double quantity,
     double price, {
     int? displayOrder,
-  }) => caller.callServerEndpoint<_i11.ProductPortion>(
+  }) => caller.callServerEndpoint<_i13.ProductPortion>(
     'productPortion',
     'updatePortion',
     {
@@ -843,11 +892,11 @@ class EndpointStock extends _i2.EndpointRef {
   );
 
   /// Get stock history for a product
-  _i3.Future<List<_i12.StockMovement>> getStockHistory(
+  _i3.Future<List<_i14.StockMovement>> getStockHistory(
     int productId, {
     DateTime? startDate,
     DateTime? endDate,
-  }) => caller.callServerEndpoint<List<_i12.StockMovement>>(
+  }) => caller.callServerEndpoint<List<_i14.StockMovement>>(
     'stock',
     'getStockHistory',
     {
@@ -858,13 +907,13 @@ class EndpointStock extends _i2.EndpointRef {
   );
 
   /// Get all stock movements (admin only)
-  _i3.Future<List<_i12.StockMovement>> getAllStockMovements({
-    _i13.MovementType? type,
+  _i3.Future<List<_i14.StockMovement>> getAllStockMovements({
+    _i15.MovementType? type,
     DateTime? startDate,
     DateTime? endDate,
     required int limit,
     required int offset,
-  }) => caller.callServerEndpoint<List<_i12.StockMovement>>(
+  }) => caller.callServerEndpoint<List<_i14.StockMovement>>(
     'stock',
     'getAllStockMovements',
     {
@@ -877,8 +926,8 @@ class EndpointStock extends _i2.EndpointRef {
   );
 
   /// Get products with low stock (below alert threshold)
-  _i3.Future<List<_i10.Product>> getLowStockProducts() =>
-      caller.callServerEndpoint<List<_i10.Product>>(
+  _i3.Future<List<_i12.Product>> getLowStockProducts() =>
+      caller.callServerEndpoint<List<_i12.Product>>(
         'stock',
         'getLowStockProducts',
         {},
@@ -938,7 +987,7 @@ class EndpointTransaction extends _i2.EndpointRef {
   _i3.Future<List<_i7.Transaction>> getAllTransactions({
     required int limit,
     required int offset,
-    _i14.TransactionType? type,
+    _i16.TransactionType? type,
     DateTime? startDate,
     DateTime? endDate,
   }) => caller.callServerEndpoint<List<_i7.Transaction>>(
@@ -954,9 +1003,9 @@ class EndpointTransaction extends _i2.EndpointRef {
   );
 
   /// Get transaction items for a specific transaction
-  _i3.Future<List<_i15.TransactionItem>> getTransactionItems(
+  _i3.Future<List<_i17.TransactionItem>> getTransactionItems(
     int transactionId,
-  ) => caller.callServerEndpoint<List<_i15.TransactionItem>>(
+  ) => caller.callServerEndpoint<List<_i17.TransactionItem>>(
     'transaction',
     'getTransactionItems',
     {'transactionId': transactionId},
@@ -973,8 +1022,8 @@ class EndpointGreeting extends _i2.EndpointRef {
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i3.Future<_i16.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i16.Greeting>(
+  _i3.Future<_i18.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_i18.Greeting>(
         'greeting',
         'hello',
         {'name': name},
@@ -1012,7 +1061,7 @@ class Client extends _i2.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i17.Protocol(),
+         _i19.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -1025,6 +1074,7 @@ class Client extends _i2.ServerpodClientShared {
     jwtRefresh = EndpointJwtRefresh(this);
     auth = EndpointAuth(this);
     user = EndpointUser(this);
+    cashier = EndpointCashier(this);
     cart = EndpointCart(this);
     category = EndpointCategory(this);
     product = EndpointProduct(this);
@@ -1042,6 +1092,8 @@ class Client extends _i2.ServerpodClientShared {
   late final EndpointAuth auth;
 
   late final EndpointUser user;
+
+  late final EndpointCashier cashier;
 
   late final EndpointCart cart;
 
@@ -1065,6 +1117,7 @@ class Client extends _i2.ServerpodClientShared {
     'jwtRefresh': jwtRefresh,
     'auth': auth,
     'user': user,
+    'cashier': cashier,
     'cart': cart,
     'category': category,
     'product': product,

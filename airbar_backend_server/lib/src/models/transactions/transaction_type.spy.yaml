@@ -4,3 +4,4 @@ values:
   - purchase
   - credit
   - refund
+  - cashSale  # Vente caisse à un non-membre

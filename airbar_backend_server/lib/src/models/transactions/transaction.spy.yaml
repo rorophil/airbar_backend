@@ -2,12 +2,15 @@
 class: Transaction
 table: transactions
 fields:
-  userId: int
+  userId: int?  # Null for cash sales (non-member customers)
   type: TransactionType
   totalAmount: double
   timestamp: DateTime
   notes: String?
   refundedTransactionId: int?
+  sellerId: int?  # ID du membre qui a effectué la vente (pour cashSale)
+  paymentMethod: PaymentMethod?  # Mode de paiement (pour cashSale)
+  balanceAfter: double?  # Solde après transaction (pour achats membres uniquement)
 
 indexes:
   transactions_user_idx:

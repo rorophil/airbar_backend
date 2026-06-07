@@ -1,0 +1,6 @@
+# Cash sale item data for cashier operations
+class: CashSaleItemData
+fields:
+  productId: int
+  quantity: int
+  productPortionId: int?

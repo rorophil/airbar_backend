@@ -12,25 +12,19 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 
-enum TransactionType implements _i1.SerializableModel {
-  purchase,
-  credit,
-  refund,
-  cashSale;
+enum PaymentMethod implements _i1.SerializableModel {
+  cash,
+  card;
 
-  static TransactionType fromJson(String name) {
+  static PaymentMethod fromJson(String name) {
     switch (name) {
-      case 'purchase':
-        return TransactionType.purchase;
-      case 'credit':
-        return TransactionType.credit;
-      case 'refund':
-        return TransactionType.refund;
-      case 'cashSale':
-        return TransactionType.cashSale;
+      case 'cash':
+        return PaymentMethod.cash;
+      case 'card':
+        return PaymentMethod.card;
       default:
         throw ArgumentError(
-          'Value "$name" cannot be converted to "TransactionType"',
+          'Value "$name" cannot be converted to "PaymentMethod"',
         );
     }
   }
