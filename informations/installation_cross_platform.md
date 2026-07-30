@@ -137,14 +137,14 @@ Attendu:
 ### Windows (PowerShell)
 
 ```powershell
-docker compose -f .\docker-compose.yaml run --rm airbar_server --apply-migrations
+docker compose -f .\docker-compose.yaml run --rm --entrypoint /bin/sh airbar_server -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
 docker compose -f .\docker-compose.yaml up -d airbar_server
 ```
 
 ### macOS / Linux (bash)
 
 ```bash
-docker compose -f ./docker-compose.yaml run --rm airbar_server --apply-migrations
+docker compose -f ./docker-compose.yaml run --rm --entrypoint /bin/sh airbar_server -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
 docker compose -f ./docker-compose.yaml up -d airbar_server
 ```
 
@@ -225,7 +225,7 @@ docker compose version
 ### relation ... does not exist
 
 - migrations non appliquees
-- relancer `--apply-migrations`
+- relancer la commande d'application des migrations en mode production
 
 ### backend en restart loop
 

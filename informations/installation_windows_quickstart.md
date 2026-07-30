@@ -52,7 +52,7 @@ Attendu: postgres et redis en healthy, backend en Up.
 ## 5) Appliquer les migrations (premier demarrage)
 
 ```powershell
-docker compose -f .\docker-compose.yaml run --rm airbar_server --apply-migrations
+docker compose -f .\docker-compose.yaml run --rm --entrypoint /bin/sh airbar_server -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
 docker compose -f .\docker-compose.yaml up -d airbar_server
 ```
 
@@ -86,7 +86,7 @@ docker compose -f .\docker-compose.yaml down -v
 
 - docker compose non reconnu: relancer Docker Desktop puis reouvrir PowerShell.
 - Missing password for ...: verifier toutes les variables SERVERPOD_PASSWORD_* dans .env.
-- relation ... does not exist: relancer la commande --apply-migrations.
+- relation ... does not exist: relancer la commande d'application des migrations en mode production.
 - backend en boucle de restart: lire les logs:
 
 ```powershell

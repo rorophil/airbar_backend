@@ -118,11 +118,13 @@ Attendu:
 
 ## 7. Appliquer les migrations de base (obligatoire au premier lancement)
 
-Si la base est vide, appliquer les migrations:
+Si la base est vide, appliquer les migrations en mode production:
 
 ```powershell
-docker compose -f .\docker-compose.yaml run --rm airbar_server --apply-migrations
+docker compose -f .\docker-compose.yaml run --rm --entrypoint /bin/sh airbar_server -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
 ```
+
+Cette forme explicite garantit l'exécution du serveur en mode production et évite toute ambiguïté liée à l'entrypoint.
 
 Puis redemarrer le serveur:
 
@@ -181,7 +183,7 @@ docker compose -f .\docker-compose.yaml up -d --build
 - Lancer:
 
 ```powershell
-docker compose -f .\docker-compose.yaml run --rm airbar_server --apply-migrations
+docker compose -f .\docker-compose.yaml run --rm --entrypoint /bin/sh airbar_server -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
 ```
 
 ### Le conteneur backend redemarre en boucle
@@ -206,4 +208,3 @@ docker compose -f .\docker-compose.yaml up -d airbar_server
 - `docker compose ps` OK (postgres/redis healthy, backend Up)
 - migrations appliquees
 - logs backend sans crash
-
