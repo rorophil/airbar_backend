@@ -1,44 +1,85 @@
+
 services:
-  # Development services
+  # PostgreSQL Database
   postgres:
     image: pgvector/pgvector:pg16
+    container_name: airbar_postgres_prod
+    restart: unless-stopped
     ports:
-      - "8090:5432"
+      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_DB: airbar_backend
-      POSTGRES_PASSWORD: "JN2w8w360Q0mLywsXHv8wNHuDiY64RWg"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-1234}"
     volumes:
-      - airbar_backend_data:/var/lib/postgresql/data
-
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - airbar_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  # Redis Cache
   redis:
-    image: redis:6.2.6
+    image: redis:7-alpine
+    container_name: airbar_redis_prod
+    restart: unless-stopped
     ports:
-      - "8091:6379"
-    command: redis-server --requirepass "DR6ltcbUbGaYVlOcPN4ARXESCrt7p1LS"
-    environment:
-      - REDIS_REPLICATION_MODE=master
-
-  # Test services
-  postgres_test:
-    image: pgvector/pgvector:pg16
-    ports:
-      - "9090:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_DB: airbar_backend_test
-      POSTGRES_PASSWORD: "dHNjhnRTbV73Nwd7VAabLVLl740Ht2Aj"
+      - "6379:6379"
+    command: redis-server --requirepass "${REDIS_PASSWORD:-1234}"
     volumes:
-      - airbar_backend_test_data:/var/lib/postgresql/data
-
-  redis_test:
-    image: redis:6.2.6
+      - redis_data:/data
+    networks:
+      - airbar_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  # AirBar Backend Server
+  airbar_server:
+    build:
+      context: ..
+      dockerfile: airbar_backend_server/Dockerfile
+    container_name: airbar_backend_prod
+    restart: unless-stopped
     ports:
-      - "9091:6379"
-    command: redis-server --requirepass "aOo7byqFbKR0JbF-CBG4q7AKIwvhGUjt"
+      - "8080:8080"  # API Server
+      - "8081:8081"  # Insights Server
+      - "8082:8082"  # Web Server
     environment:
-      - REDIS_REPLICATION_MODE=master
-
+      - runmode=production
+      - serverid=prod-001
+      - logging=normal
+      - role=monolith
+      # Database
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=airbar_backend
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=${POSTGRES_PASSWORD:-VotreMotDePasseSecurise123!}
+      - SERVERPOD_PASSWORD_database=${POSTGRES_PASSWORD:-VotreMotDePasseSecurise123!}
+      - SERVERPOD_PASSWORD_shared=${SERVERPOD_PASSWORD_SHARED:-ChangeMeSharedKeyAtLeast32Chars}
+      - SERVERPOD_PASSWORD_redis=${REDIS_PASSWORD:-VotreMotDePasseRedis456!}
+      - SERVERPOD_PASSWORD_serviceSecret=${SERVERPOD_PASSWORD_SERVICE_SECRET:-ChangeMeServiceSecretAtLeast32Chars}
+      - SERVERPOD_PASSWORD_jwtRefreshTokenHashPepper=${SERVERPOD_PASSWORD_JWT_REFRESH_PEPPER:-ChangeMeJwtRefreshPepperAtLeast32Chars}
+      - SERVERPOD_PASSWORD_jwtHmacSha512PrivateKey=${SERVERPOD_PASSWORD_JWT_HMAC_SHA512_PRIVATE_KEY:-ChangeMeJwtHmacSha512PrivateKeyAtLeast32Chars}
+      - SERVERPOD_PASSWORD_emailSecretHashPepper=${SERVERPOD_PASSWORD_EMAIL_SECRET_HASH_PEPPER:-ChangeMeEmailSecretHashPepperAtLeast32Chars}
+      # Redis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-VotreMotDePasseRedis456!}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - airbar_network
+networks:
+  airbar_network:
+    driver: bridge
 volumes:
-  airbar_backend_data:
-  airbar_backend_test_data:
+  postgres_data:
+  redis_data:

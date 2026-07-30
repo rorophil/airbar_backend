@@ -1,0 +1,44 @@
+services:
+  # Development services
+  postgres:
+    image: pgvector/pgvector:pg16
+    ports:
+      - "8090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: airbar_backend
+      POSTGRES_PASSWORD: "JN2w8w360Q0mLywsXHv8wNHuDiY64RWg"
+    volumes:
+      - airbar_backend_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6.2.6
+    ports:
+      - "8091:6379"
+    command: redis-server --requirepass "DR6ltcbUbGaYVlOcPN4ARXESCrt7p1LS"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+  # Test services
+  postgres_test:
+    image: pgvector/pgvector:pg16
+    ports:
+      - "9090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: airbar_backend_test
+      POSTGRES_PASSWORD: "dHNjhnRTbV73Nwd7VAabLVLl740Ht2Aj"
+    volumes:
+      - airbar_backend_test_data:/var/lib/postgresql/data
+
+  redis_test:
+    image: redis:6.2.6
+    ports:
+      - "9091:6379"
+    command: redis-server --requirepass "aOo7byqFbKR0JbF-CBG4q7AKIwvhGUjt"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+volumes:
+  airbar_backend_data:
+  airbar_backend_test_data:

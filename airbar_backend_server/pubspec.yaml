@@ -18,6 +18,11 @@ dev_dependencies:
   serverpod_test: 3.3.1
   test: ^1.25.5
 
+dependency_overrides:
+  relic: 1.1.0
+  relic_core: 1.1.0
+  relic_io: 1.1.0
+
 serverpod:
   scripts:
     # Starts the server and applies migrations
