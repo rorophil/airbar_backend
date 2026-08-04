@@ -61,6 +61,46 @@ Si vous avez des modifications locales non commitees et non voulues, verifiez-le
 git pull origin main
 ```
 
+### 4bis. Si la nouvelle version est sur une autre branche que `main`
+
+Si le code a deployer se trouve sur une branche differente (ex: `release/1.2`, `hotfix-xyz`),
+n'utilisez pas `git pull origin main`. Procedez ainsi:
+
+```powershell
+cd C:\airbar_production\airbar_backend
+git fetch origin
+git branch -r
+```
+
+`git branch -r` liste les branches distantes disponibles pour verifier le nom exact de la branche.
+
+**Cas A - vous etes deja sur `main` en local et voulez basculer definitivement sur la nouvelle branche:**
+
+```powershell
+git checkout <nom-de-la-nouvellebranche>
+git pull origin <nom-de-la-nouvellebranche>
+```
+
+**Cas B - la branche n'existe pas encore en local (premiere fois):**
+
+```powershell
+git checkout -b <nom-de-la-nouvellebranche> origin/<nom-de-la-nouvellebranche>
+```
+
+Verifiez ensuite que vous etes bien sur la bonne branche et a jour:
+
+```powershell
+git status
+git log -1 --oneline
+```
+
+Le reste de la procedure (etapes 5 a 8) reste identique. Notez simplement que la commande de
+rollback a l'etape 9 devra recibler la branche/commit d'origine (`main` ou celle utilisee avant
+l'upgrade) plutot que systematiquement `main`.
+
+> Astuce: si vous devez repasser sur `main` plus tard, utilisez `git checkout main` puis
+> `git pull origin main`.
+
 ## 5. Comparer les fichiers sensibles
 
 Apres le pull, verifiez si `docker-compose.yaml`, `Dockerfile` ou `config\production.yaml`
