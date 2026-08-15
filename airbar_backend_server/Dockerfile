@@ -2,13 +2,20 @@
 FROM dart:3.8.0 AS build
 WORKDIR /app
 
-# Build from a minimal workspace that contains only the server package.
+# Build from a minimal workspace that contains the server AND client packages
 COPY airbar_backend_server ./airbar_backend_server
-RUN printf "name: _\npublish_to: none\nenvironment:\n  sdk: '^3.8.0'\nworkspace:\n  - airbar_backend_server\n" > /app/pubspec.yaml
+COPY airbar_backend_client ./airbar_backend_client
+RUN printf "name: _\npublish_to: none\nenvironment:\n  sdk: '^3.8.0'\nworkspace:\n  - airbar_backend_server\n  - airbar_backend_client\n" > /app/pubspec.yaml
 WORKDIR /app/airbar_backend_server
 
-# Install dependencies and compile the server executable
+# Install dependencies
 RUN dart pub get
+
+# Activate serverpod_cli and generate code
+RUN dart pub global activate serverpod_cli
+RUN dart pub global run serverpod_cli generate
+
+# Compile the server executable
 RUN dart compile exe bin/main.dart -o bin/server
 
 # Final stage
