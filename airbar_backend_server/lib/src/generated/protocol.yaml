@@ -1,0 +1,70 @@
+emailIdp:
+  - login:
+  - startRegistration:
+  - verifyRegistrationCode:
+  - finishRegistration:
+  - startPasswordReset:
+  - verifyPasswordResetCode:
+  - finishPasswordReset:
+  - hasAccount:
+jwtRefresh:
+  - refreshAccessToken:
+auth:
+  - login:
+  - validatePin:
+  - changePin:
+user:
+  - getAllUsers:
+  - getUserById:
+  - createUser:
+  - updateUser:
+  - deactivateUser:
+  - reactivateUser:
+  - resetPassword:
+  - resetPin:
+  - deleteUser:
+  - creditAccount:
+cashier:
+  - processCashSale:
+  - getSellerTransactions:
+cart:
+  - getCart:
+  - addToCart:
+  - updateCartItem:
+  - removeFromCart:
+  - clearCart:
+category:
+  - getCategories:
+  - getActiveCategories:
+  - createCategory:
+  - updateCategory:
+  - deleteCategory:
+product:
+  - getAllProducts:
+  - getProductsByCategory:
+  - getProductById:
+  - createProduct:
+  - updateProduct:
+  - deleteProduct:
+  - toggleActiveStatus:
+  - updateStock:
+productPortion:
+  - getProductPortions:
+  - getPortionById:
+  - createPortion:
+  - updatePortion:
+  - deletePortion:
+stock:
+  - restockProduct:
+  - adjustStock:
+  - getStockHistory:
+  - getAllStockMovements:
+  - getLowStockProducts:
+transaction:
+  - checkout:
+  - refundTransaction:
+  - getUserTransactions:
+  - getAllTransactions:
+  - getTransactionItems:
+greeting:
+  - hello:
