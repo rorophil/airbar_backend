@@ -1,15 +1,16 @@
 # Guide d'Installation AirBar Backend - Production
+
 ## Installation Serveur Local ou Distant (Windows / Linux)
 
-**Version:** 2.0  
-**Date:** 2026-08-16  
+**Version:** 2.0
+**Date:** 2026-08-16
 **Testé sur:** Windows 10/11, Ubuntu 22.04/24.04
 
 ---
 
 ## 📋 Table des matières
 
-1. [Vue d'ensemble](#vue-densemble)
+1. [Vue d&#39;ensemble](#vue-densemble)
 2. [Prérequis](#prérequis)
 3. [Installation des outils](#installation-des-outils)
 4. [Configuration initiale](#configuration-initiale)
@@ -40,10 +41,10 @@
 
 ### Deux types d'installation
 
-| Type | Scénario | Outils requis |
-|------|----------|---------------|
-| **Local** | Machine de développement ou serveur physique accessible | Git + Docker + Dart/Flutter (optionnel) |
-| **Distant** | Serveur VPS/Cloud accessible via SSH | Git + Docker uniquement |
+| Type              | Scénario                                                | Outils requis                           |
+| ----------------- | -------------------------------------------------------- | --------------------------------------- |
+| **Local**   | Machine de développement ou serveur physique accessible | Git + Docker + Dart/Flutter (optionnel) |
+| **Distant** | Serveur VPS/Cloud accessible via SSH                     | Git + Docker uniquement                 |
 
 ### ⚠️ Point critique : Fichiers générés par Serverpod
 
@@ -120,7 +121,7 @@ docker compose version
 
 #### 1. Se connecter au serveur
 
-**Serveur local :** Ouvrir un terminal  
+**Serveur local :** Ouvrir un terminal
 **Serveur distant :** Se connecter via SSH
 
 ```bash
@@ -215,6 +216,7 @@ ls -la
 > **💡 Optimisation :** L'option `--single-branch` télécharge uniquement la branche `prod`, ce qui réduit le temps de clonage et l'espace disque utilisé (on évite de télécharger toutes les branches de développement inutiles sur le serveur de production).
 
 **Fichiers attendus :**
+
 - `docker-compose.yaml`
 - `Dockerfile`
 - `config/production.yaml`
@@ -261,6 +263,7 @@ cat config/passwords.yaml | grep -A 10 "production:"
 ```
 
 **Exemple de sortie :**
+
 ```yaml
 production:
   database: '-g4x7Ke0FV68yDNSi1xDQpirxejC2580'
@@ -333,6 +336,7 @@ SERVERPOD_PASSWORD_EMAIL_SECRET_HASH_PEPPER=9j7p2HCkJevye1Eo8GndwhKSaw7X2SKd
 #### Étape 3.3 : Sécuriser le fichier `.env`
 
 **Windows :**
+
 ```powershell
 # Vérifier que le fichier n'est pas versionné
 git status .env
@@ -340,6 +344,7 @@ git status .env
 ```
 
 **Linux :**
+
 ```bash
 # Restreindre les permissions (lecture seule pour le propriétaire)
 chmod 600 .env
@@ -441,7 +446,7 @@ airbar_redis_prod     Up (healthy)        0.0.0.0:6379->6379/tcp
 airbar_backend_prod   Up                  0.0.0.0:8080-8082->8080-8082/tcp
 ```
 
-**✅ Tous les services doivent être "Up"**  
+**✅ Tous les services doivent être "Up"**
 **✅ PostgreSQL et Redis doivent être "healthy"**
 
 ### 3. Appliquer les migrations de base de données
@@ -480,7 +485,7 @@ All migrations applied successfully
 
 **❌ Si erreur "password authentication failed" :**
 
-Voir section [Dépannage - Problème d'authentification PostgreSQL](#problème-dauthentification-postgresql)
+Voir section [Dépannage - Problème d&#39;authentification PostgreSQL](#problème-dauthentification-postgresql)
 
 ### 4. Redémarrer le serveur
 
@@ -893,6 +898,7 @@ sudo ufw status
 ## 📝 Changelog
 
 ### Version 2.0 (2026-08-16)
+
 - ✅ Ajout de la procédure complète Windows et Linux
 - ✅ Documentation du problème des fichiers générés
 - ✅ Correction de l'erreur d'authentification PostgreSQL
@@ -900,6 +906,7 @@ sudo ufw status
 - ✅ Procédures de dépannage étendues
 
 ### Version 1.0 (2026-08-10)
+
 - 🎉 Version initiale
 
 ---
