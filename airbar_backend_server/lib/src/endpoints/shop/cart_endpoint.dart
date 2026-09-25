@@ -154,4 +154,14 @@ class CartEndpoint extends Endpoint {
       rethrow;
     }
   }
+
+  /// Get all cart items across all users (admin only - used to preview/manage member carts)
+  Future<List<CartItem>> getAllCartItems(Session session) async {
+    try {
+      return await CartItem.db.find(session);
+    } catch (e) {
+      session.log('Get all cart items error: $e', level: LogLevel.warning);
+      rethrow;
+    }
+  }
 }

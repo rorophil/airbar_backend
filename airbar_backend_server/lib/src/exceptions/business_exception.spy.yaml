@@ -1,0 +1,5 @@
+# Exception métier générique, sérialisée jusqu'au client
+# (les Exception() Dart classiques ne sont jamais transmises au client par Serverpod)
+exception: BusinessException
+fields:
+  message: String

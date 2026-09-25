@@ -558,6 +558,14 @@ class EndpointCart extends _i2.EndpointRef {
     'clearCart',
     {'userId': userId},
   );
+
+  /// Get all cart items across all users (admin only - used to preview/manage member carts)
+  _i3.Future<List<_i10.CartItem>> getAllCartItems() =>
+      caller.callServerEndpoint<List<_i10.CartItem>>(
+        'cart',
+        'getAllCartItems',
+        {},
+      );
 }
 
 /// Endpoint for product category management
@@ -952,6 +960,25 @@ class EndpointTransaction extends _i2.EndpointRef {
     {
       'userId': userId,
       'pin': pin,
+    },
+  );
+
+  /// Admin-triggered checkout that bypasses the buyer's PIN and balance check
+  ///
+  /// Used when an admin wants to clear a member's cart by force-debiting the
+  /// account (e.g. balance can go negative). Requires the admin's own PIN.
+  /// Stock availability is still enforced.
+  _i3.Future<_i7.Transaction> adminForceCheckout(
+    int userId,
+    int adminId,
+    String adminPin,
+  ) => caller.callServerEndpoint<_i7.Transaction>(
+    'transaction',
+    'adminForceCheckout',
+    {
+      'userId': userId,
+      'adminId': adminId,
+      'adminPin': adminPin,
     },
   );
 

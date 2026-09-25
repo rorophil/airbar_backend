@@ -33,6 +33,7 @@ cart:
   - updateCartItem:
   - removeFromCart:
   - clearCart:
+  - getAllCartItems:
 category:
   - getCategories:
   - getActiveCategories:
@@ -62,6 +63,7 @@ stock:
   - getLowStockProducts:
 transaction:
   - checkout:
+  - adminForceCheckout:
   - refundTransaction:
   - getUserTransactions:
   - getAllTransactions:

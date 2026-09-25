@@ -875,6 +875,16 @@ class Endpoints extends _i1.EndpointDispatch {
                 params['userId'],
               ),
         ),
+        'getAllCartItems': _i1.MethodConnector(
+          name: 'getAllCartItems',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['cart'] as _i7.CartEndpoint)
+                  .getAllCartItems(session),
+        ),
       },
     );
     connectors['category'] = _i1.EndpointConnector(
@@ -1666,6 +1676,37 @@ class Endpoints extends _i1.EndpointDispatch {
                     session,
                     params['userId'],
                     params['pin'],
+                  ),
+        ),
+        'adminForceCheckout': _i1.MethodConnector(
+          name: 'adminForceCheckout',
+          params: {
+            'userId': _i1.ParameterDescription(
+              name: 'userId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'adminId': _i1.ParameterDescription(
+              name: 'adminId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'adminPin': _i1.ParameterDescription(
+              name: 'adminPin',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['transaction'] as _i12.TransactionEndpoint)
+                  .adminForceCheckout(
+                    session,
+                    params['userId'],
+                    params['adminId'],
+                    params['adminPin'],
                   ),
         ),
         'refundTransaction': _i1.MethodConnector(
