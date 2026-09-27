@@ -770,18 +770,24 @@ docker compose -f ./docker-compose.yaml restart
 ### Mettre à jour le code
 
 ```bash
-# 1. Sauvegarder la base de données
+docker ps# 1. Sauvegarder la base de données
 docker exec airbar_postgres_prod pg_dump -U postgres -d airbar_backend -F c -f /tmp/backup.dump
 docker cp airbar_postgres_prod:/tmp/backup.dump ./backup_$(date +%Y%m%d_%H%M%S).dump
 
+ce placer dans /airbar_production
 # 2. Récupérer les mises à jour
 git pull origin prod
 
+faire  un ls
+ce placer dans /airbar_production/airbar_backend/airbar_backend_server
 # 3. Rebuild et redémarrage
 docker compose down
+
+docker ps 
+y a plus rien
 docker compose up -d --build
 
-# 4. Appliquer les nouvelles migrations (si nécessaire)
+Appliquer les nouvelles migrations (si nécessaire)
 docker compose run --rm --entrypoint /bin/sh airbar_server \
   -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
 ```
