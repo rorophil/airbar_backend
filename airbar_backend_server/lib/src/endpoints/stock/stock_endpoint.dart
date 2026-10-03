@@ -117,8 +117,7 @@ class StockEndpoint extends Endpoint {
       var movements = await StockMovement.db.find(
         session,
         where: (t) => t.productId.equals(productId),
-        orderBy: (t) => t.timestamp,
-        orderDescending: true,
+        orderBy: (t) => t.timestamp.desc(),
       );
 
       // Filter by date range if provided
@@ -152,8 +151,7 @@ class StockEndpoint extends Endpoint {
       var movements = await StockMovement.db.find(
         session,
         where: type != null ? (t) => t.movementType.equals(type) : null,
-        orderBy: (t) => t.timestamp,
-        orderDescending: true,
+        orderBy: (t) => t.timestamp.desc(),
         limit: limit,
         offset: offset,
       );

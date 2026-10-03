@@ -10,44 +10,48 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
-    as _i1;
-import 'package:serverpod_client/serverpod_client.dart' as _i2;
-import 'dart:async' as _i3;
-import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
-    as _i4;
-import 'package:airbar_backend_client/src/protocol/auth/user.dart' as _i5;
-import 'package:airbar_backend_client/src/protocol/auth/user_role.dart' as _i6;
-import 'package:airbar_backend_client/src/protocol/transactions/transaction.dart'
-    as _i7;
+import 'dart:async' as _ida;
+import 'package:airbar_backend_client/src/protocol/auth/user.dart' as _i8y9on69;
+import 'package:airbar_backend_client/src/protocol/auth/user_role.dart'
+    as _ia3jbbww;
 import 'package:airbar_backend_client/src/protocol/cashier/cash_sale_item_data.dart'
-    as _i8;
-import 'package:airbar_backend_client/src/protocol/transactions/payment_method.dart'
-    as _i9;
-import 'package:airbar_backend_client/src/protocol/shop/cart_item.dart' as _i10;
-import 'package:airbar_backend_client/src/protocol/shop/product_category.dart'
-    as _i11;
-import 'package:airbar_backend_client/src/protocol/shop/product.dart' as _i12;
-import 'package:airbar_backend_client/src/protocol/shop/product_portion.dart'
-    as _i13;
-import 'package:airbar_backend_client/src/protocol/stock/stock_movement.dart'
-    as _i14;
-import 'package:airbar_backend_client/src/protocol/stock/movement_type.dart'
-    as _i15;
-import 'package:airbar_backend_client/src/protocol/transactions/transaction_type.dart'
-    as _i16;
-import 'package:airbar_backend_client/src/protocol/transactions/transaction_item.dart'
-    as _i17;
+    as _ijgzfxdb;
 import 'package:airbar_backend_client/src/protocol/greetings/greeting.dart'
-    as _i18;
-import 'protocol.dart' as _i19;
+    as _ilxo1bxt;
+import 'package:airbar_backend_client/src/protocol/shop/cart_item.dart'
+    as _irrzm7ok;
+import 'package:airbar_backend_client/src/protocol/shop/product.dart'
+    as _i0zhxdfi;
+import 'package:airbar_backend_client/src/protocol/shop/product_category.dart'
+    as _iie42pd2;
+import 'package:airbar_backend_client/src/protocol/shop/product_portion.dart'
+    as _ikci3ida;
+import 'package:airbar_backend_client/src/protocol/stock/movement_type.dart'
+    as _inbvfeaz;
+import 'package:airbar_backend_client/src/protocol/stock/stock_movement.dart'
+    as _idkbt7jq;
+import 'package:airbar_backend_client/src/protocol/transactions/payment_method.dart'
+    as _i2kgb2e9;
+import 'package:airbar_backend_client/src/protocol/transactions/transaction.dart'
+    as _igfbiu5t;
+import 'package:airbar_backend_client/src/protocol/transactions/transaction_item.dart'
+    as _i596jxbt;
+import 'package:airbar_backend_client/src/protocol/transactions/transaction_type.dart'
+    as _igekk3zq;
+import 'package:http/http.dart' as _i85jenna;
+import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+    as _iacc;
+import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
+    as _iaic;
+import 'package:serverpod_client/serverpod_client.dart' as _isc;
+import 'protocol.dart' as _il2as5qe;
 
 /// By extending [EmailIdpBaseEndpoint], the email identity provider endpoints
 /// are made available on the server and enable the corresponding sign-in widget
 /// on the client.
 /// {@category Endpoint}
-class EndpointEmailIdp extends _i1.EndpointEmailIdpBase {
-  EndpointEmailIdp(_i2.EndpointCaller caller) : super(caller);
+class EndpointEmailIdp extends _iaic.EndpointEmailIdpBase {
+  EndpointEmailIdp(_isc.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'emailIdp';
@@ -62,10 +66,10 @@ class EndpointEmailIdp extends _i1.EndpointEmailIdpBase {
   ///
   /// Throws an [AuthUserBlockedException] if the auth user is blocked.
   @override
-  _i3.Future<_i4.AuthSuccess> login({
+  _ida.Future<_iacc.AuthSuccess> login({
     required String email,
     required String password,
-  }) => caller.callServerEndpoint<_i4.AuthSuccess>(
+  }) => caller.callServerEndpoint<_iacc.AuthSuccess>(
     'emailIdp',
     'login',
     {
@@ -85,8 +89,8 @@ class EndpointEmailIdp extends _i1.EndpointEmailIdpBase {
   /// registration. If the email is already registered, the returned ID will not
   /// be valid.
   @override
-  _i3.Future<_i2.UuidValue> startRegistration({required String email}) =>
-      caller.callServerEndpoint<_i2.UuidValue>(
+  _ida.Future<_isc.UuidValue> startRegistration({required String email}) =>
+      caller.callServerEndpoint<_isc.UuidValue>(
         'emailIdp',
         'startRegistration',
         {'email': email},
@@ -103,8 +107,8 @@ class EndpointEmailIdp extends _i1.EndpointEmailIdpBase {
   /// - [EmailAccountRequestExceptionReason.invalid] if no request exists
   ///   for the given [accountRequestId] or [verificationCode] is invalid.
   @override
-  _i3.Future<String> verifyRegistrationCode({
-    required _i2.UuidValue accountRequestId,
+  _ida.Future<String> verifyRegistrationCode({
+    required _isc.UuidValue accountRequestId,
     required String verificationCode,
   }) => caller.callServerEndpoint<String>(
     'emailIdp',
@@ -130,10 +134,10 @@ class EndpointEmailIdp extends _i1.EndpointEmailIdpBase {
   ///
   /// Returns a session for the newly created user.
   @override
-  _i3.Future<_i4.AuthSuccess> finishRegistration({
+  _ida.Future<_iacc.AuthSuccess> finishRegistration({
     required String registrationToken,
     required String password,
-  }) => caller.callServerEndpoint<_i4.AuthSuccess>(
+  }) => caller.callServerEndpoint<_iacc.AuthSuccess>(
     'emailIdp',
     'finishRegistration',
     {
@@ -156,8 +160,8 @@ class EndpointEmailIdp extends _i1.EndpointEmailIdpBase {
   ///   made too many attempts trying to request a password reset.
   ///
   @override
-  _i3.Future<_i2.UuidValue> startPasswordReset({required String email}) =>
-      caller.callServerEndpoint<_i2.UuidValue>(
+  _ida.Future<_isc.UuidValue> startPasswordReset({required String email}) =>
+      caller.callServerEndpoint<_isc.UuidValue>(
         'emailIdp',
         'startPasswordReset',
         {'email': email},
@@ -178,8 +182,8 @@ class EndpointEmailIdp extends _i1.EndpointEmailIdpBase {
   /// should be overridden to return credentials for the next step instead
   /// of the credentials for setting the password.
   @override
-  _i3.Future<String> verifyPasswordResetCode({
-    required _i2.UuidValue passwordResetRequestId,
+  _ida.Future<String> verifyPasswordResetCode({
+    required _isc.UuidValue passwordResetRequestId,
     required String verificationCode,
   }) => caller.callServerEndpoint<String>(
     'emailIdp',
@@ -205,7 +209,7 @@ class EndpointEmailIdp extends _i1.EndpointEmailIdpBase {
   ///
   /// Throws an [AuthUserBlockedException] if the auth user is blocked.
   @override
-  _i3.Future<void> finishPasswordReset({
+  _ida.Future<void> finishPasswordReset({
     required String finishPasswordResetToken,
     required String newPassword,
   }) => caller.callServerEndpoint<void>(
@@ -218,7 +222,7 @@ class EndpointEmailIdp extends _i1.EndpointEmailIdpBase {
   );
 
   @override
-  _i3.Future<bool> hasAccount() => caller.callServerEndpoint<bool>(
+  _ida.Future<bool> hasAccount() => caller.callServerEndpoint<bool>(
     'emailIdp',
     'hasAccount',
     {},
@@ -228,13 +232,18 @@ class EndpointEmailIdp extends _i1.EndpointEmailIdpBase {
 /// By extending [RefreshJwtTokensEndpoint], the JWT token refresh endpoint
 /// is made available on the server and enables automatic token refresh on the client.
 /// {@category Endpoint}
-class EndpointJwtRefresh extends _i4.EndpointRefreshJwtTokens {
-  EndpointJwtRefresh(_i2.EndpointCaller caller) : super(caller);
+class EndpointJwtRefresh extends _iacc.EndpointRefreshJwtTokens {
+  EndpointJwtRefresh(_isc.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'jwtRefresh';
 
   /// Creates a new token pair for the given [refreshToken].
+  ///
+  /// If [refreshToken] is omitted, cookie-mode web clients fall back to the
+  /// configured HttpOnly refresh cookie. When neither source is present this
+  /// throws [RefreshTokenNotFoundException], the same public "no usable refresh
+  /// credential" exception used for unknown refresh tokens.
   ///
   /// Can throw the following exceptions:
   /// -[RefreshTokenMalformedException]: refresh token is malformed and could
@@ -253,29 +262,28 @@ class EndpointJwtRefresh extends _i4.EndpointRefreshJwtTokens {
   /// This endpoint is unauthenticated, meaning the client won't include any
   /// authentication information with the call.
   @override
-  _i3.Future<_i4.AuthSuccess> refreshAccessToken({
-    required String refreshToken,
-  }) => caller.callServerEndpoint<_i4.AuthSuccess>(
-    'jwtRefresh',
-    'refreshAccessToken',
-    {'refreshToken': refreshToken},
-    authenticated: false,
-  );
+  _ida.Future<_iacc.AuthSuccess> refreshAccessToken({String? refreshToken}) =>
+      caller.callServerEndpoint<_iacc.AuthSuccess>(
+        'jwtRefresh',
+        'refreshAccessToken',
+        {'refreshToken': refreshToken},
+        authenticated: false,
+      );
 }
 
 /// Endpoint for authentication operations
 /// {@category Endpoint}
-class EndpointAuth extends _i2.EndpointRef {
-  EndpointAuth(_i2.EndpointCaller caller) : super(caller);
+class EndpointAuth extends _isc.EndpointRef {
+  EndpointAuth(_isc.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'auth';
 
   /// Login with email and password
-  _i3.Future<_i5.User?> login(
+  _ida.Future<_i8y9on69.User?> login(
     String email,
     String password,
-  ) => caller.callServerEndpoint<_i5.User?>(
+  ) => caller.callServerEndpoint<_i8y9on69.User?>(
     'auth',
     'login',
     {
@@ -285,7 +293,7 @@ class EndpointAuth extends _i2.EndpointRef {
   );
 
   /// Validate PIN code for checkout
-  _i3.Future<bool> validatePin(
+  _ida.Future<bool> validatePin(
     int userId,
     String pin,
   ) => caller.callServerEndpoint<bool>(
@@ -298,7 +306,7 @@ class EndpointAuth extends _i2.EndpointRef {
   );
 
   /// Change PIN code
-  _i3.Future<void> changePin(
+  _ida.Future<void> changePin(
     int userId,
     String oldPin,
     String newPin,
@@ -315,37 +323,37 @@ class EndpointAuth extends _i2.EndpointRef {
 
 /// Endpoint for user management (admin operations)
 /// {@category Endpoint}
-class EndpointUser extends _i2.EndpointRef {
-  EndpointUser(_i2.EndpointCaller caller) : super(caller);
+class EndpointUser extends _isc.EndpointRef {
+  EndpointUser(_isc.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'user';
 
   /// Get all users (admin only)
-  _i3.Future<List<_i5.User>> getAllUsers() =>
-      caller.callServerEndpoint<List<_i5.User>>(
+  _ida.Future<List<_i8y9on69.User>> getAllUsers() =>
+      caller.callServerEndpoint<List<_i8y9on69.User>>(
         'user',
         'getAllUsers',
         {},
       );
 
   /// Get user by ID
-  _i3.Future<_i5.User?> getUserById(int userId) =>
-      caller.callServerEndpoint<_i5.User?>(
+  _ida.Future<_i8y9on69.User?> getUserById(int userId) =>
+      caller.callServerEndpoint<_i8y9on69.User?>(
         'user',
         'getUserById',
         {'userId': userId},
       );
 
   /// Create new user (admin only)
-  _i3.Future<_i5.User> createUser(
+  _ida.Future<_i8y9on69.User> createUser(
     String email,
     String password,
     String firstName,
     String lastName,
     String pin,
-    _i6.UserRole role,
-  ) => caller.callServerEndpoint<_i5.User>(
+    _ia3jbbww.UserRole role,
+  ) => caller.callServerEndpoint<_i8y9on69.User>(
     'user',
     'createUser',
     {
@@ -359,13 +367,13 @@ class EndpointUser extends _i2.EndpointRef {
   );
 
   /// Update user (admin only)
-  _i3.Future<_i5.User> updateUser(
+  _ida.Future<_i8y9on69.User> updateUser(
     int userId,
     String email,
     String firstName,
     String lastName,
-    _i6.UserRole role,
-  ) => caller.callServerEndpoint<_i5.User>(
+    _ia3jbbww.UserRole role,
+  ) => caller.callServerEndpoint<_i8y9on69.User>(
     'user',
     'updateUser',
     {
@@ -378,7 +386,7 @@ class EndpointUser extends _i2.EndpointRef {
   );
 
   /// Deactivate user (soft delete, admin only)
-  _i3.Future<void> deactivateUser(int userId) =>
+  _ida.Future<void> deactivateUser(int userId) =>
       caller.callServerEndpoint<void>(
         'user',
         'deactivateUser',
@@ -386,7 +394,7 @@ class EndpointUser extends _i2.EndpointRef {
       );
 
   /// Reactivate user (admin only)
-  _i3.Future<void> reactivateUser(int userId) =>
+  _ida.Future<void> reactivateUser(int userId) =>
       caller.callServerEndpoint<void>(
         'user',
         'reactivateUser',
@@ -394,7 +402,7 @@ class EndpointUser extends _i2.EndpointRef {
       );
 
   /// Reset user password (admin only)
-  _i3.Future<void> resetPassword(
+  _ida.Future<void> resetPassword(
     int userId,
     String newPassword,
   ) => caller.callServerEndpoint<void>(
@@ -407,7 +415,7 @@ class EndpointUser extends _i2.EndpointRef {
   );
 
   /// Reset user PIN code (admin only)
-  _i3.Future<void> resetPin(
+  _ida.Future<void> resetPin(
     int userId,
     String newPin,
   ) => caller.callServerEndpoint<void>(
@@ -420,18 +428,18 @@ class EndpointUser extends _i2.EndpointRef {
   );
 
   /// Delete user (hard delete, admin only)
-  _i3.Future<void> deleteUser(int userId) => caller.callServerEndpoint<void>(
+  _ida.Future<void> deleteUser(int userId) => caller.callServerEndpoint<void>(
     'user',
     'deleteUser',
     {'userId': userId},
   );
 
   /// Credit or debit user account (admin only)
-  _i3.Future<_i7.Transaction> creditAccount(
+  _ida.Future<_igfbiu5t.Transaction> creditAccount(
     int userId,
     double amount,
     String? notes,
-  ) => caller.callServerEndpoint<_i7.Transaction>(
+  ) => caller.callServerEndpoint<_igfbiu5t.Transaction>(
     'user',
     'creditAccount',
     {
@@ -444,8 +452,8 @@ class EndpointUser extends _i2.EndpointRef {
 
 /// Endpoint for cashier operations (cash sales to non-members)
 /// {@category Endpoint}
-class EndpointCashier extends _i2.EndpointRef {
-  EndpointCashier(_i2.EndpointCaller caller) : super(caller);
+class EndpointCashier extends _isc.EndpointRef {
+  EndpointCashier(_isc.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'cashier';
@@ -455,12 +463,12 @@ class EndpointCashier extends _i2.EndpointRef {
   /// [items] - List of items being sold
   /// [paymentMethod] - How the customer is paying (cash or card)
   /// [pin] - Seller's PIN for verification
-  _i3.Future<_i7.Transaction> processCashSale(
+  _ida.Future<_igfbiu5t.Transaction> processCashSale(
     int sellerId,
-    List<_i8.CashSaleItemData> items,
-    _i9.PaymentMethod paymentMethod,
+    List<_ijgzfxdb.CashSaleItemData> items,
+    _i2kgb2e9.PaymentMethod paymentMethod,
     String pin,
-  ) => caller.callServerEndpoint<_i7.Transaction>(
+  ) => caller.callServerEndpoint<_igfbiu5t.Transaction>(
     'cashier',
     'processCashSale',
     {
@@ -472,11 +480,11 @@ class EndpointCashier extends _i2.EndpointRef {
   );
 
   /// Get transactions for a specific seller (to track sales made by a member)
-  _i3.Future<List<_i7.Transaction>> getSellerTransactions(
+  _ida.Future<List<_igfbiu5t.Transaction>> getSellerTransactions(
     int sellerId, {
     required int limit,
     required int offset,
-  }) => caller.callServerEndpoint<List<_i7.Transaction>>(
+  }) => caller.callServerEndpoint<List<_igfbiu5t.Transaction>>(
     'cashier',
     'getSellerTransactions',
     {
@@ -489,27 +497,27 @@ class EndpointCashier extends _i2.EndpointRef {
 
 /// Endpoint for shopping cart management (real-time sync)
 /// {@category Endpoint}
-class EndpointCart extends _i2.EndpointRef {
-  EndpointCart(_i2.EndpointCaller caller) : super(caller);
+class EndpointCart extends _isc.EndpointRef {
+  EndpointCart(_isc.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'cart';
 
   /// Get user's cart
-  _i3.Future<List<_i10.CartItem>> getCart(int userId) =>
-      caller.callServerEndpoint<List<_i10.CartItem>>(
+  _ida.Future<List<_irrzm7ok.CartItem>> getCart(int userId) =>
+      caller.callServerEndpoint<List<_irrzm7ok.CartItem>>(
         'cart',
         'getCart',
         {'userId': userId},
       );
 
   /// Add item to cart
-  _i3.Future<_i10.CartItem> addToCart(
+  _ida.Future<_irrzm7ok.CartItem> addToCart(
     int userId,
     int productId,
     int quantity, {
     int? productPortionId,
-  }) => caller.callServerEndpoint<_i10.CartItem>(
+  }) => caller.callServerEndpoint<_irrzm7ok.CartItem>(
     'cart',
     'addToCart',
     {
@@ -521,12 +529,12 @@ class EndpointCart extends _i2.EndpointRef {
   );
 
   /// Update cart item quantity
-  _i3.Future<_i10.CartItem> updateCartItem(
+  _ida.Future<_irrzm7ok.CartItem> updateCartItem(
     int userId,
     int productId,
     int quantity, {
     int? productPortionId,
-  }) => caller.callServerEndpoint<_i10.CartItem>(
+  }) => caller.callServerEndpoint<_irrzm7ok.CartItem>(
     'cart',
     'updateCartItem',
     {
@@ -538,7 +546,7 @@ class EndpointCart extends _i2.EndpointRef {
   );
 
   /// Remove item from cart
-  _i3.Future<void> removeFromCart(
+  _ida.Future<void> removeFromCart(
     int userId,
     int productId, {
     int? productPortionId,
@@ -553,15 +561,15 @@ class EndpointCart extends _i2.EndpointRef {
   );
 
   /// Clear entire cart for user
-  _i3.Future<void> clearCart(int userId) => caller.callServerEndpoint<void>(
+  _ida.Future<void> clearCart(int userId) => caller.callServerEndpoint<void>(
     'cart',
     'clearCart',
     {'userId': userId},
   );
 
   /// Get all cart items across all users (admin only - used to preview/manage member carts)
-  _i3.Future<List<_i10.CartItem>> getAllCartItems() =>
-      caller.callServerEndpoint<List<_i10.CartItem>>(
+  _ida.Future<List<_irrzm7ok.CartItem>> getAllCartItems() =>
+      caller.callServerEndpoint<List<_irrzm7ok.CartItem>>(
         'cart',
         'getAllCartItems',
         {},
@@ -570,35 +578,35 @@ class EndpointCart extends _i2.EndpointRef {
 
 /// Endpoint for product category management
 /// {@category Endpoint}
-class EndpointCategory extends _i2.EndpointRef {
-  EndpointCategory(_i2.EndpointCaller caller) : super(caller);
+class EndpointCategory extends _isc.EndpointRef {
+  EndpointCategory(_isc.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'category';
 
   /// Get all categories and ensure "Sans catégorie" exists
-  _i3.Future<List<_i11.ProductCategory>> getCategories() =>
-      caller.callServerEndpoint<List<_i11.ProductCategory>>(
+  _ida.Future<List<_iie42pd2.ProductCategory>> getCategories() =>
+      caller.callServerEndpoint<List<_iie42pd2.ProductCategory>>(
         'category',
         'getCategories',
         {},
       );
 
   /// Get active categories only
-  _i3.Future<List<_i11.ProductCategory>> getActiveCategories() =>
-      caller.callServerEndpoint<List<_i11.ProductCategory>>(
+  _ida.Future<List<_iie42pd2.ProductCategory>> getActiveCategories() =>
+      caller.callServerEndpoint<List<_iie42pd2.ProductCategory>>(
         'category',
         'getActiveCategories',
         {},
       );
 
   /// Create category (admin only)
-  _i3.Future<_i11.ProductCategory> createCategory(
+  _ida.Future<_iie42pd2.ProductCategory> createCategory(
     String name,
     String? description,
     String? iconName,
     int displayOrder,
-  ) => caller.callServerEndpoint<_i11.ProductCategory>(
+  ) => caller.callServerEndpoint<_iie42pd2.ProductCategory>(
     'category',
     'createCategory',
     {
@@ -610,13 +618,13 @@ class EndpointCategory extends _i2.EndpointRef {
   );
 
   /// Update category (admin only)
-  _i3.Future<_i11.ProductCategory> updateCategory(
+  _ida.Future<_iie42pd2.ProductCategory> updateCategory(
     int categoryId,
     String name,
     String? description,
     String? iconName,
     int displayOrder,
-  ) => caller.callServerEndpoint<_i11.ProductCategory>(
+  ) => caller.callServerEndpoint<_iie42pd2.ProductCategory>(
     'category',
     'updateCategory',
     {
@@ -630,7 +638,7 @@ class EndpointCategory extends _i2.EndpointRef {
 
   /// Delete category (admin only)
   /// Products in this category will be moved to "Sans catégorie"
-  _i3.Future<void> deleteCategory(int categoryId) =>
+  _ida.Future<void> deleteCategory(int categoryId) =>
       caller.callServerEndpoint<void>(
         'category',
         'deleteCategory',
@@ -640,17 +648,17 @@ class EndpointCategory extends _i2.EndpointRef {
 
 /// Endpoint for product management
 /// {@category Endpoint}
-class EndpointProduct extends _i2.EndpointRef {
-  EndpointProduct(_i2.EndpointCaller caller) : super(caller);
+class EndpointProduct extends _isc.EndpointRef {
+  EndpointProduct(_isc.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'product';
 
   /// Get all products
-  _i3.Future<List<_i12.Product>> getAllProducts({
+  _ida.Future<List<_i0zhxdfi.Product>> getAllProducts({
     bool? activeOnly,
     required bool includeDeleted,
-  }) => caller.callServerEndpoint<List<_i12.Product>>(
+  }) => caller.callServerEndpoint<List<_i0zhxdfi.Product>>(
     'product',
     'getAllProducts',
     {
@@ -660,23 +668,23 @@ class EndpointProduct extends _i2.EndpointRef {
   );
 
   /// Get products by category
-  _i3.Future<List<_i12.Product>> getProductsByCategory(int categoryId) =>
-      caller.callServerEndpoint<List<_i12.Product>>(
+  _ida.Future<List<_i0zhxdfi.Product>> getProductsByCategory(int categoryId) =>
+      caller.callServerEndpoint<List<_i0zhxdfi.Product>>(
         'product',
         'getProductsByCategory',
         {'categoryId': categoryId},
       );
 
   /// Get product by ID
-  _i3.Future<_i12.Product?> getProductById(int productId) =>
-      caller.callServerEndpoint<_i12.Product?>(
+  _ida.Future<_i0zhxdfi.Product?> getProductById(int productId) =>
+      caller.callServerEndpoint<_i0zhxdfi.Product?>(
         'product',
         'getProductById',
         {'productId': productId},
       );
 
   /// Create product (admin only)
-  _i3.Future<_i12.Product> createProduct(
+  _ida.Future<_i0zhxdfi.Product> createProduct(
     String name,
     String? description,
     double price,
@@ -689,7 +697,7 @@ class EndpointProduct extends _i2.EndpointRef {
     double? bulkTotalQuantity,
     double? currentUnitRemaining,
     required bool trackStock,
-  }) => caller.callServerEndpoint<_i12.Product>(
+  }) => caller.callServerEndpoint<_i0zhxdfi.Product>(
     'product',
     'createProduct',
     {
@@ -709,7 +717,7 @@ class EndpointProduct extends _i2.EndpointRef {
   );
 
   /// Update product (admin only)
-  _i3.Future<_i12.Product> updateProduct(
+  _ida.Future<_i0zhxdfi.Product> updateProduct(
     int productId,
     String name,
     String? description,
@@ -723,7 +731,7 @@ class EndpointProduct extends _i2.EndpointRef {
     int? stockQuantity,
     double? currentUnitRemaining,
     bool? trackStock,
-  }) => caller.callServerEndpoint<_i12.Product>(
+  }) => caller.callServerEndpoint<_i0zhxdfi.Product>(
     'product',
     'updateProduct',
     {
@@ -745,7 +753,7 @@ class EndpointProduct extends _i2.EndpointRef {
 
   /// Delete/Remove product permanently from list (admin only)
   /// Sets isDeleted=true, product stays in DB for referential integrity
-  _i3.Future<void> deleteProduct(int productId) =>
+  _ida.Future<void> deleteProduct(int productId) =>
       caller.callServerEndpoint<void>(
         'product',
         'deleteProduct',
@@ -754,10 +762,10 @@ class EndpointProduct extends _i2.EndpointRef {
 
   /// Toggle product active status (admin only)
   /// Activate or deactivate without deleting
-  _i3.Future<_i12.Product> toggleActiveStatus(
+  _ida.Future<_i0zhxdfi.Product> toggleActiveStatus(
     int productId,
     bool isActive,
-  ) => caller.callServerEndpoint<_i12.Product>(
+  ) => caller.callServerEndpoint<_i0zhxdfi.Product>(
     'product',
     'toggleActiveStatus',
     {
@@ -768,10 +776,10 @@ class EndpointProduct extends _i2.EndpointRef {
 
   /// Update product stock quantity (admin only)
   /// Can be used to increase or decrease stock
-  _i3.Future<_i12.Product> updateStock(
+  _ida.Future<_i0zhxdfi.Product> updateStock(
     int productId,
     int newStockQuantity,
-  ) => caller.callServerEndpoint<_i12.Product>(
+  ) => caller.callServerEndpoint<_i0zhxdfi.Product>(
     'product',
     'updateStock',
     {
@@ -783,17 +791,17 @@ class EndpointProduct extends _i2.EndpointRef {
 
 /// Endpoint for product portion management
 /// {@category Endpoint}
-class EndpointProductPortion extends _i2.EndpointRef {
-  EndpointProductPortion(_i2.EndpointCaller caller) : super(caller);
+class EndpointProductPortion extends _isc.EndpointRef {
+  EndpointProductPortion(_isc.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'productPortion';
 
   /// Get all portions for a product
-  _i3.Future<List<_i13.ProductPortion>> getProductPortions(
+  _ida.Future<List<_ikci3ida.ProductPortion>> getProductPortions(
     int productId, {
     required bool activeOnly,
-  }) => caller.callServerEndpoint<List<_i13.ProductPortion>>(
+  }) => caller.callServerEndpoint<List<_ikci3ida.ProductPortion>>(
     'productPortion',
     'getProductPortions',
     {
@@ -803,21 +811,21 @@ class EndpointProductPortion extends _i2.EndpointRef {
   );
 
   /// Get portion by ID
-  _i3.Future<_i13.ProductPortion?> getPortionById(int portionId) =>
-      caller.callServerEndpoint<_i13.ProductPortion?>(
+  _ida.Future<_ikci3ida.ProductPortion?> getPortionById(int portionId) =>
+      caller.callServerEndpoint<_ikci3ida.ProductPortion?>(
         'productPortion',
         'getPortionById',
         {'portionId': portionId},
       );
 
   /// Create product portion (admin only)
-  _i3.Future<_i13.ProductPortion> createPortion(
+  _ida.Future<_ikci3ida.ProductPortion> createPortion(
     int productId,
     String name,
     double quantity,
     double price, {
     required int displayOrder,
-  }) => caller.callServerEndpoint<_i13.ProductPortion>(
+  }) => caller.callServerEndpoint<_ikci3ida.ProductPortion>(
     'productPortion',
     'createPortion',
     {
@@ -830,13 +838,13 @@ class EndpointProductPortion extends _i2.EndpointRef {
   );
 
   /// Update product portion (admin only)
-  _i3.Future<_i13.ProductPortion> updatePortion(
+  _ida.Future<_ikci3ida.ProductPortion> updatePortion(
     int portionId,
     String name,
     double quantity,
     double price, {
     int? displayOrder,
-  }) => caller.callServerEndpoint<_i13.ProductPortion>(
+  }) => caller.callServerEndpoint<_ikci3ida.ProductPortion>(
     'productPortion',
     'updatePortion',
     {
@@ -849,7 +857,7 @@ class EndpointProductPortion extends _i2.EndpointRef {
   );
 
   /// Delete/Deactivate portion (admin only)
-  _i3.Future<void> deletePortion(int portionId) =>
+  _ida.Future<void> deletePortion(int portionId) =>
       caller.callServerEndpoint<void>(
         'productPortion',
         'deletePortion',
@@ -859,14 +867,14 @@ class EndpointProductPortion extends _i2.EndpointRef {
 
 /// Endpoint for stock management
 /// {@category Endpoint}
-class EndpointStock extends _i2.EndpointRef {
-  EndpointStock(_i2.EndpointCaller caller) : super(caller);
+class EndpointStock extends _isc.EndpointRef {
+  EndpointStock(_isc.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'stock';
 
   /// Restock product (admin only)
-  _i3.Future<void> restockProduct(
+  _ida.Future<void> restockProduct(
     int productId,
     int quantity,
     int adminUserId,
@@ -883,7 +891,7 @@ class EndpointStock extends _i2.EndpointRef {
   );
 
   /// Adjust stock (inventory correction, admin only)
-  _i3.Future<void> adjustStock(
+  _ida.Future<void> adjustStock(
     int productId,
     int newQuantity,
     int adminUserId,
@@ -900,11 +908,11 @@ class EndpointStock extends _i2.EndpointRef {
   );
 
   /// Get stock history for a product
-  _i3.Future<List<_i14.StockMovement>> getStockHistory(
+  _ida.Future<List<_idkbt7jq.StockMovement>> getStockHistory(
     int productId, {
     DateTime? startDate,
     DateTime? endDate,
-  }) => caller.callServerEndpoint<List<_i14.StockMovement>>(
+  }) => caller.callServerEndpoint<List<_idkbt7jq.StockMovement>>(
     'stock',
     'getStockHistory',
     {
@@ -915,13 +923,13 @@ class EndpointStock extends _i2.EndpointRef {
   );
 
   /// Get all stock movements (admin only)
-  _i3.Future<List<_i14.StockMovement>> getAllStockMovements({
-    _i15.MovementType? type,
+  _ida.Future<List<_idkbt7jq.StockMovement>> getAllStockMovements({
+    _inbvfeaz.MovementType? type,
     DateTime? startDate,
     DateTime? endDate,
     required int limit,
     required int offset,
-  }) => caller.callServerEndpoint<List<_i14.StockMovement>>(
+  }) => caller.callServerEndpoint<List<_idkbt7jq.StockMovement>>(
     'stock',
     'getAllStockMovements',
     {
@@ -934,8 +942,8 @@ class EndpointStock extends _i2.EndpointRef {
   );
 
   /// Get products with low stock (below alert threshold)
-  _i3.Future<List<_i12.Product>> getLowStockProducts() =>
-      caller.callServerEndpoint<List<_i12.Product>>(
+  _ida.Future<List<_i0zhxdfi.Product>> getLowStockProducts() =>
+      caller.callServerEndpoint<List<_i0zhxdfi.Product>>(
         'stock',
         'getLowStockProducts',
         {},
@@ -944,17 +952,17 @@ class EndpointStock extends _i2.EndpointRef {
 
 /// Endpoint for transaction management and checkout
 /// {@category Endpoint}
-class EndpointTransaction extends _i2.EndpointRef {
-  EndpointTransaction(_i2.EndpointCaller caller) : super(caller);
+class EndpointTransaction extends _isc.EndpointRef {
+  EndpointTransaction(_isc.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'transaction';
 
   /// Checkout - Create purchase transaction (atomic operation)
-  _i3.Future<_i7.Transaction> checkout(
+  _ida.Future<_igfbiu5t.Transaction> checkout(
     int userId,
     String pin,
-  ) => caller.callServerEndpoint<_i7.Transaction>(
+  ) => caller.callServerEndpoint<_igfbiu5t.Transaction>(
     'transaction',
     'checkout',
     {
@@ -968,11 +976,11 @@ class EndpointTransaction extends _i2.EndpointRef {
   /// Used when an admin wants to clear a member's cart by force-debiting the
   /// account (e.g. balance can go negative). Requires the admin's own PIN.
   /// Stock availability is still enforced.
-  _i3.Future<_i7.Transaction> adminForceCheckout(
+  _ida.Future<_igfbiu5t.Transaction> adminForceCheckout(
     int userId,
     int adminId,
     String adminPin,
-  ) => caller.callServerEndpoint<_i7.Transaction>(
+  ) => caller.callServerEndpoint<_igfbiu5t.Transaction>(
     'transaction',
     'adminForceCheckout',
     {
@@ -983,10 +991,10 @@ class EndpointTransaction extends _i2.EndpointRef {
   );
 
   /// Refund transaction (admin only)
-  _i3.Future<_i7.Transaction> refundTransaction(
+  _ida.Future<_igfbiu5t.Transaction> refundTransaction(
     int transactionId,
     String reason,
-  ) => caller.callServerEndpoint<_i7.Transaction>(
+  ) => caller.callServerEndpoint<_igfbiu5t.Transaction>(
     'transaction',
     'refundTransaction',
     {
@@ -996,11 +1004,11 @@ class EndpointTransaction extends _i2.EndpointRef {
   );
 
   /// Get user transactions with pagination
-  _i3.Future<List<_i7.Transaction>> getUserTransactions(
+  _ida.Future<List<_igfbiu5t.Transaction>> getUserTransactions(
     int userId, {
     required int limit,
     required int offset,
-  }) => caller.callServerEndpoint<List<_i7.Transaction>>(
+  }) => caller.callServerEndpoint<List<_igfbiu5t.Transaction>>(
     'transaction',
     'getUserTransactions',
     {
@@ -1011,13 +1019,13 @@ class EndpointTransaction extends _i2.EndpointRef {
   );
 
   /// Get all transactions (admin only, with pagination)
-  _i3.Future<List<_i7.Transaction>> getAllTransactions({
+  _ida.Future<List<_igfbiu5t.Transaction>> getAllTransactions({
     required int limit,
     required int offset,
-    _i16.TransactionType? type,
+    _igekk3zq.TransactionType? type,
     DateTime? startDate,
     DateTime? endDate,
-  }) => caller.callServerEndpoint<List<_i7.Transaction>>(
+  }) => caller.callServerEndpoint<List<_igfbiu5t.Transaction>>(
     'transaction',
     'getAllTransactions',
     {
@@ -1030,9 +1038,9 @@ class EndpointTransaction extends _i2.EndpointRef {
   );
 
   /// Get transaction items for a specific transaction
-  _i3.Future<List<_i17.TransactionItem>> getTransactionItems(
+  _ida.Future<List<_i596jxbt.TransactionItem>> getTransactionItems(
     int transactionId,
-  ) => caller.callServerEndpoint<List<_i17.TransactionItem>>(
+  ) => caller.callServerEndpoint<List<_i596jxbt.TransactionItem>>(
     'transaction',
     'getTransactionItems',
     {'transactionId': transactionId},
@@ -1042,15 +1050,15 @@ class EndpointTransaction extends _i2.EndpointRef {
 /// This is an example endpoint that returns a greeting message through
 /// its [hello] method.
 /// {@category Endpoint}
-class EndpointGreeting extends _i2.EndpointRef {
-  EndpointGreeting(_i2.EndpointCaller caller) : super(caller);
+class EndpointGreeting extends _isc.EndpointRef {
+  EndpointGreeting(_isc.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i3.Future<_i18.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i18.Greeting>(
+  _ida.Future<_ilxo1bxt.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_ilxo1bxt.Greeting>(
         'greeting',
         'hello',
         {'name': name},
@@ -1059,36 +1067,33 @@ class EndpointGreeting extends _i2.EndpointRef {
 
 class Modules {
   Modules(Client client) {
-    serverpod_auth_idp = _i1.Caller(client);
-    serverpod_auth_core = _i4.Caller(client);
+    serverpod_auth_idp = _iaic.Caller(client);
+    serverpod_auth_core = _iacc.Caller(client);
   }
 
-  late final _i1.Caller serverpod_auth_idp;
+  late final _iaic.Caller serverpod_auth_idp;
 
-  late final _i4.Caller serverpod_auth_core;
+  late final _iacc.Caller serverpod_auth_core;
 }
 
-class Client extends _i2.ServerpodClientShared {
+class Client extends _isc.ServerpodClientShared {
   Client(
     String host, {
     dynamic securityContext,
-    @Deprecated(
-      'Use authKeyProvider instead. This will be removed in future releases.',
-    )
-    super.authenticationKeyManager,
     Duration? streamingConnectionTimeout,
     Duration? connectionTimeout,
     Function(
-      _i2.MethodCallContext,
+      _isc.MethodCallContext,
       Object,
       StackTrace,
     )?
     onFailedCall,
-    Function(_i2.MethodCallContext)? onSucceededCall,
+    Function(_isc.MethodCallContext)? onSucceededCall,
     bool? disconnectStreamsOnLostInternetConnection,
+    _i85jenna.Client? httpClientOverride,
   }) : super(
          host,
-         _i19.Protocol(),
+         _il2as5qe.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -1096,6 +1101,7 @@ class Client extends _i2.ServerpodClientShared {
          onSucceededCall: onSucceededCall,
          disconnectStreamsOnLostInternetConnection:
              disconnectStreamsOnLostInternetConnection,
+         httpClientOverride: httpClientOverride,
        ) {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
@@ -1139,7 +1145,7 @@ class Client extends _i2.ServerpodClientShared {
   late final Modules modules;
 
   @override
-  Map<String, _i2.EndpointRef> get endpointRefLookup => {
+  Map<String, _isc.EndpointRef> get endpointRefLookup => {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
     'auth': auth,
@@ -1155,7 +1161,7 @@ class Client extends _i2.ServerpodClientShared {
   };
 
   @override
-  Map<String, _i2.ModuleEndpointCaller> get moduleLookup => {
+  Map<String, _isc.ModuleEndpointCaller> get moduleLookup => {
     'serverpod_auth_idp': modules.serverpod_auth_idp,
     'serverpod_auth_core': modules.serverpod_auth_core,
   };

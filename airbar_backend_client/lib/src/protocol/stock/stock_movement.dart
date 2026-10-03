@@ -10,10 +10,11 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../stock/movement_type.dart' as _i2;
+import 'package:serverpod_client/serverpod_client.dart' as _isc;
+import '../stock/movement_type.dart' as _i5r1t5hy;
 
-abstract class StockMovement implements _i1.SerializableModel {
+abstract class StockMovement
+    implements _isc.SerializableModel, _isc.ProtocolSerialization {
   StockMovement._({
     this.id,
     required this.productId,
@@ -28,7 +29,7 @@ abstract class StockMovement implements _i1.SerializableModel {
     int? id,
     required int productId,
     required double quantity,
-    required _i2.MovementType movementType,
+    required _i5r1t5hy.MovementType movementType,
     required int userId,
     required DateTime timestamp,
     String? notes,
@@ -39,11 +40,11 @@ abstract class StockMovement implements _i1.SerializableModel {
       id: jsonSerialization['id'] as int?,
       productId: jsonSerialization['productId'] as int,
       quantity: (jsonSerialization['quantity'] as num).toDouble(),
-      movementType: _i2.MovementType.fromJson(
+      movementType: _i5r1t5hy.MovementType.fromJson(
         (jsonSerialization['movementType'] as String),
       ),
       userId: jsonSerialization['userId'] as int,
-      timestamp: _i1.DateTimeJsonExtension.fromJson(
+      timestamp: _isc.DateTimeJsonExtension.fromJson(
         jsonSerialization['timestamp'],
       ),
       notes: jsonSerialization['notes'] as String?,
@@ -59,7 +60,7 @@ abstract class StockMovement implements _i1.SerializableModel {
 
   double quantity;
 
-  _i2.MovementType movementType;
+  _i5r1t5hy.MovementType movementType;
 
   int userId;
 
@@ -69,12 +70,12 @@ abstract class StockMovement implements _i1.SerializableModel {
 
   /// Returns a shallow copy of this [StockMovement]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_isc.useResult
   StockMovement copyWith({
     int? id,
     int? productId,
     double? quantity,
-    _i2.MovementType? movementType,
+    _i5r1t5hy.MovementType? movementType,
     int? userId,
     DateTime? timestamp,
     String? notes,
@@ -94,8 +95,22 @@ abstract class StockMovement implements _i1.SerializableModel {
   }
 
   @override
+  Map<String, dynamic> toJsonForProtocol() {
+    return {
+      '__className__': 'StockMovement',
+      if (id != null) 'id': id,
+      'productId': productId,
+      'quantity': quantity,
+      'movementType': movementType.toJson(),
+      'userId': userId,
+      'timestamp': timestamp.toJson(),
+      if (notes != null) 'notes': notes,
+    };
+  }
+
+  @override
   String toString() {
-    return _i1.SerializationManager.encode(this);
+    return _isc.SerializationManager.encode(this);
   }
 }
 
@@ -106,7 +121,7 @@ class _StockMovementImpl extends StockMovement {
     int? id,
     required int productId,
     required double quantity,
-    required _i2.MovementType movementType,
+    required _i5r1t5hy.MovementType movementType,
     required int userId,
     required DateTime timestamp,
     String? notes,
@@ -122,13 +137,13 @@ class _StockMovementImpl extends StockMovement {
 
   /// Returns a shallow copy of this [StockMovement]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_isc.useResult
   @override
   StockMovement copyWith({
     Object? id = _Undefined,
     int? productId,
     double? quantity,
-    _i2.MovementType? movementType,
+    _i5r1t5hy.MovementType? movementType,
     int? userId,
     DateTime? timestamp,
     Object? notes = _Undefined,

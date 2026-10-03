@@ -10,9 +10,10 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod_client/serverpod_client.dart' as _i1;
+import 'package:serverpod_client/serverpod_client.dart' as _isc;
 
-abstract class ProductPortion implements _i1.SerializableModel {
+abstract class ProductPortion
+    implements _isc.SerializableModel, _isc.ProtocolSerialization {
   ProductPortion._({
     this.id,
     required this.productId,
@@ -46,11 +47,13 @@ abstract class ProductPortion implements _i1.SerializableModel {
       quantity: (jsonSerialization['quantity'] as num).toDouble(),
       price: (jsonSerialization['price'] as num).toDouble(),
       displayOrder: jsonSerialization['displayOrder'] as int?,
-      isActive: jsonSerialization['isActive'] as bool?,
-      createdAt: _i1.DateTimeJsonExtension.fromJson(
+      isActive: jsonSerialization['isActive'] == null
+          ? null
+          : _isc.BoolJsonExtension.fromJson(jsonSerialization['isActive']),
+      createdAt: _isc.DateTimeJsonExtension.fromJson(
         jsonSerialization['createdAt'],
       ),
-      updatedAt: _i1.DateTimeJsonExtension.fromJson(
+      updatedAt: _isc.DateTimeJsonExtension.fromJson(
         jsonSerialization['updatedAt'],
       ),
     );
@@ -79,7 +82,7 @@ abstract class ProductPortion implements _i1.SerializableModel {
 
   /// Returns a shallow copy of this [ProductPortion]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_isc.useResult
   ProductPortion copyWith({
     int? id,
     int? productId,
@@ -108,8 +111,24 @@ abstract class ProductPortion implements _i1.SerializableModel {
   }
 
   @override
+  Map<String, dynamic> toJsonForProtocol() {
+    return {
+      '__className__': 'ProductPortion',
+      if (id != null) 'id': id,
+      'productId': productId,
+      'name': name,
+      'quantity': quantity,
+      'price': price,
+      'displayOrder': displayOrder,
+      'isActive': isActive,
+      'createdAt': createdAt.toJson(),
+      'updatedAt': updatedAt.toJson(),
+    };
+  }
+
+  @override
   String toString() {
-    return _i1.SerializationManager.encode(this);
+    return _isc.SerializationManager.encode(this);
   }
 }
 
@@ -140,7 +159,7 @@ class _ProductPortionImpl extends ProductPortion {
 
   /// Returns a shallow copy of this [ProductPortion]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_isc.useResult
   @override
   ProductPortion copyWith({
     Object? id = _Undefined,

@@ -10,9 +10,10 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod_client/serverpod_client.dart' as _i1;
+import 'package:serverpod_client/serverpod_client.dart' as _isc;
 
-abstract class Product implements _i1.SerializableModel {
+abstract class Product
+    implements _isc.SerializableModel, _isc.ProtocolSerialization {
   Product._({
     this.id,
     required this.name,
@@ -70,17 +71,25 @@ abstract class Product implements _i1.SerializableModel {
       currentUnitRemaining: (jsonSerialization['currentUnitRemaining'] as num?)
           ?.toDouble(),
       imageUrl: jsonSerialization['imageUrl'] as String?,
-      isActive: jsonSerialization['isActive'] as bool?,
-      isDeleted: jsonSerialization['isDeleted'] as bool?,
-      trackStock: jsonSerialization['trackStock'] as bool?,
-      isBulkProduct: jsonSerialization['isBulkProduct'] as bool?,
+      isActive: jsonSerialization['isActive'] == null
+          ? null
+          : _isc.BoolJsonExtension.fromJson(jsonSerialization['isActive']),
+      isDeleted: jsonSerialization['isDeleted'] == null
+          ? null
+          : _isc.BoolJsonExtension.fromJson(jsonSerialization['isDeleted']),
+      trackStock: jsonSerialization['trackStock'] == null
+          ? null
+          : _isc.BoolJsonExtension.fromJson(jsonSerialization['trackStock']),
+      isBulkProduct: jsonSerialization['isBulkProduct'] == null
+          ? null
+          : _isc.BoolJsonExtension.fromJson(jsonSerialization['isBulkProduct']),
       bulkUnit: jsonSerialization['bulkUnit'] as String?,
       bulkTotalQuantity: (jsonSerialization['bulkTotalQuantity'] as num?)
           ?.toDouble(),
-      createdAt: _i1.DateTimeJsonExtension.fromJson(
+      createdAt: _isc.DateTimeJsonExtension.fromJson(
         jsonSerialization['createdAt'],
       ),
-      updatedAt: _i1.DateTimeJsonExtension.fromJson(
+      updatedAt: _isc.DateTimeJsonExtension.fromJson(
         jsonSerialization['updatedAt'],
       ),
     );
@@ -125,7 +134,7 @@ abstract class Product implements _i1.SerializableModel {
 
   /// Returns a shallow copy of this [Product]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_isc.useResult
   Product copyWith({
     int? id,
     String? name,
@@ -171,8 +180,33 @@ abstract class Product implements _i1.SerializableModel {
   }
 
   @override
+  Map<String, dynamic> toJsonForProtocol() {
+    return {
+      '__className__': 'Product',
+      if (id != null) 'id': id,
+      'name': name,
+      if (description != null) 'description': description,
+      'price': price,
+      'categoryId': categoryId,
+      'stockQuantity': stockQuantity,
+      'minStockAlert': minStockAlert,
+      if (currentUnitRemaining != null)
+        'currentUnitRemaining': currentUnitRemaining,
+      if (imageUrl != null) 'imageUrl': imageUrl,
+      'isActive': isActive,
+      'isDeleted': isDeleted,
+      'trackStock': trackStock,
+      'isBulkProduct': isBulkProduct,
+      if (bulkUnit != null) 'bulkUnit': bulkUnit,
+      if (bulkTotalQuantity != null) 'bulkTotalQuantity': bulkTotalQuantity,
+      'createdAt': createdAt.toJson(),
+      'updatedAt': updatedAt.toJson(),
+    };
+  }
+
+  @override
   String toString() {
-    return _i1.SerializationManager.encode(this);
+    return _isc.SerializationManager.encode(this);
   }
 }
 
@@ -219,7 +253,7 @@ class _ProductImpl extends Product {
 
   /// Returns a shallow copy of this [Product]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_isc.useResult
   @override
   Product copyWith({
     Object? id = _Undefined,

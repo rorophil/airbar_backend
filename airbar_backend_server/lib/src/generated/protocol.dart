@@ -8,45 +8,48 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 // ignore_for_file: invalid_use_of_internal_member
+// ignore_for_file: dead_code, unnecessary_type_check
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod/serverpod.dart' as _i1;
-import 'package:serverpod/protocol.dart' as _i2;
-import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
-    as _i3;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
-    as _i4;
-import 'auth/user.dart' as _i5;
-import 'auth/user_role.dart' as _i6;
-import 'cashier/cash_sale_item_data.dart' as _i7;
-import 'exceptions/business_exception.dart' as _i8;
-import 'greetings/greeting.dart' as _i9;
-import 'shop/cart_item.dart' as _i10;
-import 'shop/product.dart' as _i11;
-import 'shop/product_category.dart' as _i12;
-import 'shop/product_portion.dart' as _i13;
-import 'stock/movement_type.dart' as _i14;
-import 'stock/stock_movement.dart' as _i15;
-import 'transactions/payment_method.dart' as _i16;
-import 'transactions/transaction.dart' as _i17;
-import 'transactions/transaction_item.dart' as _i18;
-import 'transactions/transaction_type.dart' as _i19;
-import 'package:airbar_backend_server/src/generated/auth/user.dart' as _i20;
+import 'package:airbar_backend_server/src/generated/auth/user.dart'
+    as _i1sq8sn0;
 import 'package:airbar_backend_server/src/generated/cashier/cash_sale_item_data.dart'
-    as _i21;
-import 'package:airbar_backend_server/src/generated/transactions/transaction.dart'
-    as _i22;
+    as _ixitvqwz;
 import 'package:airbar_backend_server/src/generated/shop/cart_item.dart'
-    as _i23;
+    as _inzocifv;
+import 'package:airbar_backend_server/src/generated/shop/product.dart'
+    as _it311bq9;
 import 'package:airbar_backend_server/src/generated/shop/product_category.dart'
-    as _i24;
-import 'package:airbar_backend_server/src/generated/shop/product.dart' as _i25;
+    as _idye8uc7;
 import 'package:airbar_backend_server/src/generated/shop/product_portion.dart'
-    as _i26;
+    as _in4gaz80;
 import 'package:airbar_backend_server/src/generated/stock/stock_movement.dart'
-    as _i27;
+    as _ivsz30e3;
+import 'package:airbar_backend_server/src/generated/transactions/transaction.dart'
+    as _igjc5le3;
 import 'package:airbar_backend_server/src/generated/transactions/transaction_item.dart'
-    as _i28;
+    as _iqa92bwu;
+import 'package:serverpod/protocol.dart' as _isp;
+import 'package:serverpod/serverpod.dart' as _is;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _iacs;
+import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
+    as _iais;
+import 'auth/user.dart' as _ihzw26wp;
+import 'auth/user_role.dart' as _imfzqkbp;
+import 'cashier/cash_sale_item_data.dart' as _i8q255bz;
+import 'exceptions/business_exception.dart' as _inujlvgf;
+import 'greetings/greeting.dart' as _izw8z7ou;
+import 'shop/cart_item.dart' as _i4ros8ig;
+import 'shop/product.dart' as _ictnbmx0;
+import 'shop/product_category.dart' as _ioy1aw0v;
+import 'shop/product_portion.dart' as _ip205i9w;
+import 'stock/movement_type.dart' as _iu46gsdm;
+import 'stock/stock_movement.dart' as _iq6rmlux;
+import 'transactions/payment_method.dart' as _iaa3e0kl;
+import 'transactions/transaction.dart' as _iqhl4hru;
+import 'transactions/transaction_item.dart' as _i37amypa;
+import 'transactions/transaction_type.dart' as _ijg0uxum;
 export 'auth/user.dart';
 export 'auth/user_role.dart';
 export 'cashier/cash_sale_item_data.dart';
@@ -63,80 +66,67 @@ export 'transactions/transaction.dart';
 export 'transactions/transaction_item.dart';
 export 'transactions/transaction_type.dart';
 
-class Protocol extends _i1.SerializationManagerServer {
+class Protocol extends _is.DatabaseSerializationManager {
   Protocol._();
 
   factory Protocol() => _instance;
 
-  static final Protocol _instance = Protocol._();
+  static final Protocol _instance = Protocol._().._registerHostProtocols();
 
-  static final List<_i2.TableDefinition> targetTableDefinitions = [
-    _i2.TableDefinition(
+  static List<_isp.TableDefinition> get targetTableDefinitions => [
+    _isp.TableDefinition(
       name: 'cart_items',
       dartName: 'CartItem',
       schema: 'public',
       module: 'airbar_backend',
       columns: [
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'id',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int?',
-          columnDefault: 'nextval(\'cart_items_id_seq\'::regclass)',
+          columnDefault: 'serial',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'userId',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'productId',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'productPortionId',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: true,
           dartType: 'int?',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'quantity',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
           columnDefault: '1',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'addedAt',
-          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
           isNullable: false,
           dartType: 'DateTime',
         ),
       ],
       foreignKeys: [],
       indexes: [
-        _i2.IndexDefinition(
-          indexName: 'cart_items_pkey',
-          tableSpace: null,
-          elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
-              definition: 'id',
-            ),
-          ],
-          type: 'btree',
-          isUnique: true,
-          isPrimary: true,
-        ),
-        _i2.IndexDefinition(
+        _isp.IndexDefinition(
           indexName: 'cart_user_idx',
           tableSpace: null,
           elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
               definition: 'userId',
             ),
           ],
@@ -147,167 +137,140 @@ class Protocol extends _i1.SerializationManagerServer {
       ],
       managed: true,
     ),
-    _i2.TableDefinition(
+    _isp.TableDefinition(
       name: 'product_categories',
       dartName: 'ProductCategory',
       schema: 'public',
       module: 'airbar_backend',
       columns: [
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'id',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int?',
-          columnDefault: 'nextval(\'product_categories_id_seq\'::regclass)',
+          columnDefault: 'serial',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'name',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: false,
           dartType: 'String',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'description',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: true,
           dartType: 'String?',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'iconName',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: true,
           dartType: 'String?',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'displayOrder',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
           columnDefault: '0',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'isActive',
-          columnType: _i2.ColumnType.boolean,
+          columnType: _isp.ColumnType.boolean,
           isNullable: false,
           dartType: 'bool',
           columnDefault: 'true',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'createdAt',
-          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
           isNullable: false,
           dartType: 'DateTime',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'updatedAt',
-          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
           isNullable: false,
           dartType: 'DateTime',
         ),
       ],
       foreignKeys: [],
-      indexes: [
-        _i2.IndexDefinition(
-          indexName: 'product_categories_pkey',
-          tableSpace: null,
-          elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
-              definition: 'id',
-            ),
-          ],
-          type: 'btree',
-          isUnique: true,
-          isPrimary: true,
-        ),
-      ],
+      indexes: [],
       managed: true,
     ),
-    _i2.TableDefinition(
+    _isp.TableDefinition(
       name: 'product_portions',
       dartName: 'ProductPortion',
       schema: 'public',
       module: 'airbar_backend',
       columns: [
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'id',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int?',
-          columnDefault: 'nextval(\'product_portions_id_seq\'::regclass)',
+          columnDefault: 'serial',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'productId',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'name',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: false,
           dartType: 'String',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'quantity',
-          columnType: _i2.ColumnType.doublePrecision,
+          columnType: _isp.ColumnType.doublePrecision,
           isNullable: false,
           dartType: 'double',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'price',
-          columnType: _i2.ColumnType.doublePrecision,
+          columnType: _isp.ColumnType.doublePrecision,
           isNullable: false,
           dartType: 'double',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'displayOrder',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
           columnDefault: '0',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'isActive',
-          columnType: _i2.ColumnType.boolean,
+          columnType: _isp.ColumnType.boolean,
           isNullable: false,
           dartType: 'bool',
           columnDefault: 'true',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'createdAt',
-          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
           isNullable: false,
           dartType: 'DateTime',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'updatedAt',
-          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
           isNullable: false,
           dartType: 'DateTime',
         ),
       ],
       foreignKeys: [],
       indexes: [
-        _i2.IndexDefinition(
-          indexName: 'product_portions_pkey',
-          tableSpace: null,
-          elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
-              definition: 'id',
-            ),
-          ],
-          type: 'btree',
-          isUnique: true,
-          isPrimary: true,
-        ),
-        _i2.IndexDefinition(
+        _isp.IndexDefinition(
           indexName: 'product_portions_product_idx',
           tableSpace: null,
           elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
               definition: 'productId',
             ),
           ],
@@ -315,16 +278,16 @@ class Protocol extends _i1.SerializationManagerServer {
           isUnique: false,
           isPrimary: false,
         ),
-        _i2.IndexDefinition(
+        _isp.IndexDefinition(
           indexName: 'product_portions_active_idx',
           tableSpace: null,
           elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
               definition: 'isActive',
             ),
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
               definition: 'displayOrder',
             ),
           ],
@@ -335,143 +298,130 @@ class Protocol extends _i1.SerializationManagerServer {
       ],
       managed: true,
     ),
-    _i2.TableDefinition(
+    _isp.TableDefinition(
       name: 'products',
       dartName: 'Product',
       schema: 'public',
       module: 'airbar_backend',
       columns: [
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'id',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int?',
-          columnDefault: 'nextval(\'products_id_seq\'::regclass)',
+          columnDefault: 'serial',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'name',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: false,
           dartType: 'String',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'description',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: true,
           dartType: 'String?',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'price',
-          columnType: _i2.ColumnType.doublePrecision,
+          columnType: _isp.ColumnType.doublePrecision,
           isNullable: false,
           dartType: 'double',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'categoryId',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'stockQuantity',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
           columnDefault: '0',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'minStockAlert',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
           columnDefault: '5',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'currentUnitRemaining',
-          columnType: _i2.ColumnType.doublePrecision,
+          columnType: _isp.ColumnType.doublePrecision,
           isNullable: true,
           dartType: 'double?',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'imageUrl',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: true,
           dartType: 'String?',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'isActive',
-          columnType: _i2.ColumnType.boolean,
+          columnType: _isp.ColumnType.boolean,
           isNullable: false,
           dartType: 'bool',
           columnDefault: 'true',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'isDeleted',
-          columnType: _i2.ColumnType.boolean,
+          columnType: _isp.ColumnType.boolean,
           isNullable: false,
           dartType: 'bool',
           columnDefault: 'false',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'trackStock',
-          columnType: _i2.ColumnType.boolean,
+          columnType: _isp.ColumnType.boolean,
           isNullable: false,
           dartType: 'bool',
           columnDefault: 'true',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'isBulkProduct',
-          columnType: _i2.ColumnType.boolean,
+          columnType: _isp.ColumnType.boolean,
           isNullable: false,
           dartType: 'bool',
           columnDefault: 'false',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'bulkUnit',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: true,
           dartType: 'String?',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'bulkTotalQuantity',
-          columnType: _i2.ColumnType.doublePrecision,
+          columnType: _isp.ColumnType.doublePrecision,
           isNullable: true,
           dartType: 'double?',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'createdAt',
-          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
           isNullable: false,
           dartType: 'DateTime',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'updatedAt',
-          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
           isNullable: false,
           dartType: 'DateTime',
         ),
       ],
       foreignKeys: [],
       indexes: [
-        _i2.IndexDefinition(
-          indexName: 'products_pkey',
-          tableSpace: null,
-          elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
-              definition: 'id',
-            ),
-          ],
-          type: 'btree',
-          isUnique: true,
-          isPrimary: true,
-        ),
-        _i2.IndexDefinition(
+        _isp.IndexDefinition(
           indexName: 'products_category_idx',
           tableSpace: null,
           elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
               definition: 'categoryId',
             ),
           ],
@@ -479,16 +429,16 @@ class Protocol extends _i1.SerializationManagerServer {
           isUnique: false,
           isPrimary: false,
         ),
-        _i2.IndexDefinition(
+        _isp.IndexDefinition(
           indexName: 'products_deleted_idx',
           tableSpace: null,
           elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
               definition: 'isDeleted',
             ),
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
               definition: 'isActive',
             ),
           ],
@@ -499,77 +449,64 @@ class Protocol extends _i1.SerializationManagerServer {
       ],
       managed: true,
     ),
-    _i2.TableDefinition(
+    _isp.TableDefinition(
       name: 'stock_movements',
       dartName: 'StockMovement',
       schema: 'public',
       module: 'airbar_backend',
       columns: [
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'id',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int?',
-          columnDefault: 'nextval(\'stock_movements_id_seq\'::regclass)',
+          columnDefault: 'serial',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'productId',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'quantity',
-          columnType: _i2.ColumnType.doublePrecision,
+          columnType: _isp.ColumnType.doublePrecision,
           isNullable: false,
           dartType: 'double',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'movementType',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: false,
           dartType: 'protocol:MovementType',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'userId',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'timestamp',
-          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
           isNullable: false,
           dartType: 'DateTime',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'notes',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: true,
           dartType: 'String?',
         ),
       ],
       foreignKeys: [],
       indexes: [
-        _i2.IndexDefinition(
-          indexName: 'stock_movements_pkey',
-          tableSpace: null,
-          elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
-              definition: 'id',
-            ),
-          ],
-          type: 'btree',
-          isUnique: true,
-          isPrimary: true,
-        ),
-        _i2.IndexDefinition(
+        _isp.IndexDefinition(
           indexName: 'stock_movements_product_idx',
           tableSpace: null,
           elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
               definition: 'productId',
             ),
           ],
@@ -577,12 +514,12 @@ class Protocol extends _i1.SerializationManagerServer {
           isUnique: false,
           isPrimary: false,
         ),
-        _i2.IndexDefinition(
+        _isp.IndexDefinition(
           indexName: 'stock_movements_timestamp_idx',
           tableSpace: null,
           elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
               definition: 'timestamp',
             ),
           ],
@@ -590,12 +527,12 @@ class Protocol extends _i1.SerializationManagerServer {
           isUnique: false,
           isPrimary: false,
         ),
-        _i2.IndexDefinition(
+        _isp.IndexDefinition(
           indexName: 'stock_movements_user_idx',
           tableSpace: null,
           elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
               definition: 'userId',
             ),
           ],
@@ -606,58 +543,58 @@ class Protocol extends _i1.SerializationManagerServer {
       ],
       managed: true,
     ),
-    _i2.TableDefinition(
+    _isp.TableDefinition(
       name: 'transaction_items',
       dartName: 'TransactionItem',
       schema: 'public',
       module: 'airbar_backend',
       columns: [
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'id',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int?',
-          columnDefault: 'nextval(\'transaction_items_id_seq\'::regclass)',
+          columnDefault: 'serial',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'transactionId',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'productId',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'productName',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: false,
           dartType: 'String',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'quantity',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'unitPrice',
-          columnType: _i2.ColumnType.doublePrecision,
+          columnType: _isp.ColumnType.doublePrecision,
           isNullable: false,
           dartType: 'double',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'subtotal',
-          columnType: _i2.ColumnType.doublePrecision,
+          columnType: _isp.ColumnType.doublePrecision,
           isNullable: false,
           dartType: 'double',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'stockDeduction',
-          columnType: _i2.ColumnType.doublePrecision,
+          columnType: _isp.ColumnType.doublePrecision,
           isNullable: true,
           dartType: 'double?',
           columnDefault: '0',
@@ -665,25 +602,12 @@ class Protocol extends _i1.SerializationManagerServer {
       ],
       foreignKeys: [],
       indexes: [
-        _i2.IndexDefinition(
-          indexName: 'transaction_items_pkey',
-          tableSpace: null,
-          elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
-              definition: 'id',
-            ),
-          ],
-          type: 'btree',
-          isUnique: true,
-          isPrimary: true,
-        ),
-        _i2.IndexDefinition(
+        _isp.IndexDefinition(
           indexName: 'transaction_items_transaction_idx',
           tableSpace: null,
           elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
               definition: 'transactionId',
             ),
           ],
@@ -691,12 +615,12 @@ class Protocol extends _i1.SerializationManagerServer {
           isUnique: false,
           isPrimary: false,
         ),
-        _i2.IndexDefinition(
+        _isp.IndexDefinition(
           indexName: 'transaction_items_product_idx',
           tableSpace: null,
           elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
               definition: 'productId',
             ),
           ],
@@ -707,95 +631,82 @@ class Protocol extends _i1.SerializationManagerServer {
       ],
       managed: true,
     ),
-    _i2.TableDefinition(
+    _isp.TableDefinition(
       name: 'transactions',
       dartName: 'Transaction',
       schema: 'public',
       module: 'airbar_backend',
       columns: [
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'id',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int?',
-          columnDefault: 'nextval(\'transactions_id_seq\'::regclass)',
+          columnDefault: 'serial',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'userId',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: true,
           dartType: 'int?',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'type',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: false,
           dartType: 'protocol:TransactionType',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'totalAmount',
-          columnType: _i2.ColumnType.doublePrecision,
+          columnType: _isp.ColumnType.doublePrecision,
           isNullable: false,
           dartType: 'double',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'timestamp',
-          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
           isNullable: false,
           dartType: 'DateTime',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'notes',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: true,
           dartType: 'String?',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'refundedTransactionId',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: true,
           dartType: 'int?',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'sellerId',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: true,
           dartType: 'int?',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'paymentMethod',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: true,
           dartType: 'protocol:PaymentMethod?',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'balanceAfter',
-          columnType: _i2.ColumnType.doublePrecision,
+          columnType: _isp.ColumnType.doublePrecision,
           isNullable: true,
           dartType: 'double?',
         ),
       ],
       foreignKeys: [],
       indexes: [
-        _i2.IndexDefinition(
-          indexName: 'transactions_pkey',
-          tableSpace: null,
-          elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
-              definition: 'id',
-            ),
-          ],
-          type: 'btree',
-          isUnique: true,
-          isPrimary: true,
-        ),
-        _i2.IndexDefinition(
+        _isp.IndexDefinition(
           indexName: 'transactions_user_idx',
           tableSpace: null,
           elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
               definition: 'userId',
             ),
           ],
@@ -803,12 +714,12 @@ class Protocol extends _i1.SerializationManagerServer {
           isUnique: false,
           isPrimary: false,
         ),
-        _i2.IndexDefinition(
+        _isp.IndexDefinition(
           indexName: 'transactions_timestamp_idx',
           tableSpace: null,
           elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
               definition: 'timestamp',
             ),
           ],
@@ -816,12 +727,12 @@ class Protocol extends _i1.SerializationManagerServer {
           isUnique: false,
           isPrimary: false,
         ),
-        _i2.IndexDefinition(
+        _isp.IndexDefinition(
           indexName: 'transactions_type_idx',
           tableSpace: null,
           elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
               definition: 'type',
             ),
           ],
@@ -832,103 +743,90 @@ class Protocol extends _i1.SerializationManagerServer {
       ],
       managed: true,
     ),
-    _i2.TableDefinition(
+    _isp.TableDefinition(
       name: 'users',
       dartName: 'User',
       schema: 'public',
       module: 'airbar_backend',
       columns: [
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'id',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _isp.ColumnType.bigint,
           isNullable: false,
           dartType: 'int?',
-          columnDefault: 'nextval(\'users_id_seq\'::regclass)',
+          columnDefault: 'serial',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'email',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: false,
           dartType: 'String',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'passwordHash',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: false,
           dartType: 'String',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'role',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: false,
           dartType: 'protocol:UserRole',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'balance',
-          columnType: _i2.ColumnType.doublePrecision,
+          columnType: _isp.ColumnType.doublePrecision,
           isNullable: false,
           dartType: 'double',
           columnDefault: '0.0',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'pin',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: false,
           dartType: 'String',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'firstName',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: false,
           dartType: 'String',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'lastName',
-          columnType: _i2.ColumnType.text,
+          columnType: _isp.ColumnType.text,
           isNullable: false,
           dartType: 'String',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'isActive',
-          columnType: _i2.ColumnType.boolean,
+          columnType: _isp.ColumnType.boolean,
           isNullable: false,
           dartType: 'bool',
           columnDefault: 'true',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'createdAt',
-          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
           isNullable: false,
           dartType: 'DateTime',
         ),
-        _i2.ColumnDefinition(
+        _isp.ColumnDefinition(
           name: 'updatedAt',
-          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
           isNullable: false,
           dartType: 'DateTime',
         ),
       ],
       foreignKeys: [],
       indexes: [
-        _i2.IndexDefinition(
-          indexName: 'users_pkey',
-          tableSpace: null,
-          elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
-              definition: 'id',
-            ),
-          ],
-          type: 'btree',
-          isUnique: true,
-          isPrimary: true,
-        ),
-        _i2.IndexDefinition(
+        _isp.IndexDefinition(
           indexName: 'users_email_idx',
           tableSpace: null,
           elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
               definition: 'email',
             ),
           ],
@@ -939,9 +837,9 @@ class Protocol extends _i1.SerializationManagerServer {
       ],
       managed: true,
     ),
-    ..._i3.Protocol.targetTableDefinitions,
-    ..._i4.Protocol.targetTableDefinitions,
-    ..._i2.Protocol.targetTableDefinitions,
+    ..._iais.Protocol.targetTableDefinitions,
+    ..._iacs.Protocol.targetTableDefinitions,
+    ..._isp.Protocol.targetTableDefinitions,
   ];
 
   static String? getClassNameFromObjectJson(dynamic data) {
@@ -964,179 +862,192 @@ class Protocol extends _i1.SerializationManagerServer {
           'className': dataClassName,
           'data': data,
         });
-      } on FormatException catch (_) {
+      } on _is.DeserializationClassNameNotFoundException catch (_) {
         // If the className is not recognized (e.g., older client receiving
         // data with a new subtype), fall back to deserializing without the
         // className, using the expected type T.
       }
     }
 
-    if (t == _i5.User) {
-      return _i5.User.fromJson(data) as T;
+    if (t == _ihzw26wp.User) {
+      return _ihzw26wp.User.fromJson(data) as T;
     }
-    if (t == _i6.UserRole) {
-      return _i6.UserRole.fromJson(data) as T;
+    if (t == _imfzqkbp.UserRole) {
+      return _imfzqkbp.UserRole.fromJson(data) as T;
     }
-    if (t == _i7.CashSaleItemData) {
-      return _i7.CashSaleItemData.fromJson(data) as T;
+    if (t == _i8q255bz.CashSaleItemData) {
+      return _i8q255bz.CashSaleItemData.fromJson(data) as T;
     }
-    if (t == _i8.BusinessException) {
-      return _i8.BusinessException.fromJson(data) as T;
+    if (t == _inujlvgf.BusinessException) {
+      return _inujlvgf.BusinessException.fromJson(data) as T;
     }
-    if (t == _i9.Greeting) {
-      return _i9.Greeting.fromJson(data) as T;
+    if (t == _izw8z7ou.Greeting) {
+      return _izw8z7ou.Greeting.fromJson(data) as T;
     }
-    if (t == _i10.CartItem) {
-      return _i10.CartItem.fromJson(data) as T;
+    if (t == _i4ros8ig.CartItem) {
+      return _i4ros8ig.CartItem.fromJson(data) as T;
     }
-    if (t == _i11.Product) {
-      return _i11.Product.fromJson(data) as T;
+    if (t == _ictnbmx0.Product) {
+      return _ictnbmx0.Product.fromJson(data) as T;
     }
-    if (t == _i12.ProductCategory) {
-      return _i12.ProductCategory.fromJson(data) as T;
+    if (t == _ioy1aw0v.ProductCategory) {
+      return _ioy1aw0v.ProductCategory.fromJson(data) as T;
     }
-    if (t == _i13.ProductPortion) {
-      return _i13.ProductPortion.fromJson(data) as T;
+    if (t == _ip205i9w.ProductPortion) {
+      return _ip205i9w.ProductPortion.fromJson(data) as T;
     }
-    if (t == _i14.MovementType) {
-      return _i14.MovementType.fromJson(data) as T;
+    if (t == _iu46gsdm.MovementType) {
+      return _iu46gsdm.MovementType.fromJson(data) as T;
     }
-    if (t == _i15.StockMovement) {
-      return _i15.StockMovement.fromJson(data) as T;
+    if (t == _iq6rmlux.StockMovement) {
+      return _iq6rmlux.StockMovement.fromJson(data) as T;
     }
-    if (t == _i16.PaymentMethod) {
-      return _i16.PaymentMethod.fromJson(data) as T;
+    if (t == _iaa3e0kl.PaymentMethod) {
+      return _iaa3e0kl.PaymentMethod.fromJson(data) as T;
     }
-    if (t == _i17.Transaction) {
-      return _i17.Transaction.fromJson(data) as T;
+    if (t == _iqhl4hru.Transaction) {
+      return _iqhl4hru.Transaction.fromJson(data) as T;
     }
-    if (t == _i18.TransactionItem) {
-      return _i18.TransactionItem.fromJson(data) as T;
+    if (t == _i37amypa.TransactionItem) {
+      return _i37amypa.TransactionItem.fromJson(data) as T;
     }
-    if (t == _i19.TransactionType) {
-      return _i19.TransactionType.fromJson(data) as T;
+    if (t == _ijg0uxum.TransactionType) {
+      return _ijg0uxum.TransactionType.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i5.User?>()) {
-      return (data != null ? _i5.User.fromJson(data) : null) as T;
+    if (t == _is.getType<_ihzw26wp.User?>()) {
+      return (data != null ? _ihzw26wp.User.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i6.UserRole?>()) {
-      return (data != null ? _i6.UserRole.fromJson(data) : null) as T;
+    if (t == _is.getType<_imfzqkbp.UserRole?>()) {
+      return (data != null ? _imfzqkbp.UserRole.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i7.CashSaleItemData?>()) {
-      return (data != null ? _i7.CashSaleItemData.fromJson(data) : null) as T;
+    if (t == _is.getType<_i8q255bz.CashSaleItemData?>()) {
+      return (data != null ? _i8q255bz.CashSaleItemData.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i8.BusinessException?>()) {
-      return (data != null ? _i8.BusinessException.fromJson(data) : null) as T;
+    if (t == _is.getType<_inujlvgf.BusinessException?>()) {
+      return (data != null ? _inujlvgf.BusinessException.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i9.Greeting?>()) {
-      return (data != null ? _i9.Greeting.fromJson(data) : null) as T;
+    if (t == _is.getType<_izw8z7ou.Greeting?>()) {
+      return (data != null ? _izw8z7ou.Greeting.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i10.CartItem?>()) {
-      return (data != null ? _i10.CartItem.fromJson(data) : null) as T;
+    if (t == _is.getType<_i4ros8ig.CartItem?>()) {
+      return (data != null ? _i4ros8ig.CartItem.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i11.Product?>()) {
-      return (data != null ? _i11.Product.fromJson(data) : null) as T;
+    if (t == _is.getType<_ictnbmx0.Product?>()) {
+      return (data != null ? _ictnbmx0.Product.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i12.ProductCategory?>()) {
-      return (data != null ? _i12.ProductCategory.fromJson(data) : null) as T;
+    if (t == _is.getType<_ioy1aw0v.ProductCategory?>()) {
+      return (data != null ? _ioy1aw0v.ProductCategory.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i13.ProductPortion?>()) {
-      return (data != null ? _i13.ProductPortion.fromJson(data) : null) as T;
+    if (t == _is.getType<_ip205i9w.ProductPortion?>()) {
+      return (data != null ? _ip205i9w.ProductPortion.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i14.MovementType?>()) {
-      return (data != null ? _i14.MovementType.fromJson(data) : null) as T;
+    if (t == _is.getType<_iu46gsdm.MovementType?>()) {
+      return (data != null ? _iu46gsdm.MovementType.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i15.StockMovement?>()) {
-      return (data != null ? _i15.StockMovement.fromJson(data) : null) as T;
+    if (t == _is.getType<_iq6rmlux.StockMovement?>()) {
+      return (data != null ? _iq6rmlux.StockMovement.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i16.PaymentMethod?>()) {
-      return (data != null ? _i16.PaymentMethod.fromJson(data) : null) as T;
+    if (t == _is.getType<_iaa3e0kl.PaymentMethod?>()) {
+      return (data != null ? _iaa3e0kl.PaymentMethod.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i17.Transaction?>()) {
-      return (data != null ? _i17.Transaction.fromJson(data) : null) as T;
+    if (t == _is.getType<_iqhl4hru.Transaction?>()) {
+      return (data != null ? _iqhl4hru.Transaction.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i18.TransactionItem?>()) {
-      return (data != null ? _i18.TransactionItem.fromJson(data) : null) as T;
+    if (t == _is.getType<_i37amypa.TransactionItem?>()) {
+      return (data != null ? _i37amypa.TransactionItem.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i19.TransactionType?>()) {
-      return (data != null ? _i19.TransactionType.fromJson(data) : null) as T;
+    if (t == _is.getType<_ijg0uxum.TransactionType?>()) {
+      return (data != null ? _ijg0uxum.TransactionType.fromJson(data) : null)
+          as T;
     }
-    if (t == List<_i20.User>) {
-      return (data as List).map((e) => deserialize<_i20.User>(e)).toList() as T;
+    if (t == List<_i1sq8sn0.User>) {
+      return (data as List).map((e) => deserialize<_i1sq8sn0.User>(e)).toList()
+          as T;
     }
-    if (t == List<_i21.CashSaleItemData>) {
+    if (t == List<_ixitvqwz.CashSaleItemData>) {
       return (data as List)
-              .map((e) => deserialize<_i21.CashSaleItemData>(e))
+              .map((e) => deserialize<_ixitvqwz.CashSaleItemData>(e))
               .toList()
           as T;
     }
-    if (t == List<_i22.Transaction>) {
+    if (t == List<_igjc5le3.Transaction>) {
       return (data as List)
-              .map((e) => deserialize<_i22.Transaction>(e))
+              .map((e) => deserialize<_igjc5le3.Transaction>(e))
               .toList()
           as T;
     }
-    if (t == List<_i23.CartItem>) {
-      return (data as List).map((e) => deserialize<_i23.CartItem>(e)).toList()
-          as T;
-    }
-    if (t == List<_i24.ProductCategory>) {
+    if (t == List<_inzocifv.CartItem>) {
       return (data as List)
-              .map((e) => deserialize<_i24.ProductCategory>(e))
+              .map((e) => deserialize<_inzocifv.CartItem>(e))
               .toList()
           as T;
     }
-    if (t == List<_i25.Product>) {
-      return (data as List).map((e) => deserialize<_i25.Product>(e)).toList()
-          as T;
-    }
-    if (t == List<_i26.ProductPortion>) {
+    if (t == List<_idye8uc7.ProductCategory>) {
       return (data as List)
-              .map((e) => deserialize<_i26.ProductPortion>(e))
+              .map((e) => deserialize<_idye8uc7.ProductCategory>(e))
               .toList()
           as T;
     }
-    if (t == List<_i27.StockMovement>) {
+    if (t == List<_it311bq9.Product>) {
       return (data as List)
-              .map((e) => deserialize<_i27.StockMovement>(e))
+              .map((e) => deserialize<_it311bq9.Product>(e))
               .toList()
           as T;
     }
-    if (t == List<_i28.TransactionItem>) {
+    if (t == List<_in4gaz80.ProductPortion>) {
       return (data as List)
-              .map((e) => deserialize<_i28.TransactionItem>(e))
+              .map((e) => deserialize<_in4gaz80.ProductPortion>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_ivsz30e3.StockMovement>) {
+      return (data as List)
+              .map((e) => deserialize<_ivsz30e3.StockMovement>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_iqa92bwu.TransactionItem>) {
+      return (data as List)
+              .map((e) => deserialize<_iqa92bwu.TransactionItem>(e))
               .toList()
           as T;
     }
     try {
-      return _i3.Protocol().deserialize<T>(data, t);
-    } on _i1.DeserializationTypeNotFoundException catch (_) {}
+      return _iais.Protocol().deserialize<T>(data, t);
+    } on _is.DeserializationTypeNotFoundException catch (_) {}
     try {
-      return _i4.Protocol().deserialize<T>(data, t);
-    } on _i1.DeserializationTypeNotFoundException catch (_) {}
+      return _iacs.Protocol().deserialize<T>(data, t);
+    } on _is.DeserializationTypeNotFoundException catch (_) {}
     try {
-      return _i2.Protocol().deserialize<T>(data, t);
-    } on _i1.DeserializationTypeNotFoundException catch (_) {}
+      return _isp.Protocol().deserialize<T>(data, t);
+    } on _is.DeserializationTypeNotFoundException catch (_) {}
     return super.deserialize<T>(data, t);
   }
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
-      _i5.User => 'User',
-      _i6.UserRole => 'UserRole',
-      _i7.CashSaleItemData => 'CashSaleItemData',
-      _i8.BusinessException => 'BusinessException',
-      _i9.Greeting => 'Greeting',
-      _i10.CartItem => 'CartItem',
-      _i11.Product => 'Product',
-      _i12.ProductCategory => 'ProductCategory',
-      _i13.ProductPortion => 'ProductPortion',
-      _i14.MovementType => 'MovementType',
-      _i15.StockMovement => 'StockMovement',
-      _i16.PaymentMethod => 'PaymentMethod',
-      _i17.Transaction => 'Transaction',
-      _i18.TransactionItem => 'TransactionItem',
-      _i19.TransactionType => 'TransactionType',
+      _ihzw26wp.User => 'User',
+      _imfzqkbp.UserRole => 'UserRole',
+      _i8q255bz.CashSaleItemData => 'CashSaleItemData',
+      _inujlvgf.BusinessException => 'BusinessException',
+      _izw8z7ou.Greeting => 'Greeting',
+      _i4ros8ig.CartItem => 'CartItem',
+      _ictnbmx0.Product => 'Product',
+      _ioy1aw0v.ProductCategory => 'ProductCategory',
+      _ip205i9w.ProductPortion => 'ProductPortion',
+      _iu46gsdm.MovementType => 'MovementType',
+      _iq6rmlux.StockMovement => 'StockMovement',
+      _iaa3e0kl.PaymentMethod => 'PaymentMethod',
+      _iqhl4hru.Transaction => 'Transaction',
+      _i37amypa.TransactionItem => 'TransactionItem',
+      _ijg0uxum.TransactionType => 'TransactionType',
       _ => null,
     };
   }
@@ -1154,48 +1065,52 @@ class Protocol extends _i1.SerializationManagerServer {
     }
 
     switch (data) {
-      case _i5.User():
+      case _ihzw26wp.User():
         return 'User';
-      case _i6.UserRole():
+      case _imfzqkbp.UserRole():
         return 'UserRole';
-      case _i7.CashSaleItemData():
+      case _i8q255bz.CashSaleItemData():
         return 'CashSaleItemData';
-      case _i8.BusinessException():
+      case _inujlvgf.BusinessException():
         return 'BusinessException';
-      case _i9.Greeting():
+      case _izw8z7ou.Greeting():
         return 'Greeting';
-      case _i10.CartItem():
+      case _i4ros8ig.CartItem():
         return 'CartItem';
-      case _i11.Product():
+      case _ictnbmx0.Product():
         return 'Product';
-      case _i12.ProductCategory():
+      case _ioy1aw0v.ProductCategory():
         return 'ProductCategory';
-      case _i13.ProductPortion():
+      case _ip205i9w.ProductPortion():
         return 'ProductPortion';
-      case _i14.MovementType():
+      case _iu46gsdm.MovementType():
         return 'MovementType';
-      case _i15.StockMovement():
+      case _iq6rmlux.StockMovement():
         return 'StockMovement';
-      case _i16.PaymentMethod():
+      case _iaa3e0kl.PaymentMethod():
         return 'PaymentMethod';
-      case _i17.Transaction():
+      case _iqhl4hru.Transaction():
         return 'Transaction';
-      case _i18.TransactionItem():
+      case _i37amypa.TransactionItem():
         return 'TransactionItem';
-      case _i19.TransactionType():
+      case _ijg0uxum.TransactionType():
         return 'TransactionType';
     }
-    className = _i2.Protocol().getClassNameForObject(data);
+    className = _iais.Protocol().getClassNameForObject(data);
     if (className != null) {
-      return 'serverpod.$className';
+      return className.contains('.')
+          ? className
+          : 'serverpod_auth_idp.$className';
     }
-    className = _i3.Protocol().getClassNameForObject(data);
+    className = _iacs.Protocol().getClassNameForObject(data);
     if (className != null) {
-      return 'serverpod_auth_idp.$className';
+      return className.contains('.')
+          ? className
+          : 'serverpod_auth_core.$className';
     }
-    className = _i4.Protocol().getClassNameForObject(data);
+    className = _isp.Protocol().getClassNameForObject(data);
     if (className != null) {
-      return 'serverpod_auth_core.$className';
+      return className.contains('.') ? className : 'serverpod.$className';
     }
     return null;
   }
@@ -1207,108 +1122,113 @@ class Protocol extends _i1.SerializationManagerServer {
       return super.deserializeByClassName(data);
     }
     if (dataClassName == 'User') {
-      return deserialize<_i5.User>(data['data']);
+      return deserialize<_ihzw26wp.User>(data['data']);
     }
     if (dataClassName == 'UserRole') {
-      return deserialize<_i6.UserRole>(data['data']);
+      return deserialize<_imfzqkbp.UserRole>(data['data']);
     }
     if (dataClassName == 'CashSaleItemData') {
-      return deserialize<_i7.CashSaleItemData>(data['data']);
+      return deserialize<_i8q255bz.CashSaleItemData>(data['data']);
     }
     if (dataClassName == 'BusinessException') {
-      return deserialize<_i8.BusinessException>(data['data']);
+      return deserialize<_inujlvgf.BusinessException>(data['data']);
     }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i9.Greeting>(data['data']);
+      return deserialize<_izw8z7ou.Greeting>(data['data']);
     }
     if (dataClassName == 'CartItem') {
-      return deserialize<_i10.CartItem>(data['data']);
+      return deserialize<_i4ros8ig.CartItem>(data['data']);
     }
     if (dataClassName == 'Product') {
-      return deserialize<_i11.Product>(data['data']);
+      return deserialize<_ictnbmx0.Product>(data['data']);
     }
     if (dataClassName == 'ProductCategory') {
-      return deserialize<_i12.ProductCategory>(data['data']);
+      return deserialize<_ioy1aw0v.ProductCategory>(data['data']);
     }
     if (dataClassName == 'ProductPortion') {
-      return deserialize<_i13.ProductPortion>(data['data']);
+      return deserialize<_ip205i9w.ProductPortion>(data['data']);
     }
     if (dataClassName == 'MovementType') {
-      return deserialize<_i14.MovementType>(data['data']);
+      return deserialize<_iu46gsdm.MovementType>(data['data']);
     }
     if (dataClassName == 'StockMovement') {
-      return deserialize<_i15.StockMovement>(data['data']);
+      return deserialize<_iq6rmlux.StockMovement>(data['data']);
     }
     if (dataClassName == 'PaymentMethod') {
-      return deserialize<_i16.PaymentMethod>(data['data']);
+      return deserialize<_iaa3e0kl.PaymentMethod>(data['data']);
     }
     if (dataClassName == 'Transaction') {
-      return deserialize<_i17.Transaction>(data['data']);
+      return deserialize<_iqhl4hru.Transaction>(data['data']);
     }
     if (dataClassName == 'TransactionItem') {
-      return deserialize<_i18.TransactionItem>(data['data']);
+      return deserialize<_i37amypa.TransactionItem>(data['data']);
     }
     if (dataClassName == 'TransactionType') {
-      return deserialize<_i19.TransactionType>(data['data']);
-    }
-    if (dataClassName.startsWith('serverpod.')) {
-      data['className'] = dataClassName.substring(10);
-      return _i2.Protocol().deserializeByClassName(data);
+      return deserialize<_ijg0uxum.TransactionType>(data['data']);
     }
     if (dataClassName.startsWith('serverpod_auth_idp.')) {
       data['className'] = dataClassName.substring(19);
-      return _i3.Protocol().deserializeByClassName(data);
+      return _iais.Protocol().deserializeByClassName(data);
     }
     if (dataClassName.startsWith('serverpod_auth_core.')) {
       data['className'] = dataClassName.substring(20);
-      return _i4.Protocol().deserializeByClassName(data);
+      return _iacs.Protocol().deserializeByClassName(data);
+    }
+    if (dataClassName.startsWith('serverpod.')) {
+      data['className'] = dataClassName.substring(10);
+      return _isp.Protocol().deserializeByClassName(data);
     }
     return super.deserializeByClassName(data);
   }
 
+  void _registerHostProtocols() {
+    _iais.Protocol().registerHostProtocol('airbar_backend', this);
+    _iacs.Protocol().registerHostProtocol('airbar_backend', this);
+  }
+
   @override
-  _i1.Table? getTableForType(Type t) {
+  _is.Table? getTableForType(Type t) {
     {
-      var table = _i3.Protocol().getTableForType(t);
+      var table = _iais.Protocol().getTableForType(t);
       if (table != null) {
         return table;
       }
     }
     {
-      var table = _i4.Protocol().getTableForType(t);
+      var table = _iacs.Protocol().getTableForType(t);
       if (table != null) {
         return table;
       }
     }
     {
-      var table = _i2.Protocol().getTableForType(t);
+      var table = _isp.Protocol().getTableForType(t);
       if (table != null) {
         return table;
       }
     }
     switch (t) {
-      case _i5.User:
-        return _i5.User.t;
-      case _i10.CartItem:
-        return _i10.CartItem.t;
-      case _i11.Product:
-        return _i11.Product.t;
-      case _i12.ProductCategory:
-        return _i12.ProductCategory.t;
-      case _i13.ProductPortion:
-        return _i13.ProductPortion.t;
-      case _i15.StockMovement:
-        return _i15.StockMovement.t;
-      case _i17.Transaction:
-        return _i17.Transaction.t;
-      case _i18.TransactionItem:
-        return _i18.TransactionItem.t;
+      case _ihzw26wp.User:
+        return _ihzw26wp.User.t;
+      case _i4ros8ig.CartItem:
+        return _i4ros8ig.CartItem.t;
+      case _ictnbmx0.Product:
+        return _ictnbmx0.Product.t;
+      case _ioy1aw0v.ProductCategory:
+        return _ioy1aw0v.ProductCategory.t;
+      case _ip205i9w.ProductPortion:
+        return _ip205i9w.ProductPortion.t;
+      case _iq6rmlux.StockMovement:
+        return _iq6rmlux.StockMovement.t;
+      case _iqhl4hru.Transaction:
+        return _iqhl4hru.Transaction.t;
+      case _i37amypa.TransactionItem:
+        return _i37amypa.TransactionItem.t;
     }
     return null;
   }
 
   @override
-  List<_i2.TableDefinition> getTargetTableDefinitions() =>
+  List<_isp.TableDefinition> getTargetTableDefinitions() =>
       targetTableDefinitions;
 
   @override
@@ -1324,10 +1244,10 @@ class Protocol extends _i1.SerializationManagerServer {
       return null;
     }
     try {
-      return _i3.Protocol().mapRecordToJson(record);
+      return _iais.Protocol().mapRecordToJson(record);
     } catch (_) {}
     try {
-      return _i4.Protocol().mapRecordToJson(record);
+      return _iacs.Protocol().mapRecordToJson(record);
     } catch (_) {}
     throw Exception('Unsupported record type ${record.runtimeType}');
   }

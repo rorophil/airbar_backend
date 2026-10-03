@@ -295,8 +295,7 @@ class CashierEndpoint extends Endpoint {
     return await protocol.Transaction.db.find(
       session,
       where: (t) => t.sellerId.equals(sellerId),
-      orderBy: (t) => t.timestamp,
-      orderDescending: true,
+      orderBy: (t) => t.timestamp.desc(),
       limit: limit,
       offset: offset,
     );

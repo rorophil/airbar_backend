@@ -10,10 +10,10 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod/serverpod.dart' as _i1;
+import 'package:serverpod/serverpod.dart' as _is;
 
 abstract class ProductCategory
-    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
+    implements _is.TableRow<int?>, _is.ProtocolSerialization {
   ProductCategory._({
     this.id,
     required this.name,
@@ -44,11 +44,13 @@ abstract class ProductCategory
       description: jsonSerialization['description'] as String?,
       iconName: jsonSerialization['iconName'] as String?,
       displayOrder: jsonSerialization['displayOrder'] as int?,
-      isActive: jsonSerialization['isActive'] as bool?,
-      createdAt: _i1.DateTimeJsonExtension.fromJson(
+      isActive: jsonSerialization['isActive'] == null
+          ? null
+          : _is.BoolJsonExtension.fromJson(jsonSerialization['isActive']),
+      createdAt: _is.DateTimeJsonExtension.fromJson(
         jsonSerialization['createdAt'],
       ),
-      updatedAt: _i1.DateTimeJsonExtension.fromJson(
+      updatedAt: _is.DateTimeJsonExtension.fromJson(
         jsonSerialization['updatedAt'],
       ),
     );
@@ -76,11 +78,11 @@ abstract class ProductCategory
   DateTime updatedAt;
 
   @override
-  _i1.Table<int?> get table => t;
+  _is.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [ProductCategory]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_is.useResult
   ProductCategory copyWith({
     int? id,
     String? name,
@@ -126,12 +128,11 @@ abstract class ProductCategory
   }
 
   static ProductCategoryIncludeList includeList({
-    _i1.WhereExpressionBuilder<ProductCategoryTable>? where,
+    _is.WhereExpressionBuilder<ProductCategoryTable>? where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<ProductCategoryTable>? orderBy,
-    bool orderDescending = false,
-    _i1.OrderByListBuilder<ProductCategoryTable>? orderByList,
+    _is.OrderByBuilder<ProductCategoryTable>? orderBy,
+    _is.OrderByListBuilder<ProductCategoryTable>? orderByList,
     ProductCategoryInclude? include,
   }) {
     return ProductCategoryIncludeList._(
@@ -139,7 +140,6 @@ abstract class ProductCategory
       limit: limit,
       offset: offset,
       orderBy: orderBy?.call(ProductCategory.t),
-      orderDescending: orderDescending,
       orderByList: orderByList?.call(ProductCategory.t),
       include: include,
     );
@@ -147,7 +147,7 @@ abstract class ProductCategory
 
   @override
   String toString() {
-    return _i1.SerializationManager.encode(this);
+    return _is.SerializationManager.encode(this);
   }
 }
 
@@ -176,7 +176,7 @@ class _ProductCategoryImpl extends ProductCategory {
 
   /// Returns a shallow copy of this [ProductCategory]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_is.useResult
   @override
   ProductCategory copyWith({
     Object? id = _Undefined,
@@ -201,78 +201,78 @@ class _ProductCategoryImpl extends ProductCategory {
   }
 }
 
-class ProductCategoryUpdateTable extends _i1.UpdateTable<ProductCategoryTable> {
+class ProductCategoryUpdateTable extends _is.UpdateTable<ProductCategoryTable> {
   ProductCategoryUpdateTable(super.table);
 
-  _i1.ColumnValue<String, String> name(String value) => _i1.ColumnValue(
+  _is.ColumnValue<String, String> name(String value) => _is.ColumnValue(
     table.name,
     value,
   );
 
-  _i1.ColumnValue<String, String> description(String? value) => _i1.ColumnValue(
+  _is.ColumnValue<String, String> description(String? value) => _is.ColumnValue(
     table.description,
     value,
   );
 
-  _i1.ColumnValue<String, String> iconName(String? value) => _i1.ColumnValue(
+  _is.ColumnValue<String, String> iconName(String? value) => _is.ColumnValue(
     table.iconName,
     value,
   );
 
-  _i1.ColumnValue<int, int> displayOrder(int value) => _i1.ColumnValue(
+  _is.ColumnValue<int, int> displayOrder(int value) => _is.ColumnValue(
     table.displayOrder,
     value,
   );
 
-  _i1.ColumnValue<bool, bool> isActive(bool value) => _i1.ColumnValue(
+  _is.ColumnValue<bool, bool> isActive(bool value) => _is.ColumnValue(
     table.isActive,
     value,
   );
 
-  _i1.ColumnValue<DateTime, DateTime> createdAt(DateTime value) =>
-      _i1.ColumnValue(
+  _is.ColumnValue<DateTime, DateTime> createdAt(DateTime value) =>
+      _is.ColumnValue(
         table.createdAt,
         value,
       );
 
-  _i1.ColumnValue<DateTime, DateTime> updatedAt(DateTime value) =>
-      _i1.ColumnValue(
+  _is.ColumnValue<DateTime, DateTime> updatedAt(DateTime value) =>
+      _is.ColumnValue(
         table.updatedAt,
         value,
       );
 }
 
-class ProductCategoryTable extends _i1.Table<int?> {
+class ProductCategoryTable extends _is.Table<int?> {
   ProductCategoryTable({super.tableRelation})
     : super(tableName: 'product_categories') {
     updateTable = ProductCategoryUpdateTable(this);
-    name = _i1.ColumnString(
+    name = _is.ColumnString(
       'name',
       this,
     );
-    description = _i1.ColumnString(
+    description = _is.ColumnString(
       'description',
       this,
     );
-    iconName = _i1.ColumnString(
+    iconName = _is.ColumnString(
       'iconName',
       this,
     );
-    displayOrder = _i1.ColumnInt(
+    displayOrder = _is.ColumnInt(
       'displayOrder',
       this,
       hasDefault: true,
     );
-    isActive = _i1.ColumnBool(
+    isActive = _is.ColumnBool(
       'isActive',
       this,
       hasDefault: true,
     );
-    createdAt = _i1.ColumnDateTime(
+    createdAt = _is.ColumnDateTime(
       'createdAt',
       this,
     );
-    updatedAt = _i1.ColumnDateTime(
+    updatedAt = _is.ColumnDateTime(
       'updatedAt',
       this,
     );
@@ -280,22 +280,22 @@ class ProductCategoryTable extends _i1.Table<int?> {
 
   late final ProductCategoryUpdateTable updateTable;
 
-  late final _i1.ColumnString name;
+  late final _is.ColumnString name;
 
-  late final _i1.ColumnString description;
+  late final _is.ColumnString description;
 
-  late final _i1.ColumnString iconName;
+  late final _is.ColumnString iconName;
 
-  late final _i1.ColumnInt displayOrder;
+  late final _is.ColumnInt displayOrder;
 
-  late final _i1.ColumnBool isActive;
+  late final _is.ColumnBool isActive;
 
-  late final _i1.ColumnDateTime createdAt;
+  late final _is.ColumnDateTime createdAt;
 
-  late final _i1.ColumnDateTime updatedAt;
+  late final _is.ColumnDateTime updatedAt;
 
   @override
-  List<_i1.Column> get columns => [
+  List<_is.Column> get columns => [
     id,
     name,
     description,
@@ -307,23 +307,22 @@ class ProductCategoryTable extends _i1.Table<int?> {
   ];
 }
 
-class ProductCategoryInclude extends _i1.IncludeObject {
+class ProductCategoryInclude extends _is.IncludeObject {
   ProductCategoryInclude._();
 
   @override
-  Map<String, _i1.Include?> get includes => {};
+  Map<String, _is.Include?> get includes => {};
 
   @override
-  _i1.Table<int?> get table => ProductCategory.t;
+  _is.Table<int?> get table => ProductCategory.t;
 }
 
-class ProductCategoryIncludeList extends _i1.IncludeList {
+class ProductCategoryIncludeList extends _is.IncludeList {
   ProductCategoryIncludeList._({
-    _i1.WhereExpressionBuilder<ProductCategoryTable>? where,
+    _is.WhereExpressionBuilder<ProductCategoryTable>? where,
     super.limit,
     super.offset,
     super.orderBy,
-    super.orderDescending,
     super.orderByList,
     super.include,
   }) {
@@ -331,10 +330,10 @@ class ProductCategoryIncludeList extends _i1.IncludeList {
   }
 
   @override
-  Map<String, _i1.Include?> get includes => include?.includes ?? {};
+  Map<String, _is.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int?> get table => ProductCategory.t;
+  _is.Table<int?> get table => ProductCategory.t;
 }
 
 class ProductCategoryRepository {
@@ -363,23 +362,25 @@ class ProductCategoryRepository {
   /// );
   /// ```
   Future<List<ProductCategory>> find(
-    _i1.Session session, {
-    _i1.WhereExpressionBuilder<ProductCategoryTable>? where,
+    _is.DatabaseSession session, {
+    _is.WhereExpressionBuilder<ProductCategoryTable>? where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<ProductCategoryTable>? orderBy,
-    bool orderDescending = false,
-    _i1.OrderByListBuilder<ProductCategoryTable>? orderByList,
-    _i1.Transaction? transaction,
+    _is.OrderByBuilder<ProductCategoryTable>? orderBy,
+    _is.OrderByListBuilder<ProductCategoryTable>? orderByList,
+    _is.Transaction? transaction,
+    _is.LockMode? lockMode,
+    _is.LockBehavior? lockBehavior,
   }) async {
     return session.db.find<ProductCategory>(
       where: where?.call(ProductCategory.t),
       orderBy: orderBy?.call(ProductCategory.t),
       orderByList: orderByList?.call(ProductCategory.t),
-      orderDescending: orderDescending,
       limit: limit,
       offset: offset,
       transaction: transaction,
+      lockMode: lockMode,
+      lockBehavior: lockBehavior,
     );
   }
 
@@ -401,33 +402,39 @@ class ProductCategoryRepository {
   /// );
   /// ```
   Future<ProductCategory?> findFirstRow(
-    _i1.Session session, {
-    _i1.WhereExpressionBuilder<ProductCategoryTable>? where,
+    _is.DatabaseSession session, {
+    _is.WhereExpressionBuilder<ProductCategoryTable>? where,
     int? offset,
-    _i1.OrderByBuilder<ProductCategoryTable>? orderBy,
-    bool orderDescending = false,
-    _i1.OrderByListBuilder<ProductCategoryTable>? orderByList,
-    _i1.Transaction? transaction,
+    _is.OrderByBuilder<ProductCategoryTable>? orderBy,
+    _is.OrderByListBuilder<ProductCategoryTable>? orderByList,
+    _is.Transaction? transaction,
+    _is.LockMode? lockMode,
+    _is.LockBehavior? lockBehavior,
   }) async {
     return session.db.findFirstRow<ProductCategory>(
       where: where?.call(ProductCategory.t),
       orderBy: orderBy?.call(ProductCategory.t),
       orderByList: orderByList?.call(ProductCategory.t),
-      orderDescending: orderDescending,
       offset: offset,
       transaction: transaction,
+      lockMode: lockMode,
+      lockBehavior: lockBehavior,
     );
   }
 
   /// Finds a single [ProductCategory] by its [id] or null if no such row exists.
   Future<ProductCategory?> findById(
-    _i1.Session session,
+    _is.DatabaseSession session,
     int id, {
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
+    _is.LockMode? lockMode,
+    _is.LockBehavior? lockBehavior,
   }) async {
     return session.db.findById<ProductCategory>(
       id,
       transaction: transaction,
+      lockMode: lockMode,
+      lockBehavior: lockBehavior,
     );
   }
 
@@ -437,14 +444,26 @@ class ProductCategoryRepository {
   ///
   /// This is an atomic operation, meaning that if one of the rows fails to
   /// insert, none of the rows will be inserted.
+  ///
+  /// If [ignoreConflicts] is set to `true`, rows that conflict with existing
+  /// rows are silently skipped, and only the successfully inserted rows are
+  /// returned.
+  ///
+  /// If [noReturn] is set to `true`, the inserted rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
   Future<List<ProductCategory>> insert(
-    _i1.Session session,
+    _is.DatabaseSession session,
     List<ProductCategory> rows, {
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
+    bool ignoreConflicts = false,
+    bool noReturn = false,
   }) async {
     return session.db.insert<ProductCategory>(
       rows,
       transaction: transaction,
+      ignoreConflicts: ignoreConflicts,
+      noReturn: noReturn,
     );
   }
 
@@ -452,12 +471,81 @@ class ProductCategoryRepository {
   ///
   /// The returned [ProductCategory] will have its `id` field set.
   Future<ProductCategory> insertRow(
-    _i1.Session session,
+    _is.DatabaseSession session,
     ProductCategory row, {
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
   }) async {
     return session.db.insertRow<ProductCategory>(
       row,
+      transaction: transaction,
+    );
+  }
+
+  /// Upserts all [ProductCategory]s in the list and returns the resulting rows.
+  ///
+  /// If a row conflicts on the given [conflictColumns], the existing row is
+  /// updated with the new values. Otherwise, a new row is inserted.
+  ///
+  /// If [updateColumns] is provided, only those columns will be updated on
+  /// conflict. If null, all non-conflict, non-id columns are updated.
+  ///
+  /// If [updateWhere] is provided, the update only applies to rows matching the
+  /// given expression. Conflicting rows that don't match are skipped and not
+  /// returned, so the resulting list may be shorter than [rows].
+  ///
+  /// The returned [ProductCategory]s will have their `id` fields set.
+  ///
+  /// This is an atomic operation, meaning that if one of the rows fails,
+  /// none of the rows will be affected.
+  ///
+  /// If [noReturn] is set to `true`, the resulting rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
+  Future<List<ProductCategory>> upsert(
+    _is.DatabaseSession session,
+    List<ProductCategory> rows, {
+    required _is.ColumnSelections<ProductCategoryTable> conflictColumns,
+    _is.ColumnSelections<ProductCategoryTable>? updateColumns,
+    _is.WhereExpressionBuilder<ProductCategoryTable>? updateWhere,
+    _is.Transaction? transaction,
+    bool noReturn = false,
+  }) async {
+    return session.db.upsert<ProductCategory>(
+      rows,
+      conflictColumns: conflictColumns(ProductCategory.t),
+      updateColumns: updateColumns?.call(ProductCategory.t),
+      updateWhere: updateWhere?.call(ProductCategory.t),
+      transaction: transaction,
+      noReturn: noReturn,
+    );
+  }
+
+  /// Upserts a single [ProductCategory] and returns the resulting row.
+  ///
+  /// If the row conflicts on the given [conflictColumns], the existing row is
+  /// updated. Otherwise, a new row is inserted.
+  ///
+  /// If [updateColumns] is provided, only those columns will be updated on
+  /// conflict. If null, all non-conflict, non-id columns are updated.
+  ///
+  /// If [updateWhere] is provided, the update only applies when the existing
+  /// row matches the expression. Returns `null` if no row was affected — for
+  /// example when [updateWhere] does not match the conflicting row.
+  ///
+  /// The returned [ProductCategory] will have its `id` field set.
+  Future<ProductCategory?> upsertRow(
+    _is.DatabaseSession session,
+    ProductCategory row, {
+    required _is.ColumnSelections<ProductCategoryTable> conflictColumns,
+    _is.ColumnSelections<ProductCategoryTable>? updateColumns,
+    _is.WhereExpressionBuilder<ProductCategoryTable>? updateWhere,
+    _is.Transaction? transaction,
+  }) async {
+    return session.db.upsertRow<ProductCategory>(
+      row,
+      conflictColumns: conflictColumns(ProductCategory.t),
+      updateColumns: updateColumns?.call(ProductCategory.t),
+      updateWhere: updateWhere?.call(ProductCategory.t),
       transaction: transaction,
     );
   }
@@ -467,16 +555,22 @@ class ProductCategoryRepository {
   /// all columns.
   /// This is an atomic operation, meaning that if one of the rows fails to
   /// update, none of the rows will be updated.
+  ///
+  /// If [noReturn] is set to `true`, the updated rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
   Future<List<ProductCategory>> update(
-    _i1.Session session,
+    _is.DatabaseSession session,
     List<ProductCategory> rows, {
-    _i1.ColumnSelections<ProductCategoryTable>? columns,
-    _i1.Transaction? transaction,
+    _is.ColumnSelections<ProductCategoryTable>? columns,
+    _is.Transaction? transaction,
+    bool noReturn = false,
   }) async {
     return session.db.update<ProductCategory>(
       rows,
       columns: columns?.call(ProductCategory.t),
       transaction: transaction,
+      noReturn: noReturn,
     );
   }
 
@@ -484,10 +578,10 @@ class ProductCategoryRepository {
   /// Optionally, a list of [columns] can be provided to only update those
   /// columns. Defaults to all columns.
   Future<ProductCategory> updateRow(
-    _i1.Session session,
+    _is.DatabaseSession session,
     ProductCategory row, {
-    _i1.ColumnSelections<ProductCategoryTable>? columns,
-    _i1.Transaction? transaction,
+    _is.ColumnSelections<ProductCategoryTable>? columns,
+    _is.Transaction? transaction,
   }) async {
     return session.db.updateRow<ProductCategory>(
       row,
@@ -499,11 +593,11 @@ class ProductCategoryRepository {
   /// Updates a single [ProductCategory] by its [id] with the specified [columnValues].
   /// Returns the updated row or null if no row with the given id exists.
   Future<ProductCategory?> updateById(
-    _i1.Session session,
+    _is.DatabaseSession session,
     int id, {
-    required _i1.ColumnValueListBuilder<ProductCategoryUpdateTable>
+    required _is.ColumnValueListBuilder<ProductCategoryUpdateTable>
     columnValues,
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
   }) async {
     return session.db.updateById<ProductCategory>(
       id,
@@ -514,17 +608,21 @@ class ProductCategoryRepository {
 
   /// Updates all [ProductCategory]s matching the [where] expression with the specified [columnValues].
   /// Returns the list of updated rows.
+  ///
+  /// If [noReturn] is set to `true`, the updated rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
   Future<List<ProductCategory>> updateWhere(
-    _i1.Session session, {
-    required _i1.ColumnValueListBuilder<ProductCategoryUpdateTable>
+    _is.DatabaseSession session, {
+    required _is.ColumnValueListBuilder<ProductCategoryUpdateTable>
     columnValues,
-    required _i1.WhereExpressionBuilder<ProductCategoryTable> where,
+    required _is.WhereExpressionBuilder<ProductCategoryTable> where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<ProductCategoryTable>? orderBy,
-    _i1.OrderByListBuilder<ProductCategoryTable>? orderByList,
-    bool orderDescending = false,
-    _i1.Transaction? transaction,
+    _is.OrderByBuilder<ProductCategoryTable>? orderBy,
+    _is.OrderByListBuilder<ProductCategoryTable>? orderByList,
+    _is.Transaction? transaction,
+    bool noReturn = false,
   }) async {
     return session.db.updateWhere<ProductCategory>(
       columnValues: columnValues(ProductCategory.t.updateTable),
@@ -533,30 +631,44 @@ class ProductCategoryRepository {
       offset: offset,
       orderBy: orderBy?.call(ProductCategory.t),
       orderByList: orderByList?.call(ProductCategory.t),
-      orderDescending: orderDescending,
       transaction: transaction,
+      noReturn: noReturn,
     );
   }
 
   /// Deletes all [ProductCategory]s in the list and returns the deleted rows.
+  ///
+  /// To specify the order of the returned rows use [orderBy] or [orderByList]
+  /// when sorting by multiple columns.
+  ///
   /// This is an atomic operation, meaning that if one of the rows fail to
   /// be deleted, none of the rows will be deleted.
+  ///
+  /// If [noReturn] is set to `true`, the deleted rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
   Future<List<ProductCategory>> delete(
-    _i1.Session session,
+    _is.DatabaseSession session,
     List<ProductCategory> rows, {
-    _i1.Transaction? transaction,
+    _is.OrderByBuilder<ProductCategoryTable>? orderBy,
+    _is.OrderByListBuilder<ProductCategoryTable>? orderByList,
+    _is.Transaction? transaction,
+    bool noReturn = false,
   }) async {
     return session.db.delete<ProductCategory>(
       rows,
+      orderBy: orderBy?.call(ProductCategory.t),
+      orderByList: orderByList?.call(ProductCategory.t),
       transaction: transaction,
+      noReturn: noReturn,
     );
   }
 
   /// Deletes a single [ProductCategory].
   Future<ProductCategory> deleteRow(
-    _i1.Session session,
+    _is.DatabaseSession session,
     ProductCategory row, {
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
   }) async {
     return session.db.deleteRow<ProductCategory>(
       row,
@@ -565,28 +677,57 @@ class ProductCategoryRepository {
   }
 
   /// Deletes all rows matching the [where] expression.
+  ///
+  /// To specify the order of the returned rows use [orderBy] or [orderByList]
+  /// when sorting by multiple columns.
+  ///
+  /// If [noReturn] is set to `true`, the deleted rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
   Future<List<ProductCategory>> deleteWhere(
-    _i1.Session session, {
-    required _i1.WhereExpressionBuilder<ProductCategoryTable> where,
-    _i1.Transaction? transaction,
+    _is.DatabaseSession session, {
+    required _is.WhereExpressionBuilder<ProductCategoryTable> where,
+    _is.OrderByBuilder<ProductCategoryTable>? orderBy,
+    _is.OrderByListBuilder<ProductCategoryTable>? orderByList,
+    _is.Transaction? transaction,
+    bool noReturn = false,
   }) async {
     return session.db.deleteWhere<ProductCategory>(
       where: where(ProductCategory.t),
+      orderBy: orderBy?.call(ProductCategory.t),
+      orderByList: orderByList?.call(ProductCategory.t),
       transaction: transaction,
+      noReturn: noReturn,
     );
   }
 
   /// Counts the number of rows matching the [where] expression. If omitted,
   /// will return the count of all rows in the table.
   Future<int> count(
-    _i1.Session session, {
-    _i1.WhereExpressionBuilder<ProductCategoryTable>? where,
+    _is.DatabaseSession session, {
+    _is.WhereExpressionBuilder<ProductCategoryTable>? where,
     int? limit,
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
   }) async {
     return session.db.count<ProductCategory>(
       where: where?.call(ProductCategory.t),
       limit: limit,
+      transaction: transaction,
+    );
+  }
+
+  /// Acquires row-level locks on [ProductCategory] rows matching the [where] expression.
+  Future<void> lockRows(
+    _is.DatabaseSession session, {
+    required _is.WhereExpressionBuilder<ProductCategoryTable> where,
+    required _is.LockMode lockMode,
+    required _is.Transaction transaction,
+    _is.LockBehavior lockBehavior = _is.LockBehavior.wait,
+  }) async {
+    return session.db.lockRows<ProductCategory>(
+      where: where(ProductCategory.t),
+      lockMode: lockMode,
+      lockBehavior: lockBehavior,
       transaction: transaction,
     );
   }

@@ -10,11 +10,12 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../transactions/transaction_type.dart' as _i2;
-import '../transactions/payment_method.dart' as _i3;
+import 'package:serverpod_client/serverpod_client.dart' as _isc;
+import '../transactions/payment_method.dart' as _i4oqxmai;
+import '../transactions/transaction_type.dart' as _igem0ql0;
 
-abstract class Transaction implements _i1.SerializableModel {
+abstract class Transaction
+    implements _isc.SerializableModel, _isc.ProtocolSerialization {
   Transaction._({
     this.id,
     this.userId,
@@ -31,13 +32,13 @@ abstract class Transaction implements _i1.SerializableModel {
   factory Transaction({
     int? id,
     int? userId,
-    required _i2.TransactionType type,
+    required _igem0ql0.TransactionType type,
     required double totalAmount,
     required DateTime timestamp,
     String? notes,
     int? refundedTransactionId,
     int? sellerId,
-    _i3.PaymentMethod? paymentMethod,
+    _i4oqxmai.PaymentMethod? paymentMethod,
     double? balanceAfter,
   }) = _TransactionImpl;
 
@@ -45,9 +46,11 @@ abstract class Transaction implements _i1.SerializableModel {
     return Transaction(
       id: jsonSerialization['id'] as int?,
       userId: jsonSerialization['userId'] as int?,
-      type: _i2.TransactionType.fromJson((jsonSerialization['type'] as String)),
+      type: _igem0ql0.TransactionType.fromJson(
+        (jsonSerialization['type'] as String),
+      ),
       totalAmount: (jsonSerialization['totalAmount'] as num).toDouble(),
-      timestamp: _i1.DateTimeJsonExtension.fromJson(
+      timestamp: _isc.DateTimeJsonExtension.fromJson(
         jsonSerialization['timestamp'],
       ),
       notes: jsonSerialization['notes'] as String?,
@@ -55,7 +58,7 @@ abstract class Transaction implements _i1.SerializableModel {
       sellerId: jsonSerialization['sellerId'] as int?,
       paymentMethod: jsonSerialization['paymentMethod'] == null
           ? null
-          : _i3.PaymentMethod.fromJson(
+          : _i4oqxmai.PaymentMethod.fromJson(
               (jsonSerialization['paymentMethod'] as String),
             ),
       balanceAfter: (jsonSerialization['balanceAfter'] as num?)?.toDouble(),
@@ -69,7 +72,7 @@ abstract class Transaction implements _i1.SerializableModel {
 
   int? userId;
 
-  _i2.TransactionType type;
+  _igem0ql0.TransactionType type;
 
   double totalAmount;
 
@@ -81,23 +84,23 @@ abstract class Transaction implements _i1.SerializableModel {
 
   int? sellerId;
 
-  _i3.PaymentMethod? paymentMethod;
+  _i4oqxmai.PaymentMethod? paymentMethod;
 
   double? balanceAfter;
 
   /// Returns a shallow copy of this [Transaction]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_isc.useResult
   Transaction copyWith({
     int? id,
     int? userId,
-    _i2.TransactionType? type,
+    _igem0ql0.TransactionType? type,
     double? totalAmount,
     DateTime? timestamp,
     String? notes,
     int? refundedTransactionId,
     int? sellerId,
-    _i3.PaymentMethod? paymentMethod,
+    _i4oqxmai.PaymentMethod? paymentMethod,
     double? balanceAfter,
   });
   @override
@@ -119,8 +122,26 @@ abstract class Transaction implements _i1.SerializableModel {
   }
 
   @override
+  Map<String, dynamic> toJsonForProtocol() {
+    return {
+      '__className__': 'Transaction',
+      if (id != null) 'id': id,
+      if (userId != null) 'userId': userId,
+      'type': type.toJson(),
+      'totalAmount': totalAmount,
+      'timestamp': timestamp.toJson(),
+      if (notes != null) 'notes': notes,
+      if (refundedTransactionId != null)
+        'refundedTransactionId': refundedTransactionId,
+      if (sellerId != null) 'sellerId': sellerId,
+      if (paymentMethod != null) 'paymentMethod': paymentMethod?.toJson(),
+      if (balanceAfter != null) 'balanceAfter': balanceAfter,
+    };
+  }
+
+  @override
   String toString() {
-    return _i1.SerializationManager.encode(this);
+    return _isc.SerializationManager.encode(this);
   }
 }
 
@@ -130,13 +151,13 @@ class _TransactionImpl extends Transaction {
   _TransactionImpl({
     int? id,
     int? userId,
-    required _i2.TransactionType type,
+    required _igem0ql0.TransactionType type,
     required double totalAmount,
     required DateTime timestamp,
     String? notes,
     int? refundedTransactionId,
     int? sellerId,
-    _i3.PaymentMethod? paymentMethod,
+    _i4oqxmai.PaymentMethod? paymentMethod,
     double? balanceAfter,
   }) : super._(
          id: id,
@@ -153,12 +174,12 @@ class _TransactionImpl extends Transaction {
 
   /// Returns a shallow copy of this [Transaction]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_isc.useResult
   @override
   Transaction copyWith({
     Object? id = _Undefined,
     Object? userId = _Undefined,
-    _i2.TransactionType? type,
+    _igem0ql0.TransactionType? type,
     double? totalAmount,
     DateTime? timestamp,
     Object? notes = _Undefined,
@@ -178,7 +199,7 @@ class _TransactionImpl extends Transaction {
           ? refundedTransactionId
           : this.refundedTransactionId,
       sellerId: sellerId is int? ? sellerId : this.sellerId,
-      paymentMethod: paymentMethod is _i3.PaymentMethod?
+      paymentMethod: paymentMethod is _i4oqxmai.PaymentMethod?
           ? paymentMethod
           : this.paymentMethod,
       balanceAfter: balanceAfter is double? ? balanceAfter : this.balanceAfter,

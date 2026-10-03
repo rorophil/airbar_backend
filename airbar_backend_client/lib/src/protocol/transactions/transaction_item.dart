@@ -10,9 +10,10 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod_client/serverpod_client.dart' as _i1;
+import 'package:serverpod_client/serverpod_client.dart' as _isc;
 
-abstract class TransactionItem implements _i1.SerializableModel {
+abstract class TransactionItem
+    implements _isc.SerializableModel, _isc.ProtocolSerialization {
   TransactionItem._({
     this.id,
     required this.transactionId,
@@ -69,7 +70,7 @@ abstract class TransactionItem implements _i1.SerializableModel {
 
   /// Returns a shallow copy of this [TransactionItem]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_isc.useResult
   TransactionItem copyWith({
     int? id,
     int? transactionId,
@@ -96,8 +97,23 @@ abstract class TransactionItem implements _i1.SerializableModel {
   }
 
   @override
+  Map<String, dynamic> toJsonForProtocol() {
+    return {
+      '__className__': 'TransactionItem',
+      if (id != null) 'id': id,
+      'transactionId': transactionId,
+      'productId': productId,
+      'productName': productName,
+      'quantity': quantity,
+      'unitPrice': unitPrice,
+      'subtotal': subtotal,
+      if (stockDeduction != null) 'stockDeduction': stockDeduction,
+    };
+  }
+
+  @override
   String toString() {
-    return _i1.SerializationManager.encode(this);
+    return _isc.SerializationManager.encode(this);
   }
 }
 
@@ -126,7 +142,7 @@ class _TransactionItemImpl extends TransactionItem {
 
   /// Returns a shallow copy of this [TransactionItem]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_isc.useResult
   @override
   TransactionItem copyWith({
     Object? id = _Undefined,

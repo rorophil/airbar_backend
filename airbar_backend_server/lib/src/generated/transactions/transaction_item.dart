@@ -10,10 +10,10 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod/serverpod.dart' as _i1;
+import 'package:serverpod/serverpod.dart' as _is;
 
 abstract class TransactionItem
-    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
+    implements _is.TableRow<int?>, _is.ProtocolSerialization {
   TransactionItem._({
     this.id,
     required this.transactionId,
@@ -71,11 +71,11 @@ abstract class TransactionItem
   double? stockDeduction;
 
   @override
-  _i1.Table<int?> get table => t;
+  _is.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [TransactionItem]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_is.useResult
   TransactionItem copyWith({
     int? id,
     int? transactionId,
@@ -121,12 +121,11 @@ abstract class TransactionItem
   }
 
   static TransactionItemIncludeList includeList({
-    _i1.WhereExpressionBuilder<TransactionItemTable>? where,
+    _is.WhereExpressionBuilder<TransactionItemTable>? where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<TransactionItemTable>? orderBy,
-    bool orderDescending = false,
-    _i1.OrderByListBuilder<TransactionItemTable>? orderByList,
+    _is.OrderByBuilder<TransactionItemTable>? orderBy,
+    _is.OrderByListBuilder<TransactionItemTable>? orderByList,
     TransactionItemInclude? include,
   }) {
     return TransactionItemIncludeList._(
@@ -134,7 +133,6 @@ abstract class TransactionItem
       limit: limit,
       offset: offset,
       orderBy: orderBy?.call(TransactionItem.t),
-      orderDescending: orderDescending,
       orderByList: orderByList?.call(TransactionItem.t),
       include: include,
     );
@@ -142,7 +140,7 @@ abstract class TransactionItem
 
   @override
   String toString() {
-    return _i1.SerializationManager.encode(this);
+    return _is.SerializationManager.encode(this);
   }
 }
 
@@ -171,7 +169,7 @@ class _TransactionItemImpl extends TransactionItem {
 
   /// Returns a shallow copy of this [TransactionItem]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_is.useResult
   @override
   TransactionItem copyWith({
     Object? id = _Undefined,
@@ -198,75 +196,75 @@ class _TransactionItemImpl extends TransactionItem {
   }
 }
 
-class TransactionItemUpdateTable extends _i1.UpdateTable<TransactionItemTable> {
+class TransactionItemUpdateTable extends _is.UpdateTable<TransactionItemTable> {
   TransactionItemUpdateTable(super.table);
 
-  _i1.ColumnValue<int, int> transactionId(int value) => _i1.ColumnValue(
+  _is.ColumnValue<int, int> transactionId(int value) => _is.ColumnValue(
     table.transactionId,
     value,
   );
 
-  _i1.ColumnValue<int, int> productId(int value) => _i1.ColumnValue(
+  _is.ColumnValue<int, int> productId(int value) => _is.ColumnValue(
     table.productId,
     value,
   );
 
-  _i1.ColumnValue<String, String> productName(String value) => _i1.ColumnValue(
+  _is.ColumnValue<String, String> productName(String value) => _is.ColumnValue(
     table.productName,
     value,
   );
 
-  _i1.ColumnValue<int, int> quantity(int value) => _i1.ColumnValue(
+  _is.ColumnValue<int, int> quantity(int value) => _is.ColumnValue(
     table.quantity,
     value,
   );
 
-  _i1.ColumnValue<double, double> unitPrice(double value) => _i1.ColumnValue(
+  _is.ColumnValue<double, double> unitPrice(double value) => _is.ColumnValue(
     table.unitPrice,
     value,
   );
 
-  _i1.ColumnValue<double, double> subtotal(double value) => _i1.ColumnValue(
+  _is.ColumnValue<double, double> subtotal(double value) => _is.ColumnValue(
     table.subtotal,
     value,
   );
 
-  _i1.ColumnValue<double, double> stockDeduction(double? value) =>
-      _i1.ColumnValue(
+  _is.ColumnValue<double, double> stockDeduction(double? value) =>
+      _is.ColumnValue(
         table.stockDeduction,
         value,
       );
 }
 
-class TransactionItemTable extends _i1.Table<int?> {
+class TransactionItemTable extends _is.Table<int?> {
   TransactionItemTable({super.tableRelation})
     : super(tableName: 'transaction_items') {
     updateTable = TransactionItemUpdateTable(this);
-    transactionId = _i1.ColumnInt(
+    transactionId = _is.ColumnInt(
       'transactionId',
       this,
     );
-    productId = _i1.ColumnInt(
+    productId = _is.ColumnInt(
       'productId',
       this,
     );
-    productName = _i1.ColumnString(
+    productName = _is.ColumnString(
       'productName',
       this,
     );
-    quantity = _i1.ColumnInt(
+    quantity = _is.ColumnInt(
       'quantity',
       this,
     );
-    unitPrice = _i1.ColumnDouble(
+    unitPrice = _is.ColumnDouble(
       'unitPrice',
       this,
     );
-    subtotal = _i1.ColumnDouble(
+    subtotal = _is.ColumnDouble(
       'subtotal',
       this,
     );
-    stockDeduction = _i1.ColumnDouble(
+    stockDeduction = _is.ColumnDouble(
       'stockDeduction',
       this,
       hasDefault: true,
@@ -275,22 +273,22 @@ class TransactionItemTable extends _i1.Table<int?> {
 
   late final TransactionItemUpdateTable updateTable;
 
-  late final _i1.ColumnInt transactionId;
+  late final _is.ColumnInt transactionId;
 
-  late final _i1.ColumnInt productId;
+  late final _is.ColumnInt productId;
 
-  late final _i1.ColumnString productName;
+  late final _is.ColumnString productName;
 
-  late final _i1.ColumnInt quantity;
+  late final _is.ColumnInt quantity;
 
-  late final _i1.ColumnDouble unitPrice;
+  late final _is.ColumnDouble unitPrice;
 
-  late final _i1.ColumnDouble subtotal;
+  late final _is.ColumnDouble subtotal;
 
-  late final _i1.ColumnDouble stockDeduction;
+  late final _is.ColumnDouble stockDeduction;
 
   @override
-  List<_i1.Column> get columns => [
+  List<_is.Column> get columns => [
     id,
     transactionId,
     productId,
@@ -302,23 +300,22 @@ class TransactionItemTable extends _i1.Table<int?> {
   ];
 }
 
-class TransactionItemInclude extends _i1.IncludeObject {
+class TransactionItemInclude extends _is.IncludeObject {
   TransactionItemInclude._();
 
   @override
-  Map<String, _i1.Include?> get includes => {};
+  Map<String, _is.Include?> get includes => {};
 
   @override
-  _i1.Table<int?> get table => TransactionItem.t;
+  _is.Table<int?> get table => TransactionItem.t;
 }
 
-class TransactionItemIncludeList extends _i1.IncludeList {
+class TransactionItemIncludeList extends _is.IncludeList {
   TransactionItemIncludeList._({
-    _i1.WhereExpressionBuilder<TransactionItemTable>? where,
+    _is.WhereExpressionBuilder<TransactionItemTable>? where,
     super.limit,
     super.offset,
     super.orderBy,
-    super.orderDescending,
     super.orderByList,
     super.include,
   }) {
@@ -326,10 +323,10 @@ class TransactionItemIncludeList extends _i1.IncludeList {
   }
 
   @override
-  Map<String, _i1.Include?> get includes => include?.includes ?? {};
+  Map<String, _is.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int?> get table => TransactionItem.t;
+  _is.Table<int?> get table => TransactionItem.t;
 }
 
 class TransactionItemRepository {
@@ -358,23 +355,25 @@ class TransactionItemRepository {
   /// );
   /// ```
   Future<List<TransactionItem>> find(
-    _i1.Session session, {
-    _i1.WhereExpressionBuilder<TransactionItemTable>? where,
+    _is.DatabaseSession session, {
+    _is.WhereExpressionBuilder<TransactionItemTable>? where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<TransactionItemTable>? orderBy,
-    bool orderDescending = false,
-    _i1.OrderByListBuilder<TransactionItemTable>? orderByList,
-    _i1.Transaction? transaction,
+    _is.OrderByBuilder<TransactionItemTable>? orderBy,
+    _is.OrderByListBuilder<TransactionItemTable>? orderByList,
+    _is.Transaction? transaction,
+    _is.LockMode? lockMode,
+    _is.LockBehavior? lockBehavior,
   }) async {
     return session.db.find<TransactionItem>(
       where: where?.call(TransactionItem.t),
       orderBy: orderBy?.call(TransactionItem.t),
       orderByList: orderByList?.call(TransactionItem.t),
-      orderDescending: orderDescending,
       limit: limit,
       offset: offset,
       transaction: transaction,
+      lockMode: lockMode,
+      lockBehavior: lockBehavior,
     );
   }
 
@@ -396,33 +395,39 @@ class TransactionItemRepository {
   /// );
   /// ```
   Future<TransactionItem?> findFirstRow(
-    _i1.Session session, {
-    _i1.WhereExpressionBuilder<TransactionItemTable>? where,
+    _is.DatabaseSession session, {
+    _is.WhereExpressionBuilder<TransactionItemTable>? where,
     int? offset,
-    _i1.OrderByBuilder<TransactionItemTable>? orderBy,
-    bool orderDescending = false,
-    _i1.OrderByListBuilder<TransactionItemTable>? orderByList,
-    _i1.Transaction? transaction,
+    _is.OrderByBuilder<TransactionItemTable>? orderBy,
+    _is.OrderByListBuilder<TransactionItemTable>? orderByList,
+    _is.Transaction? transaction,
+    _is.LockMode? lockMode,
+    _is.LockBehavior? lockBehavior,
   }) async {
     return session.db.findFirstRow<TransactionItem>(
       where: where?.call(TransactionItem.t),
       orderBy: orderBy?.call(TransactionItem.t),
       orderByList: orderByList?.call(TransactionItem.t),
-      orderDescending: orderDescending,
       offset: offset,
       transaction: transaction,
+      lockMode: lockMode,
+      lockBehavior: lockBehavior,
     );
   }
 
   /// Finds a single [TransactionItem] by its [id] or null if no such row exists.
   Future<TransactionItem?> findById(
-    _i1.Session session,
+    _is.DatabaseSession session,
     int id, {
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
+    _is.LockMode? lockMode,
+    _is.LockBehavior? lockBehavior,
   }) async {
     return session.db.findById<TransactionItem>(
       id,
       transaction: transaction,
+      lockMode: lockMode,
+      lockBehavior: lockBehavior,
     );
   }
 
@@ -432,14 +437,26 @@ class TransactionItemRepository {
   ///
   /// This is an atomic operation, meaning that if one of the rows fails to
   /// insert, none of the rows will be inserted.
+  ///
+  /// If [ignoreConflicts] is set to `true`, rows that conflict with existing
+  /// rows are silently skipped, and only the successfully inserted rows are
+  /// returned.
+  ///
+  /// If [noReturn] is set to `true`, the inserted rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
   Future<List<TransactionItem>> insert(
-    _i1.Session session,
+    _is.DatabaseSession session,
     List<TransactionItem> rows, {
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
+    bool ignoreConflicts = false,
+    bool noReturn = false,
   }) async {
     return session.db.insert<TransactionItem>(
       rows,
       transaction: transaction,
+      ignoreConflicts: ignoreConflicts,
+      noReturn: noReturn,
     );
   }
 
@@ -447,12 +464,81 @@ class TransactionItemRepository {
   ///
   /// The returned [TransactionItem] will have its `id` field set.
   Future<TransactionItem> insertRow(
-    _i1.Session session,
+    _is.DatabaseSession session,
     TransactionItem row, {
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
   }) async {
     return session.db.insertRow<TransactionItem>(
       row,
+      transaction: transaction,
+    );
+  }
+
+  /// Upserts all [TransactionItem]s in the list and returns the resulting rows.
+  ///
+  /// If a row conflicts on the given [conflictColumns], the existing row is
+  /// updated with the new values. Otherwise, a new row is inserted.
+  ///
+  /// If [updateColumns] is provided, only those columns will be updated on
+  /// conflict. If null, all non-conflict, non-id columns are updated.
+  ///
+  /// If [updateWhere] is provided, the update only applies to rows matching the
+  /// given expression. Conflicting rows that don't match are skipped and not
+  /// returned, so the resulting list may be shorter than [rows].
+  ///
+  /// The returned [TransactionItem]s will have their `id` fields set.
+  ///
+  /// This is an atomic operation, meaning that if one of the rows fails,
+  /// none of the rows will be affected.
+  ///
+  /// If [noReturn] is set to `true`, the resulting rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
+  Future<List<TransactionItem>> upsert(
+    _is.DatabaseSession session,
+    List<TransactionItem> rows, {
+    required _is.ColumnSelections<TransactionItemTable> conflictColumns,
+    _is.ColumnSelections<TransactionItemTable>? updateColumns,
+    _is.WhereExpressionBuilder<TransactionItemTable>? updateWhere,
+    _is.Transaction? transaction,
+    bool noReturn = false,
+  }) async {
+    return session.db.upsert<TransactionItem>(
+      rows,
+      conflictColumns: conflictColumns(TransactionItem.t),
+      updateColumns: updateColumns?.call(TransactionItem.t),
+      updateWhere: updateWhere?.call(TransactionItem.t),
+      transaction: transaction,
+      noReturn: noReturn,
+    );
+  }
+
+  /// Upserts a single [TransactionItem] and returns the resulting row.
+  ///
+  /// If the row conflicts on the given [conflictColumns], the existing row is
+  /// updated. Otherwise, a new row is inserted.
+  ///
+  /// If [updateColumns] is provided, only those columns will be updated on
+  /// conflict. If null, all non-conflict, non-id columns are updated.
+  ///
+  /// If [updateWhere] is provided, the update only applies when the existing
+  /// row matches the expression. Returns `null` if no row was affected — for
+  /// example when [updateWhere] does not match the conflicting row.
+  ///
+  /// The returned [TransactionItem] will have its `id` field set.
+  Future<TransactionItem?> upsertRow(
+    _is.DatabaseSession session,
+    TransactionItem row, {
+    required _is.ColumnSelections<TransactionItemTable> conflictColumns,
+    _is.ColumnSelections<TransactionItemTable>? updateColumns,
+    _is.WhereExpressionBuilder<TransactionItemTable>? updateWhere,
+    _is.Transaction? transaction,
+  }) async {
+    return session.db.upsertRow<TransactionItem>(
+      row,
+      conflictColumns: conflictColumns(TransactionItem.t),
+      updateColumns: updateColumns?.call(TransactionItem.t),
+      updateWhere: updateWhere?.call(TransactionItem.t),
       transaction: transaction,
     );
   }
@@ -462,16 +548,22 @@ class TransactionItemRepository {
   /// all columns.
   /// This is an atomic operation, meaning that if one of the rows fails to
   /// update, none of the rows will be updated.
+  ///
+  /// If [noReturn] is set to `true`, the updated rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
   Future<List<TransactionItem>> update(
-    _i1.Session session,
+    _is.DatabaseSession session,
     List<TransactionItem> rows, {
-    _i1.ColumnSelections<TransactionItemTable>? columns,
-    _i1.Transaction? transaction,
+    _is.ColumnSelections<TransactionItemTable>? columns,
+    _is.Transaction? transaction,
+    bool noReturn = false,
   }) async {
     return session.db.update<TransactionItem>(
       rows,
       columns: columns?.call(TransactionItem.t),
       transaction: transaction,
+      noReturn: noReturn,
     );
   }
 
@@ -479,10 +571,10 @@ class TransactionItemRepository {
   /// Optionally, a list of [columns] can be provided to only update those
   /// columns. Defaults to all columns.
   Future<TransactionItem> updateRow(
-    _i1.Session session,
+    _is.DatabaseSession session,
     TransactionItem row, {
-    _i1.ColumnSelections<TransactionItemTable>? columns,
-    _i1.Transaction? transaction,
+    _is.ColumnSelections<TransactionItemTable>? columns,
+    _is.Transaction? transaction,
   }) async {
     return session.db.updateRow<TransactionItem>(
       row,
@@ -494,11 +586,11 @@ class TransactionItemRepository {
   /// Updates a single [TransactionItem] by its [id] with the specified [columnValues].
   /// Returns the updated row or null if no row with the given id exists.
   Future<TransactionItem?> updateById(
-    _i1.Session session,
+    _is.DatabaseSession session,
     int id, {
-    required _i1.ColumnValueListBuilder<TransactionItemUpdateTable>
+    required _is.ColumnValueListBuilder<TransactionItemUpdateTable>
     columnValues,
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
   }) async {
     return session.db.updateById<TransactionItem>(
       id,
@@ -509,17 +601,21 @@ class TransactionItemRepository {
 
   /// Updates all [TransactionItem]s matching the [where] expression with the specified [columnValues].
   /// Returns the list of updated rows.
+  ///
+  /// If [noReturn] is set to `true`, the updated rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
   Future<List<TransactionItem>> updateWhere(
-    _i1.Session session, {
-    required _i1.ColumnValueListBuilder<TransactionItemUpdateTable>
+    _is.DatabaseSession session, {
+    required _is.ColumnValueListBuilder<TransactionItemUpdateTable>
     columnValues,
-    required _i1.WhereExpressionBuilder<TransactionItemTable> where,
+    required _is.WhereExpressionBuilder<TransactionItemTable> where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<TransactionItemTable>? orderBy,
-    _i1.OrderByListBuilder<TransactionItemTable>? orderByList,
-    bool orderDescending = false,
-    _i1.Transaction? transaction,
+    _is.OrderByBuilder<TransactionItemTable>? orderBy,
+    _is.OrderByListBuilder<TransactionItemTable>? orderByList,
+    _is.Transaction? transaction,
+    bool noReturn = false,
   }) async {
     return session.db.updateWhere<TransactionItem>(
       columnValues: columnValues(TransactionItem.t.updateTable),
@@ -528,30 +624,44 @@ class TransactionItemRepository {
       offset: offset,
       orderBy: orderBy?.call(TransactionItem.t),
       orderByList: orderByList?.call(TransactionItem.t),
-      orderDescending: orderDescending,
       transaction: transaction,
+      noReturn: noReturn,
     );
   }
 
   /// Deletes all [TransactionItem]s in the list and returns the deleted rows.
+  ///
+  /// To specify the order of the returned rows use [orderBy] or [orderByList]
+  /// when sorting by multiple columns.
+  ///
   /// This is an atomic operation, meaning that if one of the rows fail to
   /// be deleted, none of the rows will be deleted.
+  ///
+  /// If [noReturn] is set to `true`, the deleted rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
   Future<List<TransactionItem>> delete(
-    _i1.Session session,
+    _is.DatabaseSession session,
     List<TransactionItem> rows, {
-    _i1.Transaction? transaction,
+    _is.OrderByBuilder<TransactionItemTable>? orderBy,
+    _is.OrderByListBuilder<TransactionItemTable>? orderByList,
+    _is.Transaction? transaction,
+    bool noReturn = false,
   }) async {
     return session.db.delete<TransactionItem>(
       rows,
+      orderBy: orderBy?.call(TransactionItem.t),
+      orderByList: orderByList?.call(TransactionItem.t),
       transaction: transaction,
+      noReturn: noReturn,
     );
   }
 
   /// Deletes a single [TransactionItem].
   Future<TransactionItem> deleteRow(
-    _i1.Session session,
+    _is.DatabaseSession session,
     TransactionItem row, {
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
   }) async {
     return session.db.deleteRow<TransactionItem>(
       row,
@@ -560,28 +670,57 @@ class TransactionItemRepository {
   }
 
   /// Deletes all rows matching the [where] expression.
+  ///
+  /// To specify the order of the returned rows use [orderBy] or [orderByList]
+  /// when sorting by multiple columns.
+  ///
+  /// If [noReturn] is set to `true`, the deleted rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
   Future<List<TransactionItem>> deleteWhere(
-    _i1.Session session, {
-    required _i1.WhereExpressionBuilder<TransactionItemTable> where,
-    _i1.Transaction? transaction,
+    _is.DatabaseSession session, {
+    required _is.WhereExpressionBuilder<TransactionItemTable> where,
+    _is.OrderByBuilder<TransactionItemTable>? orderBy,
+    _is.OrderByListBuilder<TransactionItemTable>? orderByList,
+    _is.Transaction? transaction,
+    bool noReturn = false,
   }) async {
     return session.db.deleteWhere<TransactionItem>(
       where: where(TransactionItem.t),
+      orderBy: orderBy?.call(TransactionItem.t),
+      orderByList: orderByList?.call(TransactionItem.t),
       transaction: transaction,
+      noReturn: noReturn,
     );
   }
 
   /// Counts the number of rows matching the [where] expression. If omitted,
   /// will return the count of all rows in the table.
   Future<int> count(
-    _i1.Session session, {
-    _i1.WhereExpressionBuilder<TransactionItemTable>? where,
+    _is.DatabaseSession session, {
+    _is.WhereExpressionBuilder<TransactionItemTable>? where,
     int? limit,
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
   }) async {
     return session.db.count<TransactionItem>(
       where: where?.call(TransactionItem.t),
       limit: limit,
+      transaction: transaction,
+    );
+  }
+
+  /// Acquires row-level locks on [TransactionItem] rows matching the [where] expression.
+  Future<void> lockRows(
+    _is.DatabaseSession session, {
+    required _is.WhereExpressionBuilder<TransactionItemTable> where,
+    required _is.LockMode lockMode,
+    required _is.Transaction transaction,
+    _is.LockBehavior lockBehavior = _is.LockBehavior.wait,
+  }) async {
+    return session.db.lockRows<TransactionItem>(
+      where: where(TransactionItem.t),
+      lockMode: lockMode,
+      lockBehavior: lockBehavior,
       transaction: transaction,
     );
   }

@@ -10,10 +10,11 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../auth/user_role.dart' as _i2;
+import 'package:serverpod_client/serverpod_client.dart' as _isc;
+import '../auth/user_role.dart' as _ip8qv1h2;
 
-abstract class User implements _i1.SerializableModel {
+abstract class User
+    implements _isc.SerializableModel, _isc.ProtocolSerialization {
   User._({
     this.id,
     required this.email,
@@ -33,7 +34,7 @@ abstract class User implements _i1.SerializableModel {
     int? id,
     required String email,
     required String passwordHash,
-    required _i2.UserRole role,
+    required _ip8qv1h2.UserRole role,
     double? balance,
     required String pin,
     required String firstName,
@@ -48,16 +49,18 @@ abstract class User implements _i1.SerializableModel {
       id: jsonSerialization['id'] as int?,
       email: jsonSerialization['email'] as String,
       passwordHash: jsonSerialization['passwordHash'] as String,
-      role: _i2.UserRole.fromJson((jsonSerialization['role'] as String)),
+      role: _ip8qv1h2.UserRole.fromJson((jsonSerialization['role'] as String)),
       balance: (jsonSerialization['balance'] as num?)?.toDouble(),
       pin: jsonSerialization['pin'] as String,
       firstName: jsonSerialization['firstName'] as String,
       lastName: jsonSerialization['lastName'] as String,
-      isActive: jsonSerialization['isActive'] as bool?,
-      createdAt: _i1.DateTimeJsonExtension.fromJson(
+      isActive: jsonSerialization['isActive'] == null
+          ? null
+          : _isc.BoolJsonExtension.fromJson(jsonSerialization['isActive']),
+      createdAt: _isc.DateTimeJsonExtension.fromJson(
         jsonSerialization['createdAt'],
       ),
-      updatedAt: _i1.DateTimeJsonExtension.fromJson(
+      updatedAt: _isc.DateTimeJsonExtension.fromJson(
         jsonSerialization['updatedAt'],
       ),
     );
@@ -72,7 +75,7 @@ abstract class User implements _i1.SerializableModel {
 
   String passwordHash;
 
-  _i2.UserRole role;
+  _ip8qv1h2.UserRole role;
 
   double balance;
 
@@ -90,12 +93,12 @@ abstract class User implements _i1.SerializableModel {
 
   /// Returns a shallow copy of this [User]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_isc.useResult
   User copyWith({
     int? id,
     String? email,
     String? passwordHash,
-    _i2.UserRole? role,
+    _ip8qv1h2.UserRole? role,
     double? balance,
     String? pin,
     String? firstName,
@@ -123,8 +126,26 @@ abstract class User implements _i1.SerializableModel {
   }
 
   @override
+  Map<String, dynamic> toJsonForProtocol() {
+    return {
+      '__className__': 'User',
+      if (id != null) 'id': id,
+      'email': email,
+      'passwordHash': passwordHash,
+      'role': role.toJson(),
+      'balance': balance,
+      'pin': pin,
+      'firstName': firstName,
+      'lastName': lastName,
+      'isActive': isActive,
+      'createdAt': createdAt.toJson(),
+      'updatedAt': updatedAt.toJson(),
+    };
+  }
+
+  @override
   String toString() {
-    return _i1.SerializationManager.encode(this);
+    return _isc.SerializationManager.encode(this);
   }
 }
 
@@ -135,7 +156,7 @@ class _UserImpl extends User {
     int? id,
     required String email,
     required String passwordHash,
-    required _i2.UserRole role,
+    required _ip8qv1h2.UserRole role,
     double? balance,
     required String pin,
     required String firstName,
@@ -159,13 +180,13 @@ class _UserImpl extends User {
 
   /// Returns a shallow copy of this [User]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_isc.useResult
   @override
   User copyWith({
     Object? id = _Undefined,
     String? email,
     String? passwordHash,
-    _i2.UserRole? role,
+    _ip8qv1h2.UserRole? role,
     double? balance,
     String? pin,
     String? firstName,
