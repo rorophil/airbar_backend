@@ -789,7 +789,7 @@ docker compose up -d --build
 
 Appliquer les nouvelles migrations (si nécessaire)
 docker compose run --rm --entrypoint /bin/sh airbar_server \
-  -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+  -c "./bin/server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
 ```
 
 ### Sauvegarder la base de données
