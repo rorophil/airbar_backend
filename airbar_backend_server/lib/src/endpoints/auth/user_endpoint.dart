@@ -245,14 +245,7 @@ class UserEndpoint extends Endpoint {
           throw Exception('Utilisateur non trouvé');
         }
 
-        // Check if debit would make balance negative
-        if (amount < 0 && user.balance + amount < 0) {
-          throw Exception(
-            'Solde insuffisant. Solde actuel: ${user.balance.toStringAsFixed(2)} €',
-          );
-        }
-
-        // Update balance (works for both credit and debit)
+        // L'administrateur peut librement mettre le compte en négatif
         user.balance += amount;
         user.updatedAt = DateTime.now();
         await protocol.User.db.updateRow(session, user);
