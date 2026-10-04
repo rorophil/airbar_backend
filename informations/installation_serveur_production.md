@@ -774,7 +774,7 @@ docker ps# 1. Sauvegarder la base de données
 docker exec airbar_postgres_prod pg_dump -U postgres -d airbar_backend -F c -f /tmp/backup.dump
 docker cp airbar_postgres_prod:/tmp/backup.dump ./backup_$(date +%Y%m%d_%H%M%S).dump
 
-ce placer dans /airbar_production
+ce placer dans /airbar_production/airbar_backend
 # 2. Récupérer les mises à jour
 git pull origin prod
 

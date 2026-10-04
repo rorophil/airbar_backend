@@ -1,5 +1,5 @@
 # Build stage
-FROM dart:3.8.0 AS build
+FROM dart:3.13.5 AS build
 WORKDIR /app
 
 # Build from the server package (generated files are already included in source)
