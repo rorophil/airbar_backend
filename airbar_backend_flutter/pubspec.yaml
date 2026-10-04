@@ -18,8 +18,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '^3.8.0'
-  flutter: '^3.32.0'
+  sdk: '^3.12.2'
+  flutter: '^3.44.4'
 
 resolution: workspace
 
@@ -31,8 +31,8 @@ dependencies:
     sdk: flutter
   airbar_backend_client:
     path: ../airbar_backend_client
-  serverpod_flutter: 3.3.1
-  serverpod_auth_idp_flutter: 3.3.1
+  serverpod_flutter: 4.0.3
+  serverpod_auth_idp_flutter: 4.0.3
 
 dev_dependencies:
   flutter_lints: '>=3.0.0 <7.0.0'

@@ -488,8 +488,7 @@ class TransactionEndpoint extends Endpoint {
       return await protocol.Transaction.db.find(
         session,
         where: (t) => t.userId.equals(userId),
-        orderBy: (t) => t.timestamp,
-        orderDescending: true,
+        orderBy: (t) => t.timestamp.desc(),
         limit: limit,
         offset: offset,
       );
@@ -528,8 +527,7 @@ class TransactionEndpoint extends Endpoint {
       return await protocol.Transaction.db.find(
         session,
         where: whereClause,
-        orderBy: (t) => t.timestamp,
-        orderDescending: true,
+        orderBy: (t) => t.timestamp.desc(),
         limit: limit,
         offset: offset,
       );

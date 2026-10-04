@@ -10,9 +10,9 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod/serverpod.dart' as _i1;
+import 'package:serverpod/serverpod.dart' as _is;
 
-enum MovementType implements _i1.SerializableModel {
+enum MovementType implements _is.SerializableModel {
   restock,
   sale,
   adjustment,

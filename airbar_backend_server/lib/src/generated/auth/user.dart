@@ -10,10 +10,10 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod/serverpod.dart' as _i1;
-import '../auth/user_role.dart' as _i2;
+import 'package:serverpod/serverpod.dart' as _is;
+import '../auth/user_role.dart' as _ip8qv1h2;
 
-abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
+abstract class User implements _is.TableRow<int?>, _is.ProtocolSerialization {
   User._({
     this.id,
     required this.email,
@@ -33,7 +33,7 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     int? id,
     required String email,
     required String passwordHash,
-    required _i2.UserRole role,
+    required _ip8qv1h2.UserRole role,
     double? balance,
     required String pin,
     required String firstName,
@@ -48,16 +48,18 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       id: jsonSerialization['id'] as int?,
       email: jsonSerialization['email'] as String,
       passwordHash: jsonSerialization['passwordHash'] as String,
-      role: _i2.UserRole.fromJson((jsonSerialization['role'] as String)),
+      role: _ip8qv1h2.UserRole.fromJson((jsonSerialization['role'] as String)),
       balance: (jsonSerialization['balance'] as num?)?.toDouble(),
       pin: jsonSerialization['pin'] as String,
       firstName: jsonSerialization['firstName'] as String,
       lastName: jsonSerialization['lastName'] as String,
-      isActive: jsonSerialization['isActive'] as bool?,
-      createdAt: _i1.DateTimeJsonExtension.fromJson(
+      isActive: jsonSerialization['isActive'] == null
+          ? null
+          : _is.BoolJsonExtension.fromJson(jsonSerialization['isActive']),
+      createdAt: _is.DateTimeJsonExtension.fromJson(
         jsonSerialization['createdAt'],
       ),
-      updatedAt: _i1.DateTimeJsonExtension.fromJson(
+      updatedAt: _is.DateTimeJsonExtension.fromJson(
         jsonSerialization['updatedAt'],
       ),
     );
@@ -74,7 +76,7 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
 
   String passwordHash;
 
-  _i2.UserRole role;
+  _ip8qv1h2.UserRole role;
 
   double balance;
 
@@ -91,16 +93,16 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   DateTime updatedAt;
 
   @override
-  _i1.Table<int?> get table => t;
+  _is.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [User]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_is.useResult
   User copyWith({
     int? id,
     String? email,
     String? passwordHash,
-    _i2.UserRole? role,
+    _ip8qv1h2.UserRole? role,
     double? balance,
     String? pin,
     String? firstName,
@@ -150,12 +152,11 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   }
 
   static UserIncludeList includeList({
-    _i1.WhereExpressionBuilder<UserTable>? where,
+    _is.WhereExpressionBuilder<UserTable>? where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<UserTable>? orderBy,
-    bool orderDescending = false,
-    _i1.OrderByListBuilder<UserTable>? orderByList,
+    _is.OrderByBuilder<UserTable>? orderBy,
+    _is.OrderByListBuilder<UserTable>? orderByList,
     UserInclude? include,
   }) {
     return UserIncludeList._(
@@ -163,7 +164,6 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       limit: limit,
       offset: offset,
       orderBy: orderBy?.call(User.t),
-      orderDescending: orderDescending,
       orderByList: orderByList?.call(User.t),
       include: include,
     );
@@ -171,7 +171,7 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
 
   @override
   String toString() {
-    return _i1.SerializationManager.encode(this);
+    return _is.SerializationManager.encode(this);
   }
 }
 
@@ -182,7 +182,7 @@ class _UserImpl extends User {
     int? id,
     required String email,
     required String passwordHash,
-    required _i2.UserRole role,
+    required _ip8qv1h2.UserRole role,
     double? balance,
     required String pin,
     required String firstName,
@@ -206,13 +206,13 @@ class _UserImpl extends User {
 
   /// Returns a shallow copy of this [User]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_is.useResult
   @override
   User copyWith({
     Object? id = _Undefined,
     String? email,
     String? passwordHash,
-    _i2.UserRole? role,
+    _ip8qv1h2.UserRole? role,
     double? balance,
     String? pin,
     String? firstName,
@@ -237,106 +237,107 @@ class _UserImpl extends User {
   }
 }
 
-class UserUpdateTable extends _i1.UpdateTable<UserTable> {
+class UserUpdateTable extends _is.UpdateTable<UserTable> {
   UserUpdateTable(super.table);
 
-  _i1.ColumnValue<String, String> email(String value) => _i1.ColumnValue(
+  _is.ColumnValue<String, String> email(String value) => _is.ColumnValue(
     table.email,
     value,
   );
 
-  _i1.ColumnValue<String, String> passwordHash(String value) => _i1.ColumnValue(
+  _is.ColumnValue<String, String> passwordHash(String value) => _is.ColumnValue(
     table.passwordHash,
     value,
   );
 
-  _i1.ColumnValue<_i2.UserRole, _i2.UserRole> role(_i2.UserRole value) =>
-      _i1.ColumnValue(
-        table.role,
-        value,
-      );
+  _is.ColumnValue<_ip8qv1h2.UserRole, _ip8qv1h2.UserRole> role(
+    _ip8qv1h2.UserRole value,
+  ) => _is.ColumnValue(
+    table.role,
+    value,
+  );
 
-  _i1.ColumnValue<double, double> balance(double value) => _i1.ColumnValue(
+  _is.ColumnValue<double, double> balance(double value) => _is.ColumnValue(
     table.balance,
     value,
   );
 
-  _i1.ColumnValue<String, String> pin(String value) => _i1.ColumnValue(
+  _is.ColumnValue<String, String> pin(String value) => _is.ColumnValue(
     table.pin,
     value,
   );
 
-  _i1.ColumnValue<String, String> firstName(String value) => _i1.ColumnValue(
+  _is.ColumnValue<String, String> firstName(String value) => _is.ColumnValue(
     table.firstName,
     value,
   );
 
-  _i1.ColumnValue<String, String> lastName(String value) => _i1.ColumnValue(
+  _is.ColumnValue<String, String> lastName(String value) => _is.ColumnValue(
     table.lastName,
     value,
   );
 
-  _i1.ColumnValue<bool, bool> isActive(bool value) => _i1.ColumnValue(
+  _is.ColumnValue<bool, bool> isActive(bool value) => _is.ColumnValue(
     table.isActive,
     value,
   );
 
-  _i1.ColumnValue<DateTime, DateTime> createdAt(DateTime value) =>
-      _i1.ColumnValue(
+  _is.ColumnValue<DateTime, DateTime> createdAt(DateTime value) =>
+      _is.ColumnValue(
         table.createdAt,
         value,
       );
 
-  _i1.ColumnValue<DateTime, DateTime> updatedAt(DateTime value) =>
-      _i1.ColumnValue(
+  _is.ColumnValue<DateTime, DateTime> updatedAt(DateTime value) =>
+      _is.ColumnValue(
         table.updatedAt,
         value,
       );
 }
 
-class UserTable extends _i1.Table<int?> {
+class UserTable extends _is.Table<int?> {
   UserTable({super.tableRelation}) : super(tableName: 'users') {
     updateTable = UserUpdateTable(this);
-    email = _i1.ColumnString(
+    email = _is.ColumnString(
       'email',
       this,
     );
-    passwordHash = _i1.ColumnString(
+    passwordHash = _is.ColumnString(
       'passwordHash',
       this,
     );
-    role = _i1.ColumnEnum(
+    role = _is.ColumnEnum(
       'role',
       this,
-      _i1.EnumSerialization.byName,
+      _is.EnumSerialization.byName,
     );
-    balance = _i1.ColumnDouble(
+    balance = _is.ColumnDouble(
       'balance',
       this,
       hasDefault: true,
     );
-    pin = _i1.ColumnString(
+    pin = _is.ColumnString(
       'pin',
       this,
     );
-    firstName = _i1.ColumnString(
+    firstName = _is.ColumnString(
       'firstName',
       this,
     );
-    lastName = _i1.ColumnString(
+    lastName = _is.ColumnString(
       'lastName',
       this,
     );
-    isActive = _i1.ColumnBool(
+    isActive = _is.ColumnBool(
       'isActive',
       this,
       hasDefault: true,
     );
-    createdAt = _i1.ColumnDateTime(
+    createdAt = _is.ColumnDateTime(
       'createdAt',
       this,
     );
-    updatedAt = _i1.ColumnDateTime(
+    updatedAt = _is.ColumnDateTime(
       'updatedAt',
       this,
     );
@@ -344,28 +345,28 @@ class UserTable extends _i1.Table<int?> {
 
   late final UserUpdateTable updateTable;
 
-  late final _i1.ColumnString email;
+  late final _is.ColumnString email;
 
-  late final _i1.ColumnString passwordHash;
+  late final _is.ColumnString passwordHash;
 
-  late final _i1.ColumnEnum<_i2.UserRole> role;
+  late final _is.ColumnEnum<_ip8qv1h2.UserRole> role;
 
-  late final _i1.ColumnDouble balance;
+  late final _is.ColumnDouble balance;
 
-  late final _i1.ColumnString pin;
+  late final _is.ColumnString pin;
 
-  late final _i1.ColumnString firstName;
+  late final _is.ColumnString firstName;
 
-  late final _i1.ColumnString lastName;
+  late final _is.ColumnString lastName;
 
-  late final _i1.ColumnBool isActive;
+  late final _is.ColumnBool isActive;
 
-  late final _i1.ColumnDateTime createdAt;
+  late final _is.ColumnDateTime createdAt;
 
-  late final _i1.ColumnDateTime updatedAt;
+  late final _is.ColumnDateTime updatedAt;
 
   @override
-  List<_i1.Column> get columns => [
+  List<_is.Column> get columns => [
     id,
     email,
     passwordHash,
@@ -380,23 +381,22 @@ class UserTable extends _i1.Table<int?> {
   ];
 }
 
-class UserInclude extends _i1.IncludeObject {
+class UserInclude extends _is.IncludeObject {
   UserInclude._();
 
   @override
-  Map<String, _i1.Include?> get includes => {};
+  Map<String, _is.Include?> get includes => {};
 
   @override
-  _i1.Table<int?> get table => User.t;
+  _is.Table<int?> get table => User.t;
 }
 
-class UserIncludeList extends _i1.IncludeList {
+class UserIncludeList extends _is.IncludeList {
   UserIncludeList._({
-    _i1.WhereExpressionBuilder<UserTable>? where,
+    _is.WhereExpressionBuilder<UserTable>? where,
     super.limit,
     super.offset,
     super.orderBy,
-    super.orderDescending,
     super.orderByList,
     super.include,
   }) {
@@ -404,10 +404,10 @@ class UserIncludeList extends _i1.IncludeList {
   }
 
   @override
-  Map<String, _i1.Include?> get includes => include?.includes ?? {};
+  Map<String, _is.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int?> get table => User.t;
+  _is.Table<int?> get table => User.t;
 }
 
 class UserRepository {
@@ -436,23 +436,25 @@ class UserRepository {
   /// );
   /// ```
   Future<List<User>> find(
-    _i1.Session session, {
-    _i1.WhereExpressionBuilder<UserTable>? where,
+    _is.DatabaseSession session, {
+    _is.WhereExpressionBuilder<UserTable>? where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<UserTable>? orderBy,
-    bool orderDescending = false,
-    _i1.OrderByListBuilder<UserTable>? orderByList,
-    _i1.Transaction? transaction,
+    _is.OrderByBuilder<UserTable>? orderBy,
+    _is.OrderByListBuilder<UserTable>? orderByList,
+    _is.Transaction? transaction,
+    _is.LockMode? lockMode,
+    _is.LockBehavior? lockBehavior,
   }) async {
     return session.db.find<User>(
       where: where?.call(User.t),
       orderBy: orderBy?.call(User.t),
       orderByList: orderByList?.call(User.t),
-      orderDescending: orderDescending,
       limit: limit,
       offset: offset,
       transaction: transaction,
+      lockMode: lockMode,
+      lockBehavior: lockBehavior,
     );
   }
 
@@ -474,33 +476,39 @@ class UserRepository {
   /// );
   /// ```
   Future<User?> findFirstRow(
-    _i1.Session session, {
-    _i1.WhereExpressionBuilder<UserTable>? where,
+    _is.DatabaseSession session, {
+    _is.WhereExpressionBuilder<UserTable>? where,
     int? offset,
-    _i1.OrderByBuilder<UserTable>? orderBy,
-    bool orderDescending = false,
-    _i1.OrderByListBuilder<UserTable>? orderByList,
-    _i1.Transaction? transaction,
+    _is.OrderByBuilder<UserTable>? orderBy,
+    _is.OrderByListBuilder<UserTable>? orderByList,
+    _is.Transaction? transaction,
+    _is.LockMode? lockMode,
+    _is.LockBehavior? lockBehavior,
   }) async {
     return session.db.findFirstRow<User>(
       where: where?.call(User.t),
       orderBy: orderBy?.call(User.t),
       orderByList: orderByList?.call(User.t),
-      orderDescending: orderDescending,
       offset: offset,
       transaction: transaction,
+      lockMode: lockMode,
+      lockBehavior: lockBehavior,
     );
   }
 
   /// Finds a single [User] by its [id] or null if no such row exists.
   Future<User?> findById(
-    _i1.Session session,
+    _is.DatabaseSession session,
     int id, {
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
+    _is.LockMode? lockMode,
+    _is.LockBehavior? lockBehavior,
   }) async {
     return session.db.findById<User>(
       id,
       transaction: transaction,
+      lockMode: lockMode,
+      lockBehavior: lockBehavior,
     );
   }
 
@@ -510,14 +518,26 @@ class UserRepository {
   ///
   /// This is an atomic operation, meaning that if one of the rows fails to
   /// insert, none of the rows will be inserted.
+  ///
+  /// If [ignoreConflicts] is set to `true`, rows that conflict with existing
+  /// rows are silently skipped, and only the successfully inserted rows are
+  /// returned.
+  ///
+  /// If [noReturn] is set to `true`, the inserted rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
   Future<List<User>> insert(
-    _i1.Session session,
+    _is.DatabaseSession session,
     List<User> rows, {
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
+    bool ignoreConflicts = false,
+    bool noReturn = false,
   }) async {
     return session.db.insert<User>(
       rows,
       transaction: transaction,
+      ignoreConflicts: ignoreConflicts,
+      noReturn: noReturn,
     );
   }
 
@@ -525,12 +545,81 @@ class UserRepository {
   ///
   /// The returned [User] will have its `id` field set.
   Future<User> insertRow(
-    _i1.Session session,
+    _is.DatabaseSession session,
     User row, {
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
   }) async {
     return session.db.insertRow<User>(
       row,
+      transaction: transaction,
+    );
+  }
+
+  /// Upserts all [User]s in the list and returns the resulting rows.
+  ///
+  /// If a row conflicts on the given [conflictColumns], the existing row is
+  /// updated with the new values. Otherwise, a new row is inserted.
+  ///
+  /// If [updateColumns] is provided, only those columns will be updated on
+  /// conflict. If null, all non-conflict, non-id columns are updated.
+  ///
+  /// If [updateWhere] is provided, the update only applies to rows matching the
+  /// given expression. Conflicting rows that don't match are skipped and not
+  /// returned, so the resulting list may be shorter than [rows].
+  ///
+  /// The returned [User]s will have their `id` fields set.
+  ///
+  /// This is an atomic operation, meaning that if one of the rows fails,
+  /// none of the rows will be affected.
+  ///
+  /// If [noReturn] is set to `true`, the resulting rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
+  Future<List<User>> upsert(
+    _is.DatabaseSession session,
+    List<User> rows, {
+    required _is.ColumnSelections<UserTable> conflictColumns,
+    _is.ColumnSelections<UserTable>? updateColumns,
+    _is.WhereExpressionBuilder<UserTable>? updateWhere,
+    _is.Transaction? transaction,
+    bool noReturn = false,
+  }) async {
+    return session.db.upsert<User>(
+      rows,
+      conflictColumns: conflictColumns(User.t),
+      updateColumns: updateColumns?.call(User.t),
+      updateWhere: updateWhere?.call(User.t),
+      transaction: transaction,
+      noReturn: noReturn,
+    );
+  }
+
+  /// Upserts a single [User] and returns the resulting row.
+  ///
+  /// If the row conflicts on the given [conflictColumns], the existing row is
+  /// updated. Otherwise, a new row is inserted.
+  ///
+  /// If [updateColumns] is provided, only those columns will be updated on
+  /// conflict. If null, all non-conflict, non-id columns are updated.
+  ///
+  /// If [updateWhere] is provided, the update only applies when the existing
+  /// row matches the expression. Returns `null` if no row was affected — for
+  /// example when [updateWhere] does not match the conflicting row.
+  ///
+  /// The returned [User] will have its `id` field set.
+  Future<User?> upsertRow(
+    _is.DatabaseSession session,
+    User row, {
+    required _is.ColumnSelections<UserTable> conflictColumns,
+    _is.ColumnSelections<UserTable>? updateColumns,
+    _is.WhereExpressionBuilder<UserTable>? updateWhere,
+    _is.Transaction? transaction,
+  }) async {
+    return session.db.upsertRow<User>(
+      row,
+      conflictColumns: conflictColumns(User.t),
+      updateColumns: updateColumns?.call(User.t),
+      updateWhere: updateWhere?.call(User.t),
       transaction: transaction,
     );
   }
@@ -540,16 +629,22 @@ class UserRepository {
   /// all columns.
   /// This is an atomic operation, meaning that if one of the rows fails to
   /// update, none of the rows will be updated.
+  ///
+  /// If [noReturn] is set to `true`, the updated rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
   Future<List<User>> update(
-    _i1.Session session,
+    _is.DatabaseSession session,
     List<User> rows, {
-    _i1.ColumnSelections<UserTable>? columns,
-    _i1.Transaction? transaction,
+    _is.ColumnSelections<UserTable>? columns,
+    _is.Transaction? transaction,
+    bool noReturn = false,
   }) async {
     return session.db.update<User>(
       rows,
       columns: columns?.call(User.t),
       transaction: transaction,
+      noReturn: noReturn,
     );
   }
 
@@ -557,10 +652,10 @@ class UserRepository {
   /// Optionally, a list of [columns] can be provided to only update those
   /// columns. Defaults to all columns.
   Future<User> updateRow(
-    _i1.Session session,
+    _is.DatabaseSession session,
     User row, {
-    _i1.ColumnSelections<UserTable>? columns,
-    _i1.Transaction? transaction,
+    _is.ColumnSelections<UserTable>? columns,
+    _is.Transaction? transaction,
   }) async {
     return session.db.updateRow<User>(
       row,
@@ -572,10 +667,10 @@ class UserRepository {
   /// Updates a single [User] by its [id] with the specified [columnValues].
   /// Returns the updated row or null if no row with the given id exists.
   Future<User?> updateById(
-    _i1.Session session,
+    _is.DatabaseSession session,
     int id, {
-    required _i1.ColumnValueListBuilder<UserUpdateTable> columnValues,
-    _i1.Transaction? transaction,
+    required _is.ColumnValueListBuilder<UserUpdateTable> columnValues,
+    _is.Transaction? transaction,
   }) async {
     return session.db.updateById<User>(
       id,
@@ -586,16 +681,20 @@ class UserRepository {
 
   /// Updates all [User]s matching the [where] expression with the specified [columnValues].
   /// Returns the list of updated rows.
+  ///
+  /// If [noReturn] is set to `true`, the updated rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
   Future<List<User>> updateWhere(
-    _i1.Session session, {
-    required _i1.ColumnValueListBuilder<UserUpdateTable> columnValues,
-    required _i1.WhereExpressionBuilder<UserTable> where,
+    _is.DatabaseSession session, {
+    required _is.ColumnValueListBuilder<UserUpdateTable> columnValues,
+    required _is.WhereExpressionBuilder<UserTable> where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<UserTable>? orderBy,
-    _i1.OrderByListBuilder<UserTable>? orderByList,
-    bool orderDescending = false,
-    _i1.Transaction? transaction,
+    _is.OrderByBuilder<UserTable>? orderBy,
+    _is.OrderByListBuilder<UserTable>? orderByList,
+    _is.Transaction? transaction,
+    bool noReturn = false,
   }) async {
     return session.db.updateWhere<User>(
       columnValues: columnValues(User.t.updateTable),
@@ -604,30 +703,44 @@ class UserRepository {
       offset: offset,
       orderBy: orderBy?.call(User.t),
       orderByList: orderByList?.call(User.t),
-      orderDescending: orderDescending,
       transaction: transaction,
+      noReturn: noReturn,
     );
   }
 
   /// Deletes all [User]s in the list and returns the deleted rows.
+  ///
+  /// To specify the order of the returned rows use [orderBy] or [orderByList]
+  /// when sorting by multiple columns.
+  ///
   /// This is an atomic operation, meaning that if one of the rows fail to
   /// be deleted, none of the rows will be deleted.
+  ///
+  /// If [noReturn] is set to `true`, the deleted rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
   Future<List<User>> delete(
-    _i1.Session session,
+    _is.DatabaseSession session,
     List<User> rows, {
-    _i1.Transaction? transaction,
+    _is.OrderByBuilder<UserTable>? orderBy,
+    _is.OrderByListBuilder<UserTable>? orderByList,
+    _is.Transaction? transaction,
+    bool noReturn = false,
   }) async {
     return session.db.delete<User>(
       rows,
+      orderBy: orderBy?.call(User.t),
+      orderByList: orderByList?.call(User.t),
       transaction: transaction,
+      noReturn: noReturn,
     );
   }
 
   /// Deletes a single [User].
   Future<User> deleteRow(
-    _i1.Session session,
+    _is.DatabaseSession session,
     User row, {
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
   }) async {
     return session.db.deleteRow<User>(
       row,
@@ -636,28 +749,57 @@ class UserRepository {
   }
 
   /// Deletes all rows matching the [where] expression.
+  ///
+  /// To specify the order of the returned rows use [orderBy] or [orderByList]
+  /// when sorting by multiple columns.
+  ///
+  /// If [noReturn] is set to `true`, the deleted rows are not read back from
+  /// the database and an empty list is returned. This avoids the overhead of
+  /// transferring and deserializing the rows when the result is not needed.
   Future<List<User>> deleteWhere(
-    _i1.Session session, {
-    required _i1.WhereExpressionBuilder<UserTable> where,
-    _i1.Transaction? transaction,
+    _is.DatabaseSession session, {
+    required _is.WhereExpressionBuilder<UserTable> where,
+    _is.OrderByBuilder<UserTable>? orderBy,
+    _is.OrderByListBuilder<UserTable>? orderByList,
+    _is.Transaction? transaction,
+    bool noReturn = false,
   }) async {
     return session.db.deleteWhere<User>(
       where: where(User.t),
+      orderBy: orderBy?.call(User.t),
+      orderByList: orderByList?.call(User.t),
       transaction: transaction,
+      noReturn: noReturn,
     );
   }
 
   /// Counts the number of rows matching the [where] expression. If omitted,
   /// will return the count of all rows in the table.
   Future<int> count(
-    _i1.Session session, {
-    _i1.WhereExpressionBuilder<UserTable>? where,
+    _is.DatabaseSession session, {
+    _is.WhereExpressionBuilder<UserTable>? where,
     int? limit,
-    _i1.Transaction? transaction,
+    _is.Transaction? transaction,
   }) async {
     return session.db.count<User>(
       where: where?.call(User.t),
       limit: limit,
+      transaction: transaction,
+    );
+  }
+
+  /// Acquires row-level locks on [User] rows matching the [where] expression.
+  Future<void> lockRows(
+    _is.DatabaseSession session, {
+    required _is.WhereExpressionBuilder<UserTable> where,
+    required _is.LockMode lockMode,
+    required _is.Transaction transaction,
+    _is.LockBehavior lockBehavior = _is.LockBehavior.wait,
+  }) async {
+    return session.db.lockRows<User>(
+      where: where(User.t),
+      lockMode: lockMode,
+      lockBehavior: lockBehavior,
       transaction: transaction,
     );
   }

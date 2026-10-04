@@ -10,10 +10,10 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod/serverpod.dart' as _i1;
+import 'package:serverpod/serverpod.dart' as _is;
 
 abstract class CashSaleItemData
-    implements _i1.SerializableModel, _i1.ProtocolSerialization {
+    implements _is.SerializableModel, _is.ProtocolSerialization {
   CashSaleItemData._({
     required this.productId,
     required this.quantity,
@@ -42,7 +42,7 @@ abstract class CashSaleItemData
 
   /// Returns a shallow copy of this [CashSaleItemData]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_is.useResult
   CashSaleItemData copyWith({
     int? productId,
     int? quantity,
@@ -70,7 +70,7 @@ abstract class CashSaleItemData
 
   @override
   String toString() {
-    return _i1.SerializationManager.encode(this);
+    return _is.SerializationManager.encode(this);
   }
 }
 
@@ -89,7 +89,7 @@ class _CashSaleItemDataImpl extends CashSaleItemData {
 
   /// Returns a shallow copy of this [CashSaleItemData]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_is.useResult
   @override
   CashSaleItemData copyWith({
     int? productId,

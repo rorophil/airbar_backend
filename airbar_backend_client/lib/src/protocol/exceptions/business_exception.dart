@@ -10,10 +10,13 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod_client/serverpod_client.dart' as _i1;
+import 'package:serverpod_client/serverpod_client.dart' as _isc;
 
 abstract class BusinessException
-    implements _i1.SerializableException, _i1.SerializableModel {
+    implements
+        _isc.SerializableException,
+        _isc.SerializableModel,
+        _isc.ProtocolSerialization {
   BusinessException._({required this.message});
 
   factory BusinessException({required String message}) = _BusinessExceptionImpl;
@@ -26,10 +29,18 @@ abstract class BusinessException
 
   /// Returns a shallow copy of this [BusinessException]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_isc.useResult
   BusinessException copyWith({String? message});
   @override
   Map<String, dynamic> toJson() {
+    return {
+      '__className__': 'BusinessException',
+      'message': message,
+    };
+  }
+
+  @override
+  Map<String, dynamic> toJsonForProtocol() {
     return {
       '__className__': 'BusinessException',
       'message': message,
@@ -47,7 +58,7 @@ class _BusinessExceptionImpl extends BusinessException {
 
   /// Returns a shallow copy of this [BusinessException]
   /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
+  @_isc.useResult
   @override
   BusinessException copyWith({String? message}) {
     return BusinessException(message: message ?? this.message);
