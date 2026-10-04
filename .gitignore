@@ -23,7 +23,8 @@ Thumbs.db
 # Serverpod specific
 **/config/passwords.yaml
 **/config/firebase_service_account_key.json
-**/generated/
+# Note: Generated files are versioned for production deployment
+# Only ignore test tools
 **/test/integration/test_tools/
 
 # Logs

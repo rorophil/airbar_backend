@@ -22,17 +22,19 @@ class CashierEndpoint extends Endpoint {
       final seller = await protocol.User.db.findById(session, sellerId);
 
       if (seller == null) {
-        throw Exception('Vendeur non trouvé');
+        throw protocol.BusinessException(message: 'Vendeur non trouvé');
       }
 
       // Verify PIN
       final pinHash = _hashPassword(pin);
       if (seller.pin != pinHash) {
-        throw Exception('Code PIN incorrect');
+        throw protocol.BusinessException(message: 'Code PIN incorrect');
       }
 
       if (items.isEmpty) {
-        throw Exception('Aucun article dans la vente');
+        throw protocol.BusinessException(
+          message: 'Aucun article dans la vente',
+        );
       }
 
       // 2. Execute atomic transaction
@@ -48,12 +50,14 @@ class CashierEndpoint extends Endpoint {
           );
 
           if (product == null) {
-            throw Exception('Produit ${item.productId} non trouvé');
+            throw protocol.BusinessException(
+              message: 'Produit ${item.productId} non trouvé',
+            );
           }
 
           if (!product.isActive) {
-            throw Exception(
-              'Le produit ${product.name} n\'est plus disponible',
+            throw protocol.BusinessException(
+              message: 'Le produit ${product.name} n\'est plus disponible',
             );
           }
 
@@ -98,8 +102,9 @@ class CashierEndpoint extends Endpoint {
             }
 
             if (availableStock < requiredStockQuantity) {
-              throw Exception(
-                'Stock insuffisant pour ${productName}. Disponible: ${availableStock.toStringAsFixed(2)}, Requis: ${requiredStockQuantity.toStringAsFixed(2)}',
+              throw protocol.BusinessException(
+                message:
+                    'Stock insuffisant pour ${productName}. Disponible: ${availableStock.toStringAsFixed(2)}, Requis: ${requiredStockQuantity.toStringAsFixed(2)}',
               );
             }
           }
@@ -204,7 +209,9 @@ class CashierEndpoint extends Endpoint {
                       (requiredQuantity / product.bulkTotalQuantity!).ceil();
 
                   if (product.stockQuantity < unitsNeeded) {
-                    throw Exception('Stock insuffisant pour ${product.name}');
+                    throw protocol.BusinessException(
+                      message: 'Stock insuffisant pour ${product.name}',
+                    );
                   }
 
                   product.stockQuantity -= unitsNeeded;

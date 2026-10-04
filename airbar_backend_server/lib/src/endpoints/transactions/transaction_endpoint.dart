@@ -16,262 +16,329 @@ class TransactionEndpoint extends Endpoint {
       final user = await protocol.User.db.findById(session, userId);
 
       if (user == null) {
-        throw Exception('Utilisateur non trouvé');
+        throw protocol.BusinessException(message: 'Utilisateur non trouvé');
       }
 
       // Verify PIN (should use auth endpoint's hash method)
       final pinHash = _hashPassword(pin);
       if (user.pin != pinHash) {
-        throw Exception('Code PIN incorrect');
+        throw protocol.BusinessException(message: 'Code PIN incorrect');
       }
 
-      // Execute atomic transaction
-      return await session.db.transaction((transaction) async {
-        // 1. Get cart items
-        final cartItems = await protocol.CartItem.db.find(
+      return await _executeCheckout(
+        session,
+        userId,
+        enforceBalanceCheck: true,
+        notes: null,
+      );
+    } catch (e) {
+      session.log('Checkout error: $e', level: LogLevel.error);
+      rethrow;
+    }
+  }
+
+  /// Admin-triggered checkout that bypasses the buyer's PIN and balance check
+  ///
+  /// Used when an admin wants to clear a member's cart by force-debiting the
+  /// account (e.g. balance can go negative). Requires the admin's own PIN.
+  /// Stock availability is still enforced.
+  Future<protocol.Transaction> adminForceCheckout(
+    Session session,
+    int userId,
+    int adminId,
+    String adminPin,
+  ) async {
+    try {
+      final admin = await protocol.User.db.findById(session, adminId);
+
+      if (admin == null) {
+        throw protocol.BusinessException(message: 'Administrateur non trouvé');
+      }
+
+      if (admin.role != protocol.UserRole.admin) {
+        throw protocol.BusinessException(
+          message: 'Seul un administrateur peut forcer un paiement',
+        );
+      }
+
+      if (admin.pin != _hashPassword(adminPin)) {
+        throw protocol.BusinessException(
+          message: 'Code PIN administrateur incorrect',
+        );
+      }
+
+      return await _executeCheckout(
+        session,
+        userId,
+        enforceBalanceCheck: false,
+        notes: 'Panier forcé par admin #$adminId',
+      );
+    } catch (e) {
+      session.log('Admin force checkout error: $e', level: LogLevel.error);
+      rethrow;
+    }
+  }
+
+  /// Shared atomic checkout logic used by [checkout] and [adminForceCheckout]
+  Future<protocol.Transaction> _executeCheckout(
+    Session session,
+    int userId, {
+    required bool enforceBalanceCheck,
+    required String? notes,
+  }) async {
+    final user = await protocol.User.db.findById(session, userId);
+
+    if (user == null) {
+      throw protocol.BusinessException(message: 'Utilisateur non trouvé');
+    }
+
+    // Execute atomic transaction
+    return await session.db.transaction((transaction) async {
+      // 1. Get cart items
+      final cartItems = await protocol.CartItem.db.find(
+        session,
+        where: (t) => t.userId.equals(userId),
+      );
+
+      if (cartItems.isEmpty) {
+        throw protocol.BusinessException(message: 'Le panier est vide');
+      }
+
+      // 2. Calculate total and verify stock
+      double totalAmount = 0;
+      final transactionItems = <protocol.TransactionItem>[];
+
+      for (final cartItem in cartItems) {
+        final product = await protocol.Product.db.findById(
           session,
-          where: (t) => t.userId.equals(userId),
+          cartItem.productId,
         );
 
-        if (cartItems.isEmpty) {
-          throw Exception('Le panier est vide');
+        if (product == null) {
+          throw protocol.BusinessException(
+            message: 'Produit ${cartItem.productId} non trouvé',
+          );
         }
 
-        // 2. Calculate total and verify stock
-        double totalAmount = 0;
-        final transactionItems = <protocol.TransactionItem>[];
+        if (!product.isActive) {
+          throw protocol.BusinessException(
+            message: 'Le produit ${product.name} n\'est plus disponible',
+          );
+        }
 
-        for (final cartItem in cartItems) {
-          final product = await protocol.Product.db.findById(
+        // Get effective price and calculate required stock quantity
+        double unitPrice = product.price;
+        String productName = product.name;
+        double requiredStockQuantity = cartItem.quantity.toDouble();
+
+        if (cartItem.productPortionId != null) {
+          final portion = await protocol.ProductPortion.db.findById(
             session,
-            cartItem.productId,
+            cartItem.productPortionId!,
           );
 
-          if (product == null) {
-            throw Exception('Produit ${cartItem.productId} non trouvé');
-          }
-
-          if (!product.isActive) {
-            throw Exception(
-              'Le produit ${product.name} n\'est plus disponible',
+          if (portion != null) {
+            unitPrice = portion.price;
+            productName = '${product.name} - ${portion.name}';
+            // Calculate actual stock needed (e.g., 2 portions × 0.25L = 0.5L)
+            requiredStockQuantity = cartItem.quantity * portion.quantity;
+          } else {
+            session.log(
+              'Warning: Portion ${cartItem.productPortionId} not found for cart item',
+              level: LogLevel.warning,
             );
           }
+        }
 
-          // Get effective price and calculate required stock quantity
-          double unitPrice = product.price;
-          String productName = product.name;
-          double requiredStockQuantity = cartItem.quantity.toDouble();
+        // Verify stock with actual required quantity (only if stock tracking is enabled)
+        if (product.trackStock) {
+          double availableStock;
+          if (product.isBulkProduct &&
+              cartItem.productPortionId != null &&
+              product.bulkTotalQuantity != null) {
+            // For bulk products: calculate total available in units (e.g., liters)
+            availableStock =
+                (product.stockQuantity * product.bulkTotalQuantity!) +
+                (product.currentUnitRemaining ?? 0);
+          } else {
+            // For regular products: use stockQuantity directly
+            availableStock = product.stockQuantity.toDouble();
+          }
 
-          if (cartItem.productPortionId != null) {
+          if (availableStock < requiredStockQuantity) {
+            throw protocol.BusinessException(
+              message:
+                  'Stock insuffisant pour ${productName}. Disponible: ${availableStock.toStringAsFixed(2)}, Requis: ${requiredStockQuantity.toStringAsFixed(2)}',
+            );
+          }
+        }
+
+        final subtotal = unitPrice * cartItem.quantity;
+        totalAmount += subtotal;
+
+        // Create transaction item (snapshot)
+        transactionItems.add(
+          protocol.TransactionItem(
+            transactionId: 0, // Will be set after transaction creation
+            productId: product.id!,
+            productName: productName,
+            quantity: cartItem.quantity,
+            unitPrice: unitPrice,
+            subtotal: subtotal,
+          ),
+        );
+      }
+
+      // 3. Verify sufficient balance (skipped when an admin forces the checkout)
+      if (enforceBalanceCheck && user.balance < totalAmount) {
+        throw protocol.BusinessException(
+          message:
+              'Solde insuffisant. Requis: ${totalAmount.toStringAsFixed(2)}€, Disponible: ${user.balance.toStringAsFixed(2)}€',
+        );
+      }
+
+      // 4. Debit user account
+      user.balance -= totalAmount;
+      user.updatedAt = DateTime.now();
+      await protocol.User.db.updateRow(session, user);
+
+      // 5. Create transaction
+      final trans = protocol.Transaction(
+        userId: userId,
+        type: protocol.TransactionType.purchase,
+        totalAmount: totalAmount,
+        timestamp: DateTime.now(),
+        notes: notes,
+        refundedTransactionId: null,
+      );
+
+      final createdTransaction = await protocol.Transaction.db.insertRow(
+        session,
+        trans,
+      );
+
+      // 6. Create transaction items
+      for (final item in transactionItems) {
+        item.transactionId = createdTransaction.id!;
+        await protocol.TransactionItem.db.insertRow(session, item);
+      }
+
+      // 7. Update stock and create stock movements (only for products with stock tracking)
+      for (final cartItem in cartItems) {
+        final product = await protocol.Product.db.findById(
+          session,
+          cartItem.productId,
+        );
+
+        if (product != null && product.trackStock) {
+          double stockDeduction = 0.0;
+          String movementNote = 'Vente - Transaction #${createdTransaction.id}';
+
+          // Handle bulk products with portions (unit-based management)
+          if (product.isBulkProduct && cartItem.productPortionId != null) {
             final portion = await protocol.ProductPortion.db.findById(
               session,
               cartItem.productPortionId!,
             );
 
-            if (portion != null) {
-              unitPrice = portion.price;
-              productName = '${product.name} - ${portion.name}';
-              // Calculate actual stock needed (e.g., 2 portions × 0.25L = 0.5L)
-              requiredStockQuantity = cartItem.quantity * portion.quantity;
-            } else {
-              session.log(
-                'Warning: Portion ${cartItem.productPortionId} not found for cart item',
-                level: LogLevel.warning,
-              );
-            }
-          }
+            if (portion != null && product.bulkTotalQuantity != null) {
+              // Calculate total quantity needed (e.g., 2 portions × 0.25L = 0.5L)
+              double requiredQuantity = cartItem.quantity * portion.quantity;
+              stockDeduction = requiredQuantity;
 
-          // Verify stock with actual required quantity (only if stock tracking is enabled)
-          if (product.trackStock) {
-            double availableStock;
-            if (product.isBulkProduct &&
-                cartItem.productPortionId != null &&
-                product.bulkTotalQuantity != null) {
-              // For bulk products: calculate total available in units (e.g., liters)
-              availableStock =
-                  (product.stockQuantity * product.bulkTotalQuantity!) +
-                  (product.currentUnitRemaining ?? 0);
-            } else {
-              // For regular products: use stockQuantity directly
-              availableStock = product.stockQuantity.toDouble();
-            }
-
-            if (availableStock < requiredStockQuantity) {
-              throw Exception(
-                'Stock insuffisant pour ${productName}. Disponible: ${availableStock.toStringAsFixed(2)}, Requis: ${requiredStockQuantity.toStringAsFixed(2)}',
-              );
-            }
-          }
-
-          final subtotal = unitPrice * cartItem.quantity;
-          totalAmount += subtotal;
-
-          // Create transaction item (snapshot)
-          transactionItems.add(
-            protocol.TransactionItem(
-              transactionId: 0, // Will be set after transaction creation
-              productId: product.id!,
-              productName: productName,
-              quantity: cartItem.quantity,
-              unitPrice: unitPrice,
-              subtotal: subtotal,
-            ),
-          );
-        }
-
-        // 3. Verify sufficient balance
-        if (user.balance < totalAmount) {
-          throw Exception(
-            'Solde insuffisant. Requis: ${totalAmount.toStringAsFixed(2)}€, Disponible: ${user.balance.toStringAsFixed(2)}€',
-          );
-        }
-
-        // 4. Debit user account
-        user.balance -= totalAmount;
-        user.updatedAt = DateTime.now();
-        await protocol.User.db.updateRow(session, user);
-
-        // 5. Create transaction
-        final trans = protocol.Transaction(
-          userId: userId,
-          type: protocol.TransactionType.purchase,
-          totalAmount: totalAmount,
-          timestamp: DateTime.now(),
-          notes: null,
-          refundedTransactionId: null,
-        );
-
-        final createdTransaction = await protocol.Transaction.db.insertRow(
-          session,
-          trans,
-        );
-
-        // 6. Create transaction items
-        for (final item in transactionItems) {
-          item.transactionId = createdTransaction.id!;
-          await protocol.TransactionItem.db.insertRow(session, item);
-        }
-
-        // 7. Update stock and create stock movements (only for products with stock tracking)
-        for (final cartItem in cartItems) {
-          final product = await protocol.Product.db.findById(
-            session,
-            cartItem.productId,
-          );
-
-          if (product != null && product.trackStock) {
-            double stockDeduction = 0.0;
-            String movementNote =
-                'Vente - Transaction #${createdTransaction.id}';
-
-            // Handle bulk products with portions (unit-based management)
-            if (product.isBulkProduct && cartItem.productPortionId != null) {
-              final portion = await protocol.ProductPortion.db.findById(
-                session,
-                cartItem.productPortionId!,
-              );
-
-              if (portion != null && product.bulkTotalQuantity != null) {
-                // Calculate total quantity needed (e.g., 2 portions × 0.25L = 0.5L)
-                double requiredQuantity = cartItem.quantity * portion.quantity;
-                stockDeduction = requiredQuantity;
-
-                // Check if there's an opened unit
-                if (product.currentUnitRemaining != null &&
-                    product.currentUnitRemaining! > 0) {
-                  if (product.currentUnitRemaining! >= requiredQuantity) {
-                    // Current unit is sufficient
-                    product.currentUnitRemaining =
-                        product.currentUnitRemaining! - requiredQuantity;
-                    movementNote =
-                        'Vente ${cartItem.quantity}×${portion.name} (unité entamée) - Transaction #${createdTransaction.id}';
-                  } else {
-                    // Current unit is insufficient, need to open new unit(s)
-                    double usedFromCurrent = product.currentUnitRemaining!;
-                    double remaining = requiredQuantity - usedFromCurrent;
-
-                    // Calculate how many complete units are needed
-                    int unitsNeeded = (remaining / product.bulkTotalQuantity!)
-                        .ceil();
-
-                    // Deduct from stock
-                    product.stockQuantity -= unitsNeeded;
-
-                    // Calculate what remains in the last opened unit
-                    double totalFromNewUnits =
-                        unitsNeeded * product.bulkTotalQuantity!;
-                    product.currentUnitRemaining =
-                        totalFromNewUnits - remaining;
-
-                    movementNote =
-                        'Vente ${cartItem.quantity}×${portion.name} ($unitsNeeded unité(s) entamée(s)) - Transaction #${createdTransaction.id}';
-                  }
+              // Check if there's an opened unit
+              if (product.currentUnitRemaining != null &&
+                  product.currentUnitRemaining! > 0) {
+                if (product.currentUnitRemaining! >= requiredQuantity) {
+                  // Current unit is sufficient
+                  product.currentUnitRemaining =
+                      product.currentUnitRemaining! - requiredQuantity;
+                  movementNote =
+                      'Vente ${cartItem.quantity}×${portion.name} (unité entamée) - Transaction #${createdTransaction.id}';
                 } else {
-                  // No opened unit, need to open new one(s)
-                  int unitsNeeded =
-                      (requiredQuantity / product.bulkTotalQuantity!).ceil();
+                  // Current unit is insufficient, need to open new unit(s)
+                  double usedFromCurrent = product.currentUnitRemaining!;
+                  double remaining = requiredQuantity - usedFromCurrent;
 
-                  if (product.stockQuantity < unitsNeeded) {
-                    throw Exception('Stock insuffisant pour ${product.name}');
-                  }
+                  // Calculate how many complete units are needed
+                  int unitsNeeded = (remaining / product.bulkTotalQuantity!)
+                      .ceil();
 
+                  // Deduct from stock
                   product.stockQuantity -= unitsNeeded;
 
-                  double totalFromUnits =
+                  // Calculate what remains in the last opened unit
+                  double totalFromNewUnits =
                       unitsNeeded * product.bulkTotalQuantity!;
-                  product.currentUnitRemaining =
-                      totalFromUnits - requiredQuantity;
+                  product.currentUnitRemaining = totalFromNewUnits - remaining;
 
                   movementNote =
-                      'Vente ${cartItem.quantity}×${portion.name} ($unitsNeeded unité(s) ouverte(s)) - Transaction #${createdTransaction.id}';
+                      'Vente ${cartItem.quantity}×${portion.name} ($unitsNeeded unité(s) entamée(s)) - Transaction #${createdTransaction.id}';
                 }
+              } else {
+                // No opened unit, need to open new one(s)
+                int unitsNeeded =
+                    (requiredQuantity / product.bulkTotalQuantity!).ceil();
+
+                if (product.stockQuantity < unitsNeeded) {
+                  throw protocol.BusinessException(
+                    message: 'Stock insuffisant pour ${product.name}',
+                  );
+                }
+
+                product.stockQuantity -= unitsNeeded;
+
+                double totalFromUnits =
+                    unitsNeeded * product.bulkTotalQuantity!;
+                product.currentUnitRemaining =
+                    totalFromUnits - requiredQuantity;
+
+                movementNote =
+                    'Vente ${cartItem.quantity}×${portion.name} ($unitsNeeded unité(s) ouverte(s)) - Transaction #${createdTransaction.id}';
               }
-            } else {
-              // Regular product (non-bulk) - deduct quantity directly from stock
-              product.stockQuantity -= cartItem.quantity;
-              stockDeduction = cartItem.quantity.toDouble();
-              movementNote =
-                  'Vente ${cartItem.quantity}×${product.name} - Transaction #${createdTransaction.id}';
             }
+          } else {
+            // Regular product (non-bulk) - deduct quantity directly from stock
+            product.stockQuantity -= cartItem.quantity;
+            stockDeduction = cartItem.quantity.toDouble();
+            movementNote =
+                'Vente ${cartItem.quantity}×${product.name} - Transaction #${createdTransaction.id}';
+          }
 
-            product.updatedAt = DateTime.now();
-            await protocol.Product.db.updateRow(session, product);
+          product.updatedAt = DateTime.now();
+          await protocol.Product.db.updateRow(session, product);
 
-            // Log stock movement with actual deducted quantity
-            final stockMovement = protocol.StockMovement(
-              productId: product.id!,
-              quantity: -stockDeduction,
-              movementType: protocol.MovementType.sale,
-              userId: userId,
-              timestamp: DateTime.now(),
-              notes: movementNote,
+          // Log stock movement with actual deducted quantity
+          final stockMovement = protocol.StockMovement(
+            productId: product.id!,
+            quantity: -stockDeduction,
+            movementType: protocol.MovementType.sale,
+            userId: userId,
+            timestamp: DateTime.now(),
+            notes: movementNote,
+          );
+
+          await protocol.StockMovement.db.insertRow(session, stockMovement);
+
+          // Check if stock alert needed
+          if (product.stockQuantity <= product.minStockAlert) {
+            // TODO: Trigger email alert
+            session.log(
+              'ALERT: Product ${product.name} stock low: ${product.stockQuantity} unités',
+              level: LogLevel.warning,
             );
-
-            await protocol.StockMovement.db.insertRow(session, stockMovement);
-
-            // Check if stock alert needed
-            if (product.stockQuantity <= product.minStockAlert) {
-              // TODO: Trigger email alert
-              session.log(
-                'ALERT: Product ${product.name} stock low: ${product.stockQuantity} unités',
-                level: LogLevel.warning,
-              );
-            }
           }
         }
+      }
 
-        // 8. Clear cart
-        await protocol.CartItem.db.deleteWhere(
-          session,
-          where: (t) => t.userId.equals(userId),
-        );
+      // 8. Clear cart
+      await protocol.CartItem.db.deleteWhere(
+        session,
+        where: (t) => t.userId.equals(userId),
+      );
 
-        return createdTransaction;
-      });
-    } catch (e) {
-      session.log('Checkout error: $e', level: LogLevel.error);
-      rethrow;
-    }
+      return createdTransaction;
+    });
   }
 
   /// Refund transaction (admin only)
