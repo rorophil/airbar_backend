@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-exec ./server \
+exec ./bin/server \
   --mode="${runmode}" \
   --server-id="${serverid}" \
   --logging="${logging}" \

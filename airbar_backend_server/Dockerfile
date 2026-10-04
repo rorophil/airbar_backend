@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Build from the server package (generated files are already included in source)
 COPY airbar_backend_server ./airbar_backend_server
-RUN printf "name: _\npublish_to: none\nenvironment:\n  sdk: '^3.8.0'\nworkspace:\n  - airbar_backend_server\n" > /app/pubspec.yaml
+RUN printf "name: _\npublish_to: none\nenvironment:\n  sdk: '^3.12.2'\nworkspace:\n  - airbar_backend_server\n" > /app/pubspec.yaml
 WORKDIR /app/airbar_backend_server
 
 # Install dependencies
@@ -13,8 +13,11 @@ RUN dart pub get
 # Note: Generated files are already copied with the source code
 # No need to regenerate them (would require Flutter)
 
-# Compile the server executable
-RUN dart compile exe bin/main.dart -o bin/server
+# Compile the server executable.
+# Serverpod 4 dependencies (serverpod_argon2, sqlite3) use Dart native build
+# hooks, which 'dart compile exe' cannot handle; 'dart build cli' is required.
+RUN dart build cli --target bin/main.dart --output build
+RUN mv build/bundle/bin/main build/bundle/bin/server
 
 # Final stage
 FROM alpine:latest
@@ -28,8 +31,8 @@ ENV role=monolith
 # Copy runtime dependencies
 COPY --from=build /runtime/ /
 
-# Copy compiled server executable
-COPY --from=build /app/airbar_backend_server/bin/server server
+# Copy compiled server executable and native libraries
+COPY --from=build /app/airbar_backend_server/build/bundle/ ./
 COPY --from=build /app/airbar_backend_server/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
