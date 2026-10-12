@@ -159,7 +159,7 @@ ls lib/src/generated/endpoints.dart
 ls lib/src/generated/protocol.dart
 
 # Si absents
-git pull origin prod  # Récupérer depuis Git
+git pull origin <branche>  # <branche> = prod ou securite, voir installation_quickstart.md
 # OU
 serverpod generate    # Générer en local (nécessite Flutter)
 ```

@@ -305,12 +305,12 @@ git add airbar_backend_server/lib/src/generated/
 git add airbar_backend_client/lib/src/protocol/
 git status
 
-# 7. Commit et push
+# 7. Commit et push (remplacer <branche> par prod ou securite selon le déploiement cible)
 git commit -m "chore: version generated files for Docker deployment"
-git push origin prod
+git push origin <branche>
 
 # 8. Sur le serveur de production, récupérer les fichiers
-git pull origin prod
+git pull origin <branche>
 docker compose up -d --build
 ```
 

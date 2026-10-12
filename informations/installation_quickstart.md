@@ -5,7 +5,20 @@
 
 ---
 
-## 🎯 Prérequis installés
+## � Quelle branche utiliser ?
+
+Deux branches de production coexistent actuellement, **non fusionnées entre elles** :
+
+| Branche | Contenu |
+|---|---|
+| **`prod`** | Stable actuelle, accès HTTP direct sur le port 8080 (sans Caddy/TLS/pinning) |
+| **`securite`** | Nouvelle architecture Caddy + TLS (CA locale) + certificate pinning, voir [migration_http_vers_caddy_tls.md](migration_http_vers_caddy_tls.md) |
+
+Dans toutes les commandes ci-dessous, remplacez `<branche>` par `prod` ou `securite` selon celle que vous souhaitez déployer.
+
+---
+
+## �🎯 Prérequis installés
 
 - ✅ Git
 - ✅ Docker + Docker Compose
@@ -16,10 +29,10 @@
 ## 🚀 Installation (Windows)
 
 ```powershell
-# 1. Cloner le projet (branche prod uniquement)
+# 1. Cloner le projet (remplacer <branche> par prod ou securite)
 cd C:\
 mkdir airbar_production; cd airbar_production
-git clone -b prod --single-branch https://github.com/rorophil/airbar_backend.git
+git clone -b <branche> --single-branch https://github.com/rorophil/airbar_backend.git
 cd .\airbar_backend\airbar_backend_server
 
 # 2. Configurer les secrets
@@ -48,9 +61,9 @@ docker compose -f .\docker-compose.yaml logs -f airbar_server
 ## 🚀 Installation (Linux)
 
 ```bash
-# 1. Cloner le projet (branche prod uniquement)
+# 1. Cloner le projet (remplacer <branche> par prod ou securite)
 mkdir -p ~/airbar_production && cd ~/airbar_production
-git clone -b prod --single-branch https://github.com/rorophil/airbar_backend.git
+git clone -b <branche> --single-branch https://github.com/rorophil/airbar_backend.git
 cd airbar_backend/airbar_backend_server
 
 # 2. Configurer les secrets
@@ -128,7 +141,7 @@ ls lib/src/generated/endpoints.dart
 ls lib/src/generated/protocol.dart
 
 # Si absents, pull la dernière version
-git pull origin prod
+git pull origin <branche>
 
 # Si toujours absents, vérifier .gitignore
 cat ../.gitignore | grep generated
@@ -163,7 +176,7 @@ docker compose restart
 docker compose down
 
 # Mettre à jour
-git pull origin prod
+git pull origin <branche>
 docker compose down && docker compose up -d --build
 
 # Sauvegarder la BDD

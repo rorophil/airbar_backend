@@ -100,7 +100,9 @@ cp config/production.yaml ~/backup_pre_caddy/production.yaml.bak
 # Toujours depuis le dossier du dépôt
 cd ~/airbar_production/airbar_backend
 git status   # vérifier qu'il n'y a pas de modifications locales non commitées en conflit
-git pull origin prod   # ou la branche utilisée en production
+git fetch origin
+git checkout securite   # la branche securite contient l'architecture Caddy/TLS/pinning tant qu'elle n'est pas mergée dans prod
+git pull origin securite
 
 cd airbar_backend_server
 ```

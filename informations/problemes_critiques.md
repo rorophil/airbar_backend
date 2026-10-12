@@ -200,15 +200,15 @@ git status
 # Commit
 git commit -m "chore: version generated files for Docker deployment"
 
-# Push
-git push origin prod
+# Push (remplacer <branche> par prod ou securite selon le déploiement cible)
+git push origin <branche>
 ```
 
 #### Étape 4 : Sur le serveur de production
 
 ```bash
 # Récupérer les nouveaux fichiers
-git pull origin prod
+git pull origin <branche>
 
 # Rebuild
 docker compose down

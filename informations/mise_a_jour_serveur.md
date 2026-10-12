@@ -119,7 +119,9 @@ git pull origin prod
 
 ### 4bis. Si la nouvelle version est sur une autre branche que `prod`
 
-Si le code à déployer se trouve sur une branche différente (ex: `release/1.2`, `hotfix-xyz`), n'utilisez pas `git pull origin prod`. Procédez ainsi :
+> **Cas concret actuel :** `securite` est une branche de production distincte, contenant l'architecture Caddy + TLS + certificate pinning, **non fusionnée dans `prod`** (voir [migration_http_vers_caddy_tls.md](migration_http_vers_caddy_tls.md)). Les instructions ci-dessous s'appliquent telles quelles en remplaçant `<nom-de-la-nouvellebranche>` par `securite`.
+
+Si le code à déployer se trouve sur une branche différente (ex: `securite`, `release/1.2`, `hotfix-xyz`), n'utilisez pas `git pull origin prod`. Procédez ainsi :
 
 #### Windows (PowerShell)
 

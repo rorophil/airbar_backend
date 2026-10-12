@@ -186,6 +186,17 @@ docker ps
 
 ## ⚙️ Configuration initiale
 
+### 🌿 Quelle branche utiliser ?
+
+Deux branches de production coexistent actuellement, **non fusionnées entre elles** :
+
+| Branche | Contenu |
+|---|---|
+| **`prod`** | Stable actuelle, accès HTTP direct sur le port 8080 (sans Caddy/TLS/pinning) |
+| **`securite`** | Nouvelle architecture Caddy + TLS (CA locale) + certificate pinning, voir [migration_http_vers_caddy_tls.md](migration_http_vers_caddy_tls.md) |
+
+Dans toutes les commandes ci-dessous, remplacez `<branche>` par `prod` ou `securite` selon celle que vous souhaitez déployer.
+
 ### 1. Récupérer le code source
 
 #### Windows (PowerShell)
@@ -196,8 +207,8 @@ cd C:\
 mkdir airbar_production
 cd airbar_production
 
-# Cloner le dépôt (branche prod uniquement)
-git clone -b prod --single-branch https://github.com/rorophil/airbar_backend.git
+# Cloner le dépôt (remplacer <branche> par prod ou securite)
+git clone -b <branche> --single-branch https://github.com/rorophil/airbar_backend.git
 cd .\airbar_backend\airbar_backend_server
 
 # Vérifier la structure
@@ -211,15 +222,15 @@ dir
 mkdir -p ~/airbar_production
 cd ~/airbar_production
 
-# Cloner le dépôt (branche prod uniquement)
-git clone -b prod --single-branch https://github.com/rorophil/airbar_backend.git
+# Cloner le dépôt (remplacer <branche> par prod ou securite)
+git clone -b <branche> --single-branch https://github.com/rorophil/airbar_backend.git
 cd airbar_backend/airbar_backend_server
 
 # Vérifier la structure
 ls -la
 ```
 
-> **💡 Optimisation :** L'option `--single-branch` télécharge uniquement la branche `prod`, ce qui réduit le temps de clonage et l'espace disque utilisé (on évite de télécharger toutes les branches de développement inutiles sur le serveur de production).
+> **💡 Optimisation :** L'option `--single-branch` télécharge uniquement la branche choisie, ce qui réduit le temps de clonage et l'espace disque utilisé (on évite de télécharger toutes les branches de développement inutiles sur le serveur de production).
 
 **Fichiers attendus :**
 
@@ -242,7 +253,7 @@ ls lib/src/generated/protocol.yaml
 
 ```bash
 # Vérifier que vous avez bien la dernière version
-git pull origin prod
+git pull origin <branche>
 
 # Vérifier le .gitignore à la racine du workspace
 cat ../.gitignore | grep generated
@@ -787,13 +798,13 @@ ls airbar_backend_server/lib/src/generated/
 # Ajouter au Git
 git add airbar_backend_server/lib/src/generated/
 git commit -m "chore: add generated files for production deployment"
-git push origin prod
+git push origin <branche>
 ```
 
 3. **Sur le serveur distant, récupérer les fichiers**
 
 ```bash
-git pull origin prod
+git pull origin <branche>
 docker compose up -d --build
 ```
 
@@ -881,7 +892,7 @@ docker cp airbar_postgres_prod:/tmp/backup.dump ./backup_$(date +%Y%m%d_%H%M%S).
 
 # 2. Se placer dans le dossier du dépôt, récupérer les mises à jour
 cd ~/airbar_production/airbar_backend
-git pull origin prod
+git pull origin <branche>
 
 # 3. Rebuild et redémarrage (depuis airbar_backend_server)
 cd airbar_backend_server
