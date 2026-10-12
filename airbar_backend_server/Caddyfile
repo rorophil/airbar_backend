@@ -1,0 +1,14 @@
+{
+	# Connexion par adresse IP (pas de nom de domaine) : le ClientHello TLS ne
+	# contient alors aucune SNI. Sans ceci, Caddy ne sait pas quel certificat
+	# présenter (surtout derrière le NAT Docker) et renvoie "internal error".
+	default_sni {$PUBLIC_ADDRESS}
+}
+
+{$PUBLIC_ADDRESS}:443 {
+	# CA locale auto-générée (pas de nom de domaine requis) ; le certificat racine
+	# doit être extrait puis épinglé (pinning) dans l'app Flutter — voir DEPLOYMENT.md.
+	tls internal
+
+	reverse_proxy airbar_server:8080
+}

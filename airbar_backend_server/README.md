@@ -8,7 +8,7 @@ Backend Serverpod pour l'application de gestion de bar d'aéro-club AirBar.
 
 - Dart 3.x
 - PostgreSQL (via Docker recommandé)
-- Serverpod CLI 3.3.1+
+- Serverpod CLI 4.0.3+
 
 ### Démarrer les services
 

@@ -17,6 +17,7 @@
 | **[installation_serveur_production.md](installation_serveur_production.md)** | 📘 Installation | Débutants | Guide complet détaillé Windows/Linux - RECOMMANDÉ |
 | **[troubleshooting.md](troubleshooting.md)** | 🔧 Dépannage | Tous | Dépannage exhaustif de tous les problèmes |
 | **[mise_a_jour_serveur.md](mise_a_jour_serveur.md)** | 🔄 Maintenance | Tous | Procédure de mise à jour avec sauvegardes |
+| **[migration_http_vers_caddy_tls.md](migration_http_vers_caddy_tls.md)** | 🔐 Migration | Admins existants | Bascule d'une prod existante (HTTP:8080) vers Caddy/TLS/pinning |
 
 ### 📍 Dossier : `/airbar_backend_server/`
 
@@ -95,6 +96,18 @@
 3. **En cas de problème** : Rollback documenté dans le guide
 
 **Temps estimé :** 15-20 minutes
+
+---
+
+### Scénario 5 : Migration d'une production existante vers Caddy/TLS/pinning
+
+**Objectif :** Vous avez déjà un serveur AirBar en production en HTTP direct sur le port 8080 (sans reverse proxy) et vous voulez basculer vers Caddy avec TLS et certificate pinning, sans coupure de service ni perte de données.
+
+1. **Lire** : [migration_http_vers_caddy_tls.md](migration_http_vers_caddy_tls.md)
+2. **Suivre** : Les 7 étapes (sauvegardes → déploiement en parallèle → validation app → coupure finale du port 8080)
+3. **En cas de problème** : Plan de rollback documenté à chaque étape
+
+**Temps estimé :** 30-60 minutes (hors délai de distribution de la nouvelle app aux utilisateurs)
 
 ---
 

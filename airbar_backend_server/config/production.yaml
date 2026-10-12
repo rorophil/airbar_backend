@@ -5,25 +5,29 @@
 # this file is the examplepod.com domain name.
 
 # Configuration for the main API server.
+# Le serveur écoute en clair sur le port 8080 (interne au réseau Docker) ;
+# Caddy termine le TLS et expose publiquement le port 443 (voir Caddyfile).
+# publicHost/publicPort/publicScheme ne servent qu'à générer des liens absolus,
+# ils doivent refléter l'adresse PUBLIQUE réelle (remplacer CHANGE_ME_PUBLIC_IP).
 apiServer:
   port: 8080
-  publicHost: localhost
-  publicPort: 8080
-  publicScheme: http
+  publicHost: CHANGE_ME_PUBLIC_IP
+  publicPort: 443
+  publicScheme: https
 
 # Configuration for the Insights server.
 insightsServer:
   port: 8081
-  publicHost: localhost
-  publicPort: 8081
-  publicScheme: http
+  publicHost: CHANGE_ME_PUBLIC_IP
+  publicPort: 443
+  publicScheme: https
 
 # Configuration for the web server.
 webServer:
   port: 8082
-  publicHost: localhost
-  publicPort: 8082
-  publicScheme: http
+  publicHost: CHANGE_ME_PUBLIC_IP
+  publicPort: 443
+  publicScheme: https
 
 # This is the database setup for your servers. The default for the Google Cloud
 # Engine Terraform configuration is to connect on a private IP address.

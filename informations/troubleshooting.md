@@ -472,7 +472,7 @@ docker compose ps
 docker compose logs airbar_server | grep "listening on port"
 
 # 2. Vérifier depuis le serveur local
-curl http://localhost:8080/
+curl -k https://localhost/
 # Doit répondre : {"status":"ok",...}
 
 # 3. Vérifier le pare-feu (Linux)
@@ -483,9 +483,7 @@ sudo iptables -L -n | grep 8080
 **Solution :**
 ```bash
 # Ouvrir les ports dans le pare-feu
-sudo ufw allow 8080/tcp
-sudo ufw allow 8081/tcp
-sudo ufw allow 8082/tcp
+sudo ufw allow 443/tcp
 sudo ufw reload
 
 # Vérifier

@@ -39,7 +39,7 @@ docker compose -f .\docker-compose.yaml run --rm --entrypoint /bin/sh airbar_ser
 docker compose -f .\docker-compose.yaml restart airbar_server
 
 # 6. Tester
-curl http://localhost:8080/
+curl -k https://localhost/
 docker compose -f .\docker-compose.yaml logs -f airbar_server
 ```
 
@@ -73,7 +73,7 @@ docker compose -f ./docker-compose.yaml run --rm --entrypoint /bin/sh airbar_ser
 docker compose -f ./docker-compose.yaml restart airbar_server
 
 # 7. Tester
-curl http://localhost:8080/
+curl -k https://localhost/
 docker compose -f ./docker-compose.yaml logs -f airbar_server
 ```
 
@@ -180,7 +180,7 @@ docker system prune -a
 
 | Service | Vérification | Commande |
 |---------|--------------|----------|
-| **API** | HTTP 200 | `curl http://localhost:8080/` |
+| **API** | HTTP 200 | `curl -k https://localhost/` |
 | **Insights** | Dashboard web | Navigateur : `http://localhost:8081` |
 | **PostgreSQL** | Connexion OK | `docker compose exec postgres psql -U postgres -d airbar_backend` |
 | **Redis** | Ping OK | `docker compose exec redis redis-cli -a "PASSWORD" ping` |
@@ -198,13 +198,14 @@ openssl rand -base64 32  # Répéter pour chaque secret
 
 # 2. Mettre à jour config/passwords.yaml ET .env
 
-# 3. Configurer pare-feu (Linux)
+# 3. Configurer pare-feu (Linux) : seul le port 443 (HTTPS, via Caddy) doit être ouvert
 sudo ufw allow ssh
-sudo ufw allow 8080,8081,8082/tcp
+sudo ufw allow 443/tcp
 sudo ufw enable
 
-# 4. Installer reverse proxy + SSL (Nginx + Let's Encrypt)
-# Voir guide complet : installation_serveur_production.md
+# 4. TLS déjà géré par Caddy (tls internal, pas de nom de domaine requis)
+# Extraire la CA locale et l'épingler côté Flutter : voir DEPLOYMENT.md
+docker compose cp caddy:/data/caddy/pki/authorities/local/root.crt ./root.crt
 
 # 5. Configurer sauvegardes automatiques (cron)
 crontab -e

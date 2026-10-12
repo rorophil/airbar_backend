@@ -42,15 +42,16 @@ services:
     build:
       context: ..
       dockerfile: airbar_backend_server/Dockerfile
-    container_name: airbar_backend_prod
+    container_name: airbar_backend_${RUNMODE:-production}
     restart: unless-stopped
-    ports:
-      - "8080:8080"  # API Server
-      - "8081:8081"  # Insights Server
-      - "8082:8082"  # Web Server
+    # Pas de "ports:" ici : le serveur n'est accessible que via Caddy (TLS), jamais directement.
+    expose:
+      - "8080"
+      - "8081"
+      - "8082"
     environment:
-      - runmode=production
-      - serverid=prod-001
+      - runmode=${RUNMODE:-production}
+      - serverid=${SERVER_ID:-prod-001}
       - logging=normal
       - role=monolith
       # Database
@@ -77,9 +78,28 @@ services:
         condition: service_healthy
     networks:
       - airbar_network
+  # Reverse proxy TLS (certificat local Caddy "tls internal", voir README pour le pinning côté app)
+  caddy:
+    image: caddy:2-alpine
+    container_name: airbar_caddy_${RUNMODE:-production}
+    restart: unless-stopped
+    ports:
+      - "443:443"
+    environment:
+      - PUBLIC_ADDRESS=${PUBLIC_ADDRESS:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - airbar_server
+    networks:
+      - airbar_network
 networks:
   airbar_network:
     driver: bridge
 volumes:
   postgres_data:
   redis_data:
+  caddy_data:
+  caddy_config:

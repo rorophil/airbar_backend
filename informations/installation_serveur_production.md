@@ -2,8 +2,8 @@
 
 ## Installation Serveur Local ou Distant (Windows / Linux)
 
-**Version:** 2.0
-**Date:** 2026-08-16
+**Version:** 3.0
+**Date:** 2026-10-12
 **Testé sur:** Windows 10/11, Ubuntu 22.04/24.04
 
 ---
@@ -26,18 +26,24 @@
 ### Architecture de déploiement
 
 ```
-┌─────────────────────────────────────────────────────┐
-│  SERVEUR (Windows ou Linux)                         │
-│  ┌───────────────────────────────────────────────┐  │
-│  │  Docker Engine                                 │  │
-│  │  ┌──────────┐  ┌──────────┐  ┌─────────────┐ │  │
-│  │  │PostgreSQL│  │  Redis   │  │  AirBar     │ │  │
-│  │  │  :5432   │  │  :6379   │  │  Server     │ │  │
-│  │  │          │  │          │  │  :8080-8082 │ │  │
-│  │  └──────────┘  └──────────┘  └─────────────┘ │  │
-│  └───────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────┐
+│  SERVEUR (Windows ou Linux)                               │
+│  ┌───────────────────────────────────────────────────┐    │
+│  │  Docker Engine                                     │    │
+│  │  ┌──────────┐  ┌──────────┐  ┌─────────┐ ┌──────┐ │    │
+│  │  │PostgreSQL│  │  Redis   │  │ AirBar  │ │Caddy │ │    │
+│  │  │  :5432   │  │  :6379   │  │ Server  │ │ :443 │◄┼────┼── Internet (HTTPS uniquement)
+│  │  │          │  │          │  │:8080-82 │ │ TLS  │ │    │
+│  │  └──────────┘  └──────────┘  └────▲────┘ └──┬───┘ │    │
+│  │                                   └──────────┘     │    │
+│  │                            (reverse proxy interne)  │    │
+│  └───────────────────────────────────────────────────┘    │
+└───────────────────────────────────────────────────────────┘
 ```
+
+**Depuis la version 3.0 :** seul le port **443 (HTTPS)** est exposé publiquement. Caddy termine le TLS avec sa propre CA locale (`tls internal`, aucun nom de domaine requis) et relaie le trafic vers `airbar_server:8080` à l'intérieur du réseau Docker. Les ports 8080 (API), 8081 (Insights) et 8082 (Web) ne sont plus accessibles depuis l'extérieur.
+
+L'application Flutter épingle (certificate pinning) le certificat racine de cette CA locale : elle n'accepte que ce certificat précis, jamais une CA publique quelconque — voir [Déploiement](#déploiement) pour la procédure d'extraction/épinglage.
 
 ### Deux types d'installation
 
@@ -48,7 +54,7 @@
 
 ### ⚠️ Point critique : Fichiers générés par Serverpod
 
-**Depuis la version 3.3.1 de Serverpod**, les fichiers générés (`lib/src/generated/`) **DOIVENT être versionnés dans Git** pour un déploiement Docker sans Flutter.
+**Depuis la version 4.0.3 de Serverpod**, les fichiers générés (`lib/src/generated/`) **DOIVENT être versionnés dans Git** pour un déploiement Docker sans Flutter.
 
 **Pourquoi ?** La génération de code nécessite Flutter, mais Docker utilise une image Dart légère (~200MB vs ~2GB avec Flutter). Les fichiers générés sont donc créés en développement puis versionnés.
 
@@ -70,7 +76,7 @@
 - **Accès:** SSH avec clés publiques (recommandé) ou mot de passe
 - **RAM:** 4 Go minimum, 8 Go recommandé
 - **Disque:** 20 Go libres
-- **Ports:** 8080, 8081, 8082 ouverts (pare-feu)
+- **Ports:** 443 (HTTPS, Caddy) ouvert dans le pare-feu — 8080/8081/8082 restent internes au réseau Docker et NE DOIVENT PAS être exposés publiquement
 
 ---
 
@@ -306,6 +312,15 @@ nano .env
 # ⚠️ ATTENTION : Les valeurs ci-dessous DOIVENT
 # correspondre à config/passwords.yaml (section production)
 
+# Mode Serverpod pour CE serveur : "production" pour le vrai serveur,
+# "staging" pour un serveur de test grandeur nature (même docker-compose.yaml)
+RUNMODE=production
+SERVER_ID=prod-001
+
+# Adresse IP PUBLIQUE de ce serveur : utilisée par Caddy pour émettre
+# son certificat TLS local (SAN = cette IP). Pas de nom de domaine requis.
+PUBLIC_ADDRESS=203.0.113.10
+
 # PostgreSQL - Base de données principale
 # Doit correspondre à : passwords.yaml -> production -> database
 POSTGRES_PASSWORD=-g4x7Ke0FV68yDNSi1xDQpirxejC2580
@@ -367,22 +382,41 @@ cat config/production.yaml
 ```yaml
 apiServer:
   port: 8080
-  publicHost: localhost          # ⚠️ Remplacer par votre domaine en production
-  publicPort: 8080
-  publicScheme: http             # ⚠️ Passer à https avec reverse proxy
+  publicHost: 203.0.113.10       # ⚠️ Remplacer par l'IP publique réelle (= PUBLIC_ADDRESS du .env)
+  publicPort: 443                # ✅ Port public = celui de Caddy, pas 8080
+  publicScheme: https            # ✅ HTTPS géré par Caddy
 
 database:
   host: postgres                 # ✅ Ne pas changer (nom du service Docker)
   port: 5432
   name: airbar_backend
   user: postgres
-  requireSsl: false              # ⚠️ true si certificat SSL configuré
+  requireSsl: false              # ✅ Normal : la connexion postgres<->serveur reste interne au réseau Docker
 
 redis:
   enabled: true
   host: redis                    # ✅ Ne pas changer (nom du service Docker)
   port: 6379
 ```
+
+**Fichier `Caddyfile` (reverse proxy TLS) :** vérifiez qu'il existe bien à la racine de `airbar_backend_server/` et qu'il utilise la variable `${PUBLIC_ADDRESS}` :
+
+```bash
+cat Caddyfile
+```
+
+```caddyfile
+{
+	default_sni {$PUBLIC_ADDRESS}
+}
+
+{$PUBLIC_ADDRESS}:443 {
+	tls internal
+	reverse_proxy airbar_server:8080
+}
+```
+
+> `default_sni` est indispensable : une connexion par adresse IP (sans nom de domaine) n'envoie pas de SNI TLS, Caddy a donc besoin de cette option pour savoir quel certificat présenter. Sans elle, le handshake TLS échoue avec une erreur `alert internal error` (voir [Dépannage](#dépannage)).
 
 ---
 
@@ -420,9 +454,12 @@ docker compose -f ./docker-compose.yaml logs -f
 ✔ Network airbar_backend_server_airbar_network  Created
 ✔ Volume airbar_backend_server_postgres_data    Created
 ✔ Volume airbar_backend_server_redis_data       Created
+✔ Volume airbar_backend_server_caddy_data        Created
+✔ Volume airbar_backend_server_caddy_config      Created
 ✔ Container airbar_postgres_prod                Healthy
 ✔ Container airbar_redis_prod                   Healthy
-✔ Container airbar_backend_prod                 Started
+✔ Container airbar_backend_production            Started
+✔ Container airbar_caddy_production               Started
 ```
 
 ### 2. Vérifier l'état des services
@@ -440,14 +477,16 @@ docker compose -f ./docker-compose.yaml ps
 **État attendu :**
 
 ```
-NAME                  STATUS              PORTS
-airbar_postgres_prod  Up (healthy)        0.0.0.0:5432->5432/tcp
-airbar_redis_prod     Up (healthy)        0.0.0.0:6379->6379/tcp
-airbar_backend_prod   Up                  0.0.0.0:8080-8082->8080-8082/tcp
+NAME                        STATUS              PORTS
+airbar_postgres_prod        Up (healthy)        0.0.0.0:5432->5432/tcp
+airbar_redis_prod           Up (healthy)        0.0.0.0:6379->6379/tcp
+airbar_backend_production  Up                  8080-8082/tcp (internes, non publiés)
+airbar_caddy_production     Up                  0.0.0.0:443->443/tcp
 ```
 
 **✅ Tous les services doivent être "Up"**
 **✅ PostgreSQL et Redis doivent être "healthy"**
+**✅ Seul `caddy` doit publier un port sur l'hôte (443) — `airbar_server` ne doit avoir aucun port publié**
 
 ### 3. Appliquer les migrations de base de données
 
@@ -470,7 +509,7 @@ docker compose -f ./docker-compose.yaml run --rm --entrypoint /bin/sh airbar_ser
 **Sortie attendue :**
 
 ```
-SERVERPOD version: 3.3.1
+SERVERPOD version: 4.0.3
 runMode: production
 serverId: prod-001
 applyMigrations: true
@@ -497,6 +536,34 @@ docker compose -f .\docker-compose.yaml restart airbar_server
 docker compose -f ./docker-compose.yaml restart airbar_server
 ```
 
+### 5. Extraire et sauvegarder la CA locale Caddy (à faire une fois)
+
+Caddy génère sa propre autorité de certification locale au premier démarrage. Il faut l'extraire pour l'épingler (certificate pinning) dans l'application Flutter, et la sauvegarder en lieu sûr.
+
+```bash
+# Extraire le certificat et la clé privée de la CA
+docker compose cp caddy:/data/caddy/pki/authorities/local/root.crt ./root.crt
+docker compose cp caddy:/data/caddy/pki/authorities/local/root.key ./root.key
+```
+
+**Sauvegarder la CA hors du dépôt Git**, sur une machine de confiance (jamais sur le serveur lui-même uniquement) :
+
+```bash
+mkdir -p ~/AirBar-Secrets-Backup/production
+cp root.crt root.key ~/AirBar-Secrets-Backup/production/
+chmod 600 ~/AirBar-Secrets-Backup/production/root.key
+```
+
+⚠️ **Ne jamais réutiliser la même CA entre l'environnement de test (staging) et la production.** Chaque environnement a sa propre CA locale, générée indépendamment par son propre conteneur Caddy.
+
+**Épingler le certificat dans l'application Flutter :**
+
+```bash
+cp root.crt "<chemin-vers-le-repo-airbar>/assets/certs/production_root_ca.pem"
+```
+
+Puis recompiler/republier l'application (`flutter build ...`). Le `ServerpodClientProvider` côté Flutter charge automatiquement ce fichier et n'accepte que cette CA (`SecurityContext(withTrustedRoots: false)`), ce qui bloque toute interception (MITM) même avec un certificat émis par une CA publique valide.
+
 ---
 
 ## ✅ Vérification et tests
@@ -514,7 +581,7 @@ docker compose -f ./docker-compose.yaml logs --tail 100 airbar_server
 **Logs attendus (succès) :**
 
 ```
-SERVERPOD version: 3.3.1
+SERVERPOD version: 4.0.3
 runMode: production
 serverId: prod-001
 SERVERPOD started
@@ -534,29 +601,35 @@ Web Server listening on port 8082
 **Depuis le serveur :**
 
 ```bash
-curl http://localhost:8080/
+curl -k https://localhost/
 ```
 
-**Depuis un autre poste (si pare-feu ouvert) :**
+**Depuis un autre poste (si le pare-feu autorise le port 443) :**
 
 ```bash
-curl http://adresse-ip-serveur:8080/
+curl -k https://adresse-ip-serveur/
 ```
+
+Le `-k` est normal tant que le certificat racine de Caddy n'est pas installé localement : c'est un certificat auto-signé, destiné au pinning côté app plutôt qu'à une validation par une CA publique.
 
 **Réponse attendue :**
 
 ```json
-{"status":"ok","version":"3.3.1"}
+{"status":"ok","version":"4.0.3"}
 ```
 
 ### 3. Accéder à Serverpod Insights (monitoring)
 
-Ouvrir dans un navigateur :
+Depuis la version 3.0, Insights (port 8081) n'est plus exposé publiquement (seul Caddy/443 l'est). Pour y accéder malgré tout, ouvrez un tunnel SSH vers le serveur :
+
+```bash
+ssh -L 8081:localhost:8081 utilisateur@adresse-ip-serveur
+```
+
+Puis, dans un navigateur sur votre poste local :
 
 ```
 http://localhost:8081
-# ou
-http://adresse-ip-serveur:8081
 ```
 
 **Page attendue :** Dashboard Serverpod Insights avec graphiques de performances
@@ -589,6 +662,38 @@ SELECT * FROM serverpod_user_info;
 ---
 
 ## 🔧 Dépannage
+
+### Erreur TLS « alert internal error » (Caddy)
+
+**Symptôme :**
+
+```
+curl: (35) TLS connect error: error:0A000438:SSL routines::tlsv1 alert internal error
+```
+
+même en se connectant depuis le serveur lui-même, avec un certificat Caddy parfaitement valide.
+
+**Cause :** une connexion par adresse IP littérale (sans nom de domaine) n'envoie **aucune SNI** dans le ClientHello TLS (RFC 6066). Caddy a besoin de la SNI — ou de l'adresse locale de la connexion — pour choisir quel certificat présenter. Derrière le NAT de Docker, l'adresse locale vue par le conteneur n'est jamais l'IP publique de l'hôte, donc ce mécanisme de repli échoue aussi.
+
+**Solution :** ajouter l'option globale `default_sni` dans le `Caddyfile` :
+
+```caddyfile
+{
+	default_sni {$PUBLIC_ADDRESS}
+}
+
+{$PUBLIC_ADDRESS}:443 {
+	tls internal
+	reverse_proxy airbar_server:8080
+}
+```
+
+Puis redémarrer uniquement Caddy (pas besoin de rebuild, le fichier est monté en volume) :
+
+```bash
+docker compose restart caddy
+curl -k https://localhost/
+```
 
 ### Problème d'authentification PostgreSQL
 
@@ -770,27 +875,25 @@ docker compose -f ./docker-compose.yaml restart
 ### Mettre à jour le code
 
 ```bash
-docker ps# 1. Sauvegarder la base de données
+# 1. Sauvegarder la base de données
 docker exec airbar_postgres_prod pg_dump -U postgres -d airbar_backend -F c -f /tmp/backup.dump
 docker cp airbar_postgres_prod:/tmp/backup.dump ./backup_$(date +%Y%m%d_%H%M%S).dump
 
-ce placer dans /airbar_production/airbar_backend
-# 2. Récupérer les mises à jour
+# 2. Se placer dans le dossier du dépôt, récupérer les mises à jour
+cd ~/airbar_production/airbar_backend
 git pull origin prod
 
-faire  un ls
-ce placer dans /airbar_production/airbar_backend/airbar_backend_server
-# 3. Rebuild et redémarrage
+# 3. Rebuild et redémarrage (depuis airbar_backend_server)
+cd airbar_backend_server
 docker compose down
-
-docker ps 
-y a plus rien
 docker compose up -d --build
 
-Appliquer les nouvelles migrations (si nécessaire)
+# 4. Appliquer les nouvelles migrations (si nécessaire)
 docker compose run --rm --entrypoint /bin/sh airbar_server \
   -c "./bin/server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
 ```
+
+> Le Caddyfile et les volumes `caddy_data`/`caddy_config` ne sont pas affectés par un `docker compose down` (sans `-v`) : la CA locale persiste entre les mises à jour.
 
 ### Sauvegarder la base de données
 
@@ -814,6 +917,16 @@ docker cp ./backups/airbar_20260816_120000.dump airbar_postgres_prod:/tmp/restor
 # Restaurer
 docker exec airbar_postgres_prod pg_restore -U postgres -d airbar_backend -c /tmp/restore.dump
 ```
+
+### Sauvegarder/vérifier la CA Caddy
+
+La CA locale (`root.crt`/`root.key`) est générée une seule fois et persistée dans le volume `caddy_data`. Elle ne doit être renouvelée qu'en cas de compromission suspectée. Vérifier périodiquement que la sauvegarde externe est toujours à jour :
+
+```bash
+diff <(docker compose cp caddy:/data/caddy/pki/authorities/local/root.crt -) ~/AirBar-Secrets-Backup/production/root.crt
+```
+
+Aucune différence attendue tant que le volume `caddy_data` n'a pas été recréé (`docker compose down -v` supprimerait la CA — à éviter en production).
 
 ### Voir les logs en temps réel
 
@@ -846,9 +959,10 @@ docker volume prune
 
 - [ ] **Changer TOUS les mots de passe** dans `config/passwords.yaml` ET `.env`
 - [ ] **Utiliser des mots de passe de 32+ caractères** générés aléatoirement
-- [ ] **Configurer un pare-feu** (UFW sur Linux, Windows Firewall)
-- [ ] **Installer un reverse proxy** (Nginx ou Traefik) avec SSL/TLS
-- [ ] **Obtenir un certificat SSL** (Let's Encrypt gratuit)
+- [ ] **Configurer un pare-feu** (UFW sur Linux, Windows Firewall) — seul le port 443 doit être ouvert publiquement
+- [x] **TLS géré automatiquement par Caddy** (`tls internal` + `default_sni`, pas de nom de domaine requis)
+- [ ] **Sauvegarder la CA Caddy** (`root.crt`/`root.key`) hors du serveur et hors de tout dépôt Git, avec `chmod 600` sur la clé
+- [ ] **Épingler le certificat de production** dans `airbar/assets/certs/production_root_ca.pem` et vérifier que l'app refuse bien une CA différente (test négatif de pinning)
 - [ ] **Configurer les sauvegardes automatiques** (cron job quotidien)
 - [ ] **Restreindre l'accès SSH** (clés uniquement, désactiver mot de passe)
 - [ ] **Configurer la surveillance** (monitoring, alertes)
@@ -880,10 +994,8 @@ sudo apt install -y ufw
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
 sudo ufw allow ssh
-sudo ufw allow 8080/tcp   # API
-sudo ufw allow 8081/tcp   # Insights
-sudo ufw allow 8082/tcp   # Web
-sudo ufw allow 443/tcp    # HTTPS (avec reverse proxy)
+sudo ufw allow 443/tcp   # HTTPS (Caddy) - seul port à exposer publiquement
+# Les ports 8080/8081/8082 sont internes au réseau Docker, ne pas les ouvrir
 
 # Activer
 sudo ufw enable
@@ -902,6 +1014,15 @@ sudo ufw status
 ---
 
 ## 📝 Changelog
+
+### Version 3.0 (2026-10-12)
+
+- ✅ Ajout de Caddy comme reverse proxy TLS (`tls internal`, sans nom de domaine)
+- ✅ Seul le port 443 est désormais exposé publiquement (8080-8082 internes)
+- ✅ Variables `.env` `RUNMODE` et `PUBLIC_ADDRESS` (un même docker-compose.yaml pour staging et production)
+- ✅ Procédure d'extraction, de sauvegarde et d'épinglage (certificate pinning) de la CA locale
+- ✅ Nouvelle entrée de dépannage pour l'erreur TLS `alert internal error` (nécessité de `default_sni`)
+- ✅ Accès à Serverpod Insights désormais via tunnel SSH (plus exposé publiquement)
 
 ### Version 2.0 (2026-08-16)
 

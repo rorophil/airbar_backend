@@ -164,7 +164,7 @@ airbar_backend/
 - [ ] Utiliser des mots de passe de 32+ caractères (générés aléatoirement)
 - [ ] Vérifier que `.env` et `passwords.yaml` ne sont PAS dans Git
 - [ ] Configurer un pare-feu (ports 8080-8082 uniquement)
-- [ ] Installer un reverse proxy (Nginx) avec SSL/TLS (Let's Encrypt)
+- [x] TLS géré par Caddy (reverse proxy, `tls internal`, sans nom de domaine)
 - [ ] Configurer les sauvegardes automatiques quotidiennes
 - [ ] Restreindre l'accès SSH (clés uniquement, désactiver mot de passe)
 - [ ] Configurer la surveillance (monitoring, alertes)

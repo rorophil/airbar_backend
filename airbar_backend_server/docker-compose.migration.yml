@@ -1,0 +1,16 @@
+# Surcouche TEMPORAIRE pour migrer une production existante (HTTP:8080 sans Caddy)
+# vers l'architecture Caddy/TLS/pinning sans coupure de service.
+#
+# Usage (en plus du docker-compose.yaml habituel) :
+#   docker compose -f docker-compose.yaml -f docker-compose.migration.yml up -d
+#
+# Retirer ce fichier (revenir à "docker compose up -d" seul, sans -f) une fois que
+# tous les clients ont installé la nouvelle app HTTPS avec le certificat pinné.
+#
+# Détail : airbar_server n'a plus de "ports:" dans docker-compose.yaml (seulement
+# "expose:"), donc rien n'est publié sur l'hôte. Cette surcouche republie 8080
+# le temps de la transition. Voir informations/migration_http_vers_caddy_tls.md.
+services:
+  airbar_server:
+    ports:
+      - "8080:8080"
