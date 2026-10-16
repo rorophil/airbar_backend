@@ -210,9 +210,14 @@ Si cette dernière commande échoue avec `tlsv1 alert internal error`, voir l'en
 # Extraire le certificat et la clé privée générés par Caddy
 docker compose -f docker-compose.yaml -f docker-compose.migration.yml cp caddy:/data/caddy/pki/authorities/local/root.crt ./root.crt
 docker compose -f docker-compose.yaml -f docker-compose.migration.yml cp caddy:/data/caddy/pki/authorities/local/root.key ./root.key
+
+# Vérifier leur présence avant de passer à la suite
+ls -la root.crt root.key
 ```
 
-**Sauvegarder immédiatement hors du serveur**, sur une machine de confiance :
+> **⚠️ Ce sont de simples fichiers non versionnés sur le disque du serveur** : ils peuvent disparaître silencieusement (nettoyage manuel, script, erreur de manipulation) sans laisser de trace dans l'historique shell si la suppression a eu lieu via une commande SSH non-interactive (celles-ci n'écrivent jamais dans `.bash_history`/`.zsh_history`). Le CA source, lui, reste intact dans le volume Docker `caddy_data` tant qu'aucun `docker compose down -v` n'est exécuté — en cas de disparition, relancez simplement la commande d'extraction ci-dessus pour les régénérer à l'identique. Pensez à vérifier leur présence (`ls -la root.crt root.key`) après chaque déploiement (voir aussi [mise_a_jour_serveur.md](mise_a_jour_serveur.md#8-vérifier-que-tout-fonctionne)).
+
+**Sauvegarder immédiatement hors du serveur**, sur une machine de confiance (remplacer `production` par `staging` selon l'environnement concerné) :
 
 ```bash
 # Depuis votre poste local (pas le serveur)
@@ -220,6 +225,8 @@ scp utilisateur@votre-serveur:~/airbar_production/airbar_backend/airbar_backend_
 scp utilisateur@votre-serveur:~/airbar_production/airbar_backend/airbar_backend_server/root.key ~/AirBar-Secrets-Backup/production/root.key
 chmod 600 ~/AirBar-Secrets-Backup/production/root.key
 ```
+
+Une fois cette sauvegarde confirmée, vous pouvez supprimer les copies du serveur (`rm root.crt root.key`) : ce ne sont que des extractions dérivées, reproductibles à tout moment depuis le volume `caddy_data`.
 
 **Épingler le certificat dans l'app Flutter** (sur votre poste de développement) :
 
@@ -319,7 +326,7 @@ docker compose up -d
 - [ ] `docker compose -f docker-compose.yaml -f docker-compose.migration.yml up -d --build` exécuté, `... ps` conforme
 - [ ] Ancien accès HTTP:8080 toujours fonctionnel (non cassé par le déploiement)
 - [ ] Nouveau Caddy fonctionnel (`curl -k https://localhost/` → 200)
-- [ ] CA extraite, sauvegardée hors serveur avec `chmod 600` sur `root.key`
+- [ ] CA extraite, présence vérifiée (`ls -la root.crt root.key`), sauvegardée hors serveur avec `chmod 600` sur `root.key`
 - [ ] CA épinglée dans `assets/certs/production_root_ca.pem`, app recompilée
 - [ ] App HTTPS testée avec succès sur au moins un appareil réel (connexion + parcours complet)
 - [ ] Tous les utilisateurs ont installé la nouvelle version de l'app
@@ -338,6 +345,12 @@ docker compose up -d
 ---
 
 ## 📝 Changelog
+
+### Version 1.3 (2026-10-16)
+
+- 🔎 Ajout d'une vérification de présence (`ls -la root.crt root.key`) juste après l'extraction (étape 5) et d'un avertissement : ce sont de simples fichiers non versionnés, supprimables silencieusement sans trace dans l'historique shell (les commandes SSH non-interactives n'écrivent pas dans `.bash_history`/`.zsh_history`) — le CA source reste cependant intact dans le volume `caddy_data` et reproductible à tout moment
+- ✅ Recommandation de supprimer les copies serveur après confirmation de la sauvegarde hors serveur
+- 🔁 Ajout d'un rappel de contrôle périodique dans [mise_a_jour_serveur.md](mise_a_jour_serveur.md) (étape 8) pour vérifier/re-sauvegarder la CA après chaque mise à jour
 
 ### Version 1.2 (2026-10-12)
 

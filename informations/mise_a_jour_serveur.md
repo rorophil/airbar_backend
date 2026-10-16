@@ -271,6 +271,24 @@ curl http://localhost:8080
 curl http://localhost:8080
 ```
 
+### Vérifier la présence de la CA locale (si architecture Caddy/TLS en place)
+
+Si le serveur utilise l'architecture Caddy/TLS (branche `securite`, voir [migration_http_vers_caddy_tls.md](migration_http_vers_caddy_tls.md)), vérifiez que la copie extraite du certificat racine n'a pas disparu du serveur :
+
+**Windows et Linux :**
+```bash
+ls -la root.crt root.key
+```
+
+**❌ Si absents :** pas d'inquiétude en soi, le CA source reste intact dans le volume Docker `caddy_data` (sauf `docker compose down -v`). Vérifiez simplement que vous avez déjà une copie à jour dans `~/AirBar-Secrets-Backup/`, sinon ré-extrayez :
+
+```bash
+docker compose -f docker-compose.yaml -f docker-compose.migration.yml cp caddy:/data/caddy/pki/authorities/local/root.crt ./root.crt
+docker compose -f docker-compose.yaml -f docker-compose.migration.yml cp caddy:/data/caddy/pki/authorities/local/root.key ./root.key
+```
+
+(Retirer les `-f docker-compose.migration.yml` si ce fichier n'est plus utilisé sur ce serveur, voir étape 7.1 du guide de migration.)
+
 ## 9. En cas de problème : revenir en arrière
 
 ### Revenir au code précédent
@@ -322,6 +340,7 @@ docker compose up -d airbar_server
 - [ ] Migrations appliquées si nécessaire (étape 7)
 - [ ] Logs vérifiés (pas de crash) (étape 8)
 - [ ] API testée et fonctionnelle (étape 8)
+- [ ] CA locale (`root.crt`/`root.key`) toujours présente ou re-sauvegardée si absente, si architecture Caddy/TLS (étape 8)
 - [ ] Plan de rollback identifié (commit + backup) au cas où (étape 9)
 
 ---
