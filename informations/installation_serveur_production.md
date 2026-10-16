@@ -552,18 +552,35 @@ docker compose -f ./docker-compose.yaml restart airbar_server
 Caddy génère sa propre autorité de certification locale au premier démarrage. Il faut l'extraire pour l'épingler (certificate pinning) dans l'application Flutter, et la sauvegarder en lieu sûr.
 
 ```bash
-# Extraire le certificat et la clé privée de la CA
+# Depuis le dossier airbar_backend_server, sur le serveur (local ou distant via SSH)
 docker compose cp caddy:/data/caddy/pki/authorities/local/root.crt ./root.crt
 docker compose cp caddy:/data/caddy/pki/authorities/local/root.key ./root.key
+
+# Vérifier leur présence avant de passer à la suite
+ls -la root.crt root.key
 ```
 
-**Sauvegarder la CA hors du dépôt Git**, sur une machine de confiance (jamais sur le serveur lui-même uniquement) :
+**Sauvegarder la CA hors du serveur**, sur une machine de confiance — la procédure diffère selon le type d'installation :
+
+**Serveur local** (vous êtes déjà sur la machine, un simple `cp` suffit à sortir le fichier du dépôt Git vers un dossier non versionné) :
 
 ```bash
 mkdir -p ~/AirBar-Secrets-Backup/production
 cp root.crt root.key ~/AirBar-Secrets-Backup/production/
 chmod 600 ~/AirBar-Secrets-Backup/production/root.key
 ```
+
+**Serveur distant (accessible via SSH)** : un `cp` exécuté sur le serveur ne fait que déplacer la CA d'un dossier à l'autre **sur cette même machine** — ça ne protège pas contre une compromission du serveur lui-même. Il faut rapatrier les fichiers vers votre poste local via `scp`, donc exécuter ces commandes **depuis votre poste local**, pas depuis le serveur :
+
+```bash
+# Depuis votre poste local (pas le serveur)
+mkdir -p ~/AirBar-Secrets-Backup/production
+scp utilisateur@adresse-ip-serveur:~/airbar_production/airbar_backend/airbar_backend_server/root.crt ~/AirBar-Secrets-Backup/production/root.crt
+scp utilisateur@adresse-ip-serveur:~/airbar_production/airbar_backend/airbar_backend_server/root.key ~/AirBar-Secrets-Backup/production/root.key
+chmod 600 ~/AirBar-Secrets-Backup/production/root.key
+```
+
+Une fois la sauvegarde hors serveur confirmée, vous pouvez supprimer les copies restées sur le serveur distant (`rm root.crt root.key`) : ce ne sont que des extractions dérivées, reproductibles à tout moment depuis le volume `caddy_data` tant qu'il n'est pas supprimé (`docker compose down -v`).
 
 ⚠️ **Ne jamais réutiliser la même CA entre l'environnement de test (staging) et la production.** Chaque environnement a sa propre CA locale, générée indépendamment par son propre conteneur Caddy.
 
@@ -931,10 +948,19 @@ docker exec airbar_postgres_prod pg_restore -U postgres -d airbar_backend -c /tm
 
 ### Sauvegarder/vérifier la CA Caddy
 
-La CA locale (`root.crt`/`root.key`) est générée une seule fois et persistée dans le volume `caddy_data`. Elle ne doit être renouvelée qu'en cas de compromission suspectée. Vérifier périodiquement que la sauvegarde externe est toujours à jour :
+La CA locale (`root.crt`/`root.key`) est générée une seule fois et persistée dans le volume `caddy_data`. Elle ne doit être renouvelée qu'en cas de compromission suspectée. Vérifier périodiquement que la sauvegarde externe est toujours à jour.
+
+**Serveur local** (la sauvegarde `~/AirBar-Secrets-Backup/production/` est sur la même machine) :
 
 ```bash
 diff <(docker compose cp caddy:/data/caddy/pki/authorities/local/root.crt -) ~/AirBar-Secrets-Backup/production/root.crt
+```
+
+**Serveur distant (accessible via SSH)** : la sauvegarde est sur votre poste local, pas sur le serveur — exécutez la comparaison depuis votre poste local en lisant le certificat du serveur à travers SSH :
+
+```bash
+# Depuis votre poste local (pas le serveur)
+ssh utilisateur@adresse-ip-serveur 'cd ~/airbar_production/airbar_backend/airbar_backend_server && docker compose cp caddy:/data/caddy/pki/authorities/local/root.crt -' | diff - ~/AirBar-Secrets-Backup/production/root.crt
 ```
 
 Aucune différence attendue tant que le volume `caddy_data` n'a pas été recréé (`docker compose down -v` supprimerait la CA — à éviter en production).
@@ -1025,6 +1051,11 @@ sudo ufw status
 ---
 
 ## 📝 Changelog
+
+### Version 3.1 (2026-10-16)
+
+- 🐛 Correction : l'extraction/sauvegarde de la CA Caddy (étape 5) et sa vérification périodique (section Maintenance) supposaient à tort un serveur local — un `cp` exécuté sur un serveur distant ne sort pas réellement la CA de ce serveur. Ajout de la procédure `scp`/`ssh` dédiée au cas « Serveur distant (SSH) », à exécuter depuis le poste local
+- 🔎 Ajout d'une vérification de présence (`ls -la root.crt root.key`) juste après l'extraction
 
 ### Version 3.0 (2026-10-12)
 
