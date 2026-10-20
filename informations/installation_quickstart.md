@@ -45,8 +45,7 @@ docker compose -f .\docker-compose.yaml up -d --build
 docker compose -f .\docker-compose.yaml ps
 
 # 4. Migrations (premier déploiement uniquement)
-docker compose -f .\docker-compose.yaml run --rm --entrypoint /bin/sh airbar_server `
-  -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+docker compose -f .\docker-compose.yaml run --rm airbar_server --apply-migrations
 
 # 5. Redémarrer
 docker compose -f .\docker-compose.yaml restart airbar_server
@@ -79,8 +78,7 @@ docker compose -f ./docker-compose.yaml up -d --build
 docker compose -f ./docker-compose.yaml ps
 
 # 5. Migrations (premier déploiement uniquement)
-docker compose -f ./docker-compose.yaml run --rm --entrypoint /bin/sh airbar_server \
-  -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+docker compose -f ./docker-compose.yaml run --rm airbar_server --apply-migrations
 
 # 6. Redémarrer
 docker compose -f ./docker-compose.yaml restart airbar_server
@@ -131,8 +129,7 @@ docker compose down
 docker volume rm airbar_backend_server_postgres_data
 docker compose up -d
 sleep 15
-docker compose run --rm --entrypoint /bin/sh airbar_server \
-  -c "./server --mode=production --apply-migrations"
+docker compose run --rm airbar_server --apply-migrations
 ```
 
 ### Erreur : "No such file or directory: endpoints.dart"
@@ -235,4 +232,26 @@ Pour installation détaillée avec explications : **`installation_serveur_produc
 
 ---
 
-**Dernière mise à jour :** 2026-08-16
+## 📝 Historique des changements
+
+### 2026-10-20 — Commande de migration (Serverpod 4)
+
+La commande de migration est désormais `docker compose run --rm airbar_server --apply-migrations` : le `docker-entrypoint.sh` de l'image lance déjà `./bin/server` avec `--mode`, `--server-id`, `--logging` et `--role` lus depuis les variables d'environnement du service. Sur une base contenant des données, sauvegardez-la d'abord (voir `mise_a_jour_serveur.md`, étape 7).
+
+**Ancienne forme (invalide avec l'image actuelle, conservée pour mémoire) :**
+
+```bash
+# Linux
+docker compose -f ./docker-compose.yaml run --rm --entrypoint /bin/sh airbar_server \
+  -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+
+# Windows (PowerShell) : même commande avec ` (backtick) à la place de \ en fin de ligne
+
+# Dépannage rapide (variante abrégée)
+docker compose run --rm --entrypoint /bin/sh airbar_server \
+  -c "./server --mode=production --apply-migrations"
+```
+
+---
+
+**Dernière mise à jour :** 2026-10-20

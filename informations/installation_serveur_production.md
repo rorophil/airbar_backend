@@ -190,9 +190,9 @@ docker ps
 
 Deux branches de production coexistent actuellement, **non fusionnées entre elles** :
 
-| Branche | Contenu |
-|---|---|
-| **`prod`** | Stable actuelle, accès HTTP direct sur le port 8080 (sans Caddy/TLS/pinning) |
+| Branche                | Contenu                                                                                                                                       |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`prod`**     | Stable actuelle, accès HTTP direct sur le port 8080 (sans Caddy/TLS/pinning)                                                                 |
 | **`securite`** | Nouvelle architecture Caddy + TLS (CA locale) + certificate pinning, voir [migration_http_vers_caddy_tls.md](migration_http_vers_caddy_tls.md) |
 
 Dans toutes les commandes ci-dessous, remplacez `<branche>` par `prod` ou `securite` selon celle que vous souhaitez déployer.
@@ -506,16 +506,32 @@ airbar_caddy_production     Up                  0.0.0.0:443->443/tcp
 **Windows (PowerShell) :**
 
 ```powershell
-docker compose -f .\docker-compose.yaml run --rm --entrypoint /bin/sh airbar_server `
-  -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+docker compose -f .\docker-compose.yaml run --rm airbar_server --apply-migrations
 ```
 
 **Linux (Bash) :**
 
 ```bash
-docker compose -f ./docker-compose.yaml run --rm --entrypoint /bin/sh airbar_server \
-  -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+docker compose -f ./docker-compose.yaml run --rm airbar_server --apply-migrations
 ```
+
+> **ℹ️ Serverpod 4 :** le `docker-entrypoint.sh` lance déjà `./bin/server` avec `--mode`, `--server-id`, `--logging` et `--role` lus depuis les variables d'environnement du service ; seul `--apply-migrations` est à transmettre. Cette note s'applique à toutes les commandes de migration de ce document.
+>
+> **Ancienne forme (invalide avec l'image actuelle, conservée pour mémoire) :**
+>
+> ```bash
+> # Linux
+> docker compose -f ./docker-compose.yaml run --rm --entrypoint /bin/sh airbar_server \
+>   -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+>
+> # Windows (PowerShell)
+> docker compose -f .\docker-compose.yaml run --rm --entrypoint /bin/sh airbar_server `
+>   -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+> ```
+>
+> Dans la section « Mise à jour », l'ancienne commande utilisait `./bin/server` au lieu de `./server`.
+
+> **⚠️ Sur une base existante contenant des données :** `--apply-migrations` n'efface pas la base, mais une migration en attente peut contenir des `DROP`/`TRUNCATE`/`DELETE FROM`. Sauvegardez la base et relisez le SQL des migrations en attente avant d'exécuter la commande — procédure détaillée dans [mise_a_jour_serveur.md](mise_a_jour_serveur.md#7-appliquer-les-nouvelles-migrations-si-présentes). Ne jamais utiliser `docker compose down -v` (supprime la base et la CA Caddy).
 
 **Sortie attendue :**
 
@@ -777,8 +793,7 @@ docker compose up -d
 docker compose ps
 
 # 6. Relancer les migrations
-docker compose run --rm --entrypoint /bin/sh airbar_server \
-  -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+docker compose run --rm airbar_server --apply-migrations
 ```
 
 **Solution 2 : Modifier le mot de passe PostgreSQL existant**
@@ -941,8 +956,7 @@ docker compose down
 docker compose up -d --build
 
 # 4. Appliquer les nouvelles migrations (si nécessaire)
-docker compose run --rm --entrypoint /bin/sh airbar_server \
-  -c "./bin/server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+docker compose run --rm airbar_server --apply-migrations
 ```
 
 > Le Caddyfile et les volumes `caddy_data`/`caddy_config` ne sont pas affectés par un `docker compose down` (sans `-v`) : la CA locale persiste entre les mises à jour.
@@ -1021,7 +1035,7 @@ docker volume prune
 - [ ] **Changer TOUS les mots de passe** dans `config/passwords.yaml` ET `.env`
 - [ ] **Utiliser des mots de passe de 32+ caractères** générés aléatoirement
 - [ ] **Configurer un pare-feu** (UFW sur Linux, Windows Firewall) — seul le port 443 doit être ouvert publiquement
-- [x] **TLS géré automatiquement par Caddy** (`tls internal` + `default_sni`, pas de nom de domaine requis)
+- [X] **TLS géré automatiquement par Caddy** (`tls internal` + `default_sni`, pas de nom de domaine requis)
 - [ ] **Sauvegarder la CA Caddy** (`root.crt`/`root.key`) hors du serveur et hors de tout dépôt Git, avec `chmod 600` sur la clé
 - [ ] **Épingler le certificat de production** dans `airbar/assets/certs/production_root_ca.pem` et vérifier que l'app refuse bien une CA différente (test négatif de pinning)
 - [ ] **Configurer les sauvegardes automatiques** (cron job quotidien)
@@ -1075,6 +1089,10 @@ sudo ufw status
 ---
 
 ## 📝 Changelog
+
+### Version 3.4 (2026-10-20)
+
+- 🔧 Commande de migration adaptée à Serverpod 4 (`docker compose run --rm airbar_server --apply-migrations`, l'entrypoint fournit déjà les options) et avertissement sur la préservation des données (sauvegarde + relecture des migrations en attente)
 
 ### Version 3.3 (2026-10-20)
 

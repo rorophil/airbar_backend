@@ -229,16 +229,55 @@ Si oui, appliquez-les en mode production :
 ### Windows (PowerShell)
 
 ```powershell
-docker compose run --rm --entrypoint /bin/sh airbar_server -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+docker compose run --rm airbar_server --apply-migrations
 docker compose up -d airbar_server
 ```
 
 ### Linux (Bash)
 
 ```bash
-docker compose run --rm --entrypoint /bin/sh airbar_server -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+docker compose run --rm airbar_server --apply-migrations
 docker compose up -d airbar_server
 ```
+
+> **ℹ️ Serverpod 4 :** le `docker-entrypoint.sh` de l'image lance déjà `./bin/server` avec `--mode`, `--server-id`, `--logging` et `--role` lus depuis les variables d'environnement du service (`runmode`, `serverid`, `logging`, `role`). Il suffit donc de transmettre `--apply-migrations`.
+>
+> **Ancienne forme (invalide avec l'image actuelle, conservée pour mémoire) :**
+>
+> ```bash
+> docker compose run --rm --entrypoint /bin/sh airbar_server -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+> ```
+
+### ⚠️ Ne pas perdre de données lors d'une migration
+
+`--apply-migrations` n'efface pas la base : il n'applique que les migrations pas encore enregistrées dans la table `serverpod_migrations`, et les volumes Docker ne sont pas touchés. Le risque vient du **contenu** des migrations en attente : un `migration.sql` peut contenir des `DROP COLUMN`, `DROP TABLE`, `TRUNCATE` ou `DELETE FROM` qui détruisent des données.
+
+1. **Sauvegarder la base juste avant** (étape 2) — indispensable, c'est la seule garantie de retour en arrière :
+   ```bash
+   docker exec airbar_postgres_prod pg_dump -U postgres -d airbar_backend -F c -f /tmp/backup_avant_migration.dump
+   docker cp airbar_postgres_prod:/tmp/backup_avant_migration.dump ./backup_avant_migration_$(date +%Y%m%d_%H%M%S).dump
+   ```
+
+2. **Identifier les migrations en attente** (celles plus récentes que la dernière version appliquée) :
+   ```bash
+   docker exec airbar_postgres_prod psql -U postgres -d airbar_backend -c 'SELECT module, version FROM serverpod_migrations ORDER BY id;'
+   ls migrations
+   ```
+
+3. **Relire le SQL des migrations en attente** et vérifier que les suppressions ne portent pas sur des données à conserver :
+   ```bash
+   grep -nE "DROP |TRUNCATE|DELETE FROM" migrations/<dossier-en-attente>/migration.sql
+   ```
+
+4. **Appliquer** avec la commande ci-dessus, puis vérifier les logs (étape 8).
+
+5. **En cas de problème**, restaurer la sauvegarde (voir aussi l'étape 9) :
+   ```bash
+   docker cp ./backup_avant_migration_XXXX.dump airbar_postgres_prod:/tmp/restore.dump
+   docker exec airbar_postgres_prod pg_restore -U postgres -d airbar_backend -c /tmp/restore.dump
+   ```
+
+Ne jamais exécuter `docker compose down -v` : l'option `-v` supprime les volumes `postgres_data` (base) et `caddy_data` (CA locale Caddy).
 
 ## 8. Vérifier que tout fonctionne
 

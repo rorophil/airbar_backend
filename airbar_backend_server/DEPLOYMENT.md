@@ -63,9 +63,17 @@ docker compose logs -f airbar_server
 #### 5. Appliquer les migrations (première fois uniquement)
 
 ```bash
-docker compose -f ./docker-compose.yaml run --rm --entrypoint /bin/sh airbar_server \
-  -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+docker compose -f ./docker-compose.yaml run --rm airbar_server --apply-migrations
 ```
+
+> **ℹ️ Serverpod 4 :** le `docker-entrypoint.sh` lance déjà `./bin/server` avec `--mode`, `--server-id`, `--logging` et `--role` issus des variables d'environnement ; seul `--apply-migrations` est à transmettre. Sur une base existante, sauvegardez-la et relisez les migrations en attente avant (voir `informations/mise_a_jour_serveur.md`, étape 7).
+>
+> **Ancienne forme (invalide avec l'image actuelle, conservée pour mémoire) :**
+>
+> ```bash
+> docker compose -f ./docker-compose.yaml run --rm --entrypoint /bin/sh airbar_server \
+>   -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+> ```
 
 ## 🔄 Mises à jour ultérieures
 

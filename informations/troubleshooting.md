@@ -173,8 +173,7 @@ docker compose ps
 # postgres doit être "Up (healthy)"
 
 # 8. Appliquer les migrations
-docker compose run --rm --entrypoint /bin/sh airbar_server \
-  -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+docker compose run --rm airbar_server --apply-migrations
 ```
 
 **Solution 2 : Modifier le mot de passe PostgreSQL existant (conservation des données)**
@@ -356,8 +355,7 @@ ERROR: relation "users" does not exist
 **Solution :**
 ```bash
 # Appliquer les migrations
-docker compose run --rm --entrypoint /bin/sh airbar_server \
-  -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+docker compose run --rm airbar_server --apply-migrations
 
 # Vérifier les logs
 docker compose logs airbar_server | grep -i migration
@@ -662,8 +660,7 @@ sleep 20
 docker compose ps
 
 # 8. Appliquer les migrations
-docker compose run --rm --entrypoint /bin/sh airbar_server \
-  -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+docker compose run --rm airbar_server --apply-migrations
 
 # 9. Démarrer le serveur
 docker compose up -d airbar_server
@@ -688,4 +685,19 @@ Si aucune solution ne fonctionne :
 
 ---
 
-**Dernière mise à jour :** 2026-08-16
+## 📝 Historique des changements
+
+### 2026-10-20 — Commande de migration (Serverpod 4)
+
+Toutes les commandes « Appliquer les migrations » de ce document sont désormais `docker compose run --rm airbar_server --apply-migrations` : le `docker-entrypoint.sh` de l'image lance déjà `./bin/server` avec `--mode`, `--server-id`, `--logging` et `--role` issus des variables d'environnement (`runmode`, `serverid`, `logging`, `role`). Sur une base contenant des données, sauvegardez-la d'abord et relisez les migrations en attente : voir [mise_a_jour_serveur.md](mise_a_jour_serveur.md#7-appliquer-les-nouvelles-migrations-si-présentes).
+
+**Ancienne forme (invalide avec l'image actuelle, conservée pour mémoire) :**
+
+```bash
+docker compose run --rm --entrypoint /bin/sh airbar_server \
+  -c "./server --mode=production --server-id=prod-001 --logging=normal --role=monolith --apply-migrations"
+```
+
+---
+
+**Dernière mise à jour :** 2026-10-20

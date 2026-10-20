@@ -55,8 +55,7 @@ docker compose ps
 # postgres doit être "Up (healthy)"
 
 # 8. Appliquer les migrations
-docker compose run --rm --entrypoint /bin/sh airbar_server \
-  -c "./server --mode=production --apply-migrations"
+docker compose run --rm airbar_server --apply-migrations
 ```
 
 #### Windows (PowerShell)
@@ -89,8 +88,7 @@ Start-Sleep -Seconds 15
 docker compose ps
 
 # 8. Appliquer les migrations
-docker compose run --rm --entrypoint /bin/sh airbar_server `
-  -c "./server --mode=production --apply-migrations"
+docker compose run --rm airbar_server --apply-migrations
 ```
 
 ### Vérification Finale
@@ -352,4 +350,22 @@ netstat -ano | findstr ":808"  # Windows
 
 ---
 
-**Dernière mise à jour :** 2026-08-16
+## 📝 Historique des changements
+
+### 2026-10-20 — Commande de migration (Serverpod 4)
+
+Les commandes « Appliquer les migrations » de ce document sont désormais `docker compose run --rm airbar_server --apply-migrations` : le `docker-entrypoint.sh` de l'image lance déjà `./bin/server` avec les options `--mode`, `--server-id`, `--logging` et `--role` issues des variables d'environnement. Voir [mise_a_jour_serveur.md](mise_a_jour_serveur.md#7-appliquer-les-nouvelles-migrations-si-présentes) pour les précautions sur les données.
+
+**Ancienne forme (invalide avec l'image actuelle, conservée pour mémoire) :**
+
+```bash
+# Linux
+docker compose run --rm --entrypoint /bin/sh airbar_server \
+  -c "./server --mode=production --apply-migrations"
+
+# Windows (PowerShell) : même commande avec ` (backtick) à la place de \ en fin de ligne
+```
+
+---
+
+**Dernière mise à jour :** 2026-10-20
