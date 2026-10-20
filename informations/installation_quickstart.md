@@ -51,8 +51,8 @@ docker compose -f .\docker-compose.yaml run --rm --entrypoint /bin/sh airbar_ser
 # 5. Redémarrer
 docker compose -f .\docker-compose.yaml restart airbar_server
 
-# 6. Tester
-curl -k https://localhost/
+# 6. Tester (remplacer par la valeur de PUBLIC_ADDRESS définie dans .env, pas "localhost" — voir note ci-dessous)
+curl -k https://ADRESSE_IP_PUBLIQUE/
 docker compose -f .\docker-compose.yaml logs -f airbar_server
 ```
 
@@ -85,10 +85,12 @@ docker compose -f ./docker-compose.yaml run --rm --entrypoint /bin/sh airbar_ser
 # 6. Redémarrer
 docker compose -f ./docker-compose.yaml restart airbar_server
 
-# 7. Tester
-curl -k https://localhost/
+# 7. Tester (remplacer par la valeur de PUBLIC_ADDRESS définie dans .env, pas "localhost" — voir note ci-dessous)
+curl -k https://ADRESSE_IP_PUBLIQUE/
 docker compose -f ./docker-compose.yaml logs -f airbar_server
 ```
+
+> ⚠️ **Ne pas tester avec `curl -k https://localhost/`** : Caddy n'a de certificat (`tls internal`) que pour l'hôte `$PUBLIC_ADDRESS` (option `default_sni` du Caddyfile, qui ne couvre que les connexions **sans SNI**, c'est-à-dire par IP littérale). `localhost` est un nom d'hôte et envoie un SNI explicite qui ne correspond à aucun site Caddy, d'où l'erreur `tlsv1 alert internal error`. Voir [installation_serveur_production.md](installation_serveur_production.md#erreur-tls--alert-internal-error--caddy) pour le détail.
 
 ---
 
@@ -193,7 +195,7 @@ docker system prune -a
 
 | Service | Vérification | Commande |
 |---------|--------------|----------|
-| **API** | HTTP 200 | `curl -k https://localhost/` |
+| **API** | HTTP 200 | `curl -k https://$PUBLIC_ADDRESS/` (pas `localhost`, voir note plus haut) |
 | **Insights** | Dashboard web | Navigateur : `http://localhost:8081` |
 | **PostgreSQL** | Connexion OK | `docker compose exec postgres psql -U postgres -d airbar_backend` |
 | **Redis** | Ping OK | `docker compose exec redis redis-cli -a "PASSWORD" ping` |

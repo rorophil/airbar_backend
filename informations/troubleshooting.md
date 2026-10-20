@@ -471,9 +471,12 @@ services:
 docker compose ps
 docker compose logs airbar_server | grep "listening on port"
 
-# 2. Vérifier depuis le serveur local
-curl -k https://localhost/
+# 2. Vérifier depuis le serveur local (utiliser la valeur de PUBLIC_ADDRESS, pas "localhost")
+curl -k https://adresse-ip-serveur/
 # Doit répondre : {"status":"ok",...}
+# ⚠️ "curl -k https://localhost/" échoue normalement avec `tlsv1 alert internal error` :
+# Caddy ne présente un certificat (tls internal) que pour l'hôte $PUBLIC_ADDRESS ;
+# default_sni ne couvre que les connexions sans SNI (IP littérale), pas le nom "localhost".
 
 # 3. Vérifier le pare-feu (Linux)
 sudo ufw status

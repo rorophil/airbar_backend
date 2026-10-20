@@ -12,13 +12,13 @@
 ## 📋 Table des matières
 
 1. [Avant de commencer](#avant-de-commencer)
-2. [Vue d'ensemble de la bascule](#vue-densemble-de-la-bascule)
+2. [Vue d&#39;ensemble de la bascule](#vue-densemble-de-la-bascule)
 3. [Étape 1 — Sauvegardes](#étape-1--sauvegardes)
 4. [Étape 2 — Mettre à jour le code sur le serveur](#étape-2--mettre-à-jour-le-code-sur-le-serveur)
 5. [Étape 3 — Configurer `.env` et `config/production.yaml`](#étape-3--configurer-env-et-configproductionyaml)
 6. [Étape 4 — Déployer Caddy en parallèle du port 8080 existant](#étape-4--déployer-caddy-en-parallèle-du-port-8080-existant)
 7. [Étape 5 — Extraire, sauvegarder et épingler la CA](#étape-5--extraire-sauvegarder-et-épingler-la-ca)
-8. [Étape 6 — Valider avec l'app avant de couper le HTTP](#étape-6--valider-avec-lapp-avant-de-couper-le-http)
+8. [Étape 6 — Valider avec l&#39;app avant de couper le HTTP](#étape-6--valider-avec-lapp-avant-de-couper-le-http)
 9. [Étape 7 — Couper le port 8080 (bascule définitive)](#étape-7--couper-le-port-8080-bascule-définitive)
 10. [Plan de retour en arrière (rollback)](#plan-de-retour-en-arrière-rollback)
 11. [Checklist récapitulative](#checklist-récapitulative)
@@ -194,11 +194,13 @@ airbar_caddy_production   Up                  0.0.0.0:443->443/tcp
 curl http://localhost:8080/
 ```
 
-**Vérifier que le nouveau Caddy fonctionne** :
+**Vérifier que le nouveau Caddy fonctionne** (remplacer `adresse-ip-serveur` par la valeur de `PUBLIC_ADDRESS`, **ne pas tester avec `localhost`**) :
 
 ```bash
-curl -k https://localhost/
+curl -k https://adresse-ip-serveur/
 ```
+
+> ⚠️ `curl -k https://localhost/` échouera toujours avec `tlsv1 alert internal error`, même après le correctif `default_sni` ci-dessous : cette option ne couvre que les connexions **sans SNI** (IP littérale), alors que `localhost` est un nom d'hôte qui envoie un SNI explicite ne correspondant à aucun site Caddy.
 
 Si cette dernière commande échoue avec `tlsv1 alert internal error`, voir l'entrée de dépannage correspondante dans [installation_serveur_production.md](installation_serveur_production.md#dépannage) (ajout de `default_sni` dans le `Caddyfile`).
 
@@ -325,7 +327,7 @@ docker compose up -d
 - [ ] `docker-compose.migration.yml` utilisé pour republier temporairement le port 8080 sur `airbar_server` (étape 3.3, sinon l'ancienne app perd l'accès dès le déploiement)
 - [ ] `docker compose -f docker-compose.yaml -f docker-compose.migration.yml up -d --build` exécuté, `... ps` conforme
 - [ ] Ancien accès HTTP:8080 toujours fonctionnel (non cassé par le déploiement)
-- [ ] Nouveau Caddy fonctionnel (`curl -k https://localhost/` → 200)
+- [ ] Nouveau Caddy fonctionnel (`curl -k https://$PUBLIC_ADDRESS/` → 200, **pas** `localhost`)
 - [ ] CA extraite, présence vérifiée (`ls -la root.crt root.key`), sauvegardée hors serveur avec `chmod 600` sur `root.key`
 - [ ] CA épinglée dans `assets/certs/production_root_ca.pem`, app recompilée
 - [ ] App HTTPS testée avec succès sur au moins un appareil réel (connexion + parcours complet)

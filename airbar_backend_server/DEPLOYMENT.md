@@ -96,8 +96,12 @@ Tous les services doivent être `Up` et `healthy`.
 ### Tester l'API
 
 ```bash
-curl -k https://localhost/
+curl -k https://$PUBLIC_ADDRESS/
+# ou, en remplaçant directement par la valeur de PUBLIC_ADDRESS définie dans .env, par ex. :
+curl -k https://203.0.113.10/
 ```
+
+**Ne pas tester avec `curl -k https://localhost/`** : Caddy n'a de certificat configuré (`tls internal`) que pour l'hôte `$PUBLIC_ADDRESS` (voir Caddyfile, directive `default_sni`). Une connexion via une adresse IP littérale n'envoie pas d'extension SNI, donc `default_sni` prend le relais et présente le certificat de `$PUBLIC_ADDRESS` — mais `localhost` est un nom d'hôte, donc curl envoie `SNI=localhost`, qui ne correspond à aucun site Caddy et provoque l'erreur `tlsv1 alert internal error`. Ce n'est pas un bug, l'app fonctionne correctement car elle se connecte via l'IP publique, pas via `localhost`.
 
 Le `-k` est normal en local tant que le certificat racine de Caddy n'est pas installé dans le trust store de la machine (il est de toute façon auto-signé et destiné au pinning côté app, pas à une validation par une CA publique).
 

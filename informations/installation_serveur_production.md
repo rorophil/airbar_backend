@@ -629,8 +629,10 @@ Web Server listening on port 8082
 **Depuis le serveur :**
 
 ```bash
-curl -k https://localhost/
+curl -k https://adresse-ip-serveur/
 ```
+
+> ⚠️ Utilisez bien la valeur de `PUBLIC_ADDRESS` (définie dans `.env`), **pas** `curl -k https://localhost/` : Caddy ne présente un certificat (`tls internal`) que pour l'hôte `$PUBLIC_ADDRESS`. L'option `default_sni` du Caddyfile ne s'applique qu'aux connexions **sans SNI** (cas d'une IP littérale) ; `localhost` est un nom d'hôte qui envoie un SNI explicite, non reconnu par Caddy, d'où l'erreur `tlsv1 alert internal error` (voir [Dépannage](#erreur-tls--alert-internal-error--caddy)).
 
 **Depuis un autre poste (si le pare-feu autorise le port 443) :**
 
@@ -720,8 +722,10 @@ Puis redémarrer uniquement Caddy (pas besoin de rebuild, le fichier est monté 
 
 ```bash
 docker compose restart caddy
-curl -k https://localhost/
+curl -k https://adresse-ip-serveur/
 ```
+
+> ⚠️ Testez bien avec l'adresse IP publique (valeur de `PUBLIC_ADDRESS`), pas avec `curl -k https://localhost/` : `localhost` envoie un SNI explicite que `default_sni` ne couvre pas (cette option ne s'applique qu'aux connexions **sans SNI**, typiquement par IP littérale), donc le test échouerait quand même avec `tlsv1 alert internal error`.
 
 ### Problème d'authentification PostgreSQL
 
