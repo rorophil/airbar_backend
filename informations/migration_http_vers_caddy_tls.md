@@ -222,11 +222,32 @@ ls -la root.crt root.key
 **Sauvegarder immédiatement hors du serveur**, sur une machine de confiance (remplacer `production` par `staging` selon l'environnement concerné) :
 
 ```bash
-# Depuis votre poste local (pas le serveur)
-scp utilisateur@votre-serveur:~/airbar_production/airbar_backend/airbar_backend_server/root.crt ~/AirBar-Secrets-Backup/production/root.crt
-scp utilisateur@votre-serveur:~/airbar_production/airbar_backend/airbar_backend_server/root.key ~/AirBar-Secrets-Backup/production/root.key
+# À exécuter depuis le terminal de votre ordinateur, après avoir quitté la session SSH
+# (l'invite ne doit plus commencer par apps@docker-ce-ubuntu-airbarserver)
+mkdir -p ~/AirBar-Secrets-Backup/production
+scp apps@docker-ce-ubuntu-airbarserver:~/airbarserver/airbar_backend/airbar_backend_server/root.crt ~/AirBar-Secrets-Backup/production/root.crt
+scp apps@docker-ce-ubuntu-airbarserver:~/airbarserver/airbar_backend/airbar_backend_server/root.key ~/AirBar-Secrets-Backup/production/root.key
 chmod 600 ~/AirBar-Secrets-Backup/production/root.key
 ```
+
+Si `docker-ce-ubuntu-airbarserver` n'est pas joignable depuis votre ordinateur, remplacez-le par l'adresse IP publique ou le nom DNS accessible depuis votre ordinateur. S'il se résout en `127.0.1.1`, il désigne la machine locale, pas le serveur distant.
+
+Si `scp` répond `Permission denied` pour `root.crt` ou `root.key`, reconnectez-vous au serveur et vérifiez les droits :
+
+```bash
+cd ~/airbarserver/airbar_backend/airbar_backend_server
+ls -l root.crt root.key
+```
+
+Si les fichiers ne sont pas lisibles par `apps`, donnez à cet utilisateur la propriété des copies extraites, en protégeant la clé privée :
+
+```bash
+sudo chown apps:apps root.crt root.key
+chmod 644 root.crt
+chmod 600 root.key
+```
+
+Quittez ensuite le serveur avec `exit` et relancez `scp` depuis le terminal de votre ordinateur.
 
 Une fois cette sauvegarde confirmée, vous pouvez supprimer les copies du serveur (`rm root.crt root.key`) : ce ne sont que des extractions dérivées, reproductibles à tout moment depuis le volume `caddy_data`.
 
@@ -234,6 +255,10 @@ Une fois cette sauvegarde confirmée, vous pouvez supprimer les copies du serveu
 
 ```bash
 cp ~/AirBar-Secrets-Backup/production/root.crt "<chemin-vers-le-repo-airbar>/assets/certs/production_root_ca.pem"
+
+pour le projet la bonne instruction est :
+
+cp ~/AirBar-Secrets-Backup/production/root.crt "/Users/philipperobert/development/codage en flutter/airbar/assets/certs/production_root_ca.pem"
 ```
 
 Puis recompiler l'application pour chaque plateforme distribuée (`flutter build apk`, `flutter build ios`, `flutter build windows`, etc.) et préparer sa distribution (store, MDM, installeur interne...) — **sans encore forcer la mise à jour de tous les utilisateurs**.
@@ -347,6 +372,14 @@ docker compose up -d
 ---
 
 ## 📝 Changelog
+
+### Version 1.5 (2026-10-20)
+
+- 📝 Précision sur l'exécution de `scp` depuis le poste local, le nom d'hôte qui peut résoudre vers `127.0.1.1` et la correction des droits de lecture des fichiers extraits
+
+### Version 1.4 (2026-10-20)
+
+- 📝 Ajout d'exemples `scp` de sauvegarde de `root.crt` et `root.key` avec le serveur de production `docker-ce-ubuntu-airbarserver`
 
 ### Version 1.3 (2026-10-16)
 

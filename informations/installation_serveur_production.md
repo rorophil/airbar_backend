@@ -573,12 +573,32 @@ chmod 600 ~/AirBar-Secrets-Backup/production/root.key
 **Serveur distant (accessible via SSH)** : un `cp` exécuté sur le serveur ne fait que déplacer la CA d'un dossier à l'autre **sur cette même machine** — ça ne protège pas contre une compromission du serveur lui-même. Il faut rapatrier les fichiers vers votre poste local via `scp`, donc exécuter ces commandes **depuis votre poste local**, pas depuis le serveur :
 
 ```bash
-# Depuis votre poste local (pas le serveur)
+# À exécuter depuis le terminal de votre ordinateur, après avoir quitté la session SSH
+# (l'invite ne doit plus commencer par apps@docker-ce-ubuntu-airbarserver)
 mkdir -p ~/AirBar-Secrets-Backup/production
-scp utilisateur@adresse-ip-serveur:~/airbar_production/airbar_backend/airbar_backend_server/root.crt ~/AirBar-Secrets-Backup/production/root.crt
-scp utilisateur@adresse-ip-serveur:~/airbar_production/airbar_backend/airbar_backend_server/root.key ~/AirBar-Secrets-Backup/production/root.key
+scp apps@docker-ce-ubuntu-airbarserver:~/airbarserver/airbar_backend/airbar_backend_server/root.crt ~/AirBar-Secrets-Backup/production/root.crt
+scp apps@docker-ce-ubuntu-airbarserver:~/airbarserver/airbar_backend/airbar_backend_server/root.key ~/AirBar-Secrets-Backup/production/root.key
 chmod 600 ~/AirBar-Secrets-Backup/production/root.key
 ```
+
+Si `docker-ce-ubuntu-airbarserver` n'est pas joignable depuis votre ordinateur, remplacez-le par l'adresse IP publique ou le nom DNS accessible depuis votre ordinateur. S'il se résout en `127.0.1.1`, il désigne la machine locale, pas le serveur distant.
+
+Si `scp` répond `Permission denied` pour `root.crt` ou `root.key`, reconnectez-vous au serveur et vérifiez les droits :
+
+```bash
+cd ~/airbarserver/airbar_backend/airbar_backend_server
+ls -l root.crt root.key
+```
+
+Si les fichiers ne sont pas lisibles par `apps`, donnez à cet utilisateur la propriété des copies extraites, en protégeant la clé privée :
+
+```bash
+sudo chown apps:apps root.crt root.key
+chmod 644 root.crt
+chmod 600 root.key
+```
+
+Quittez ensuite le serveur avec `exit` et relancez `scp` depuis le terminal de votre ordinateur.
 
 Une fois la sauvegarde hors serveur confirmée, vous pouvez supprimer les copies restées sur le serveur distant (`rm root.crt root.key`) : ce ne sont que des extractions dérivées, reproductibles à tout moment depuis le volume `caddy_data` tant qu'il n'est pas supprimé (`docker compose down -v`).
 
@@ -964,7 +984,7 @@ diff <(docker compose cp caddy:/data/caddy/pki/authorities/local/root.crt -) ~/A
 
 ```bash
 # Depuis votre poste local (pas le serveur)
-ssh utilisateur@adresse-ip-serveur 'cd ~/airbar_production/airbar_backend/airbar_backend_server && docker compose cp caddy:/data/caddy/pki/authorities/local/root.crt -' | diff - ~/AirBar-Secrets-Backup/production/root.crt
+ssh apps@docker-ce-ubuntu-airbarserver 'cd ~/airbarserver/airbar_backend/airbar_backend_server && docker compose cp caddy:/data/caddy/pki/authorities/local/root.crt -' | diff - ~/AirBar-Secrets-Backup/production/root.crt
 ```
 
 Aucune différence attendue tant que le volume `caddy_data` n'a pas été recréé (`docker compose down -v` supprimerait la CA — à éviter en production).
@@ -1055,6 +1075,14 @@ sudo ufw status
 ---
 
 ## 📝 Changelog
+
+### Version 3.3 (2026-10-20)
+
+- 📝 Précision sur l'exécution de `scp` depuis le poste local, le nom d'hôte qui peut résoudre vers `127.0.1.1` et la correction des droits de lecture des fichiers extraits
+
+### Version 3.2 (2026-10-20)
+
+- 📝 Ajout d'exemples de sauvegarde et de vérification de la CA avec le serveur de production `docker-ce-ubuntu-airbarserver`
 
 ### Version 3.1 (2026-10-16)
 
