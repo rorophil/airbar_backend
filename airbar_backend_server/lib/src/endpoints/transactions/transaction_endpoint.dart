@@ -86,22 +86,36 @@ class TransactionEndpoint extends Endpoint {
     required bool enforceBalanceCheck,
     required String? notes,
   }) async {
-    final user = await protocol.User.db.findById(session, userId);
-
-    if (user == null) {
-      throw protocol.BusinessException(message: 'Utilisateur non trouvé');
-    }
-
     // Execute atomic transaction
     return await session.db.transaction((transaction) async {
+      final user = await protocol.User.db.findById(
+        session,
+        userId,
+        transaction: transaction,
+        lockMode: LockMode.forUpdate,
+      );
+      if (user == null) {
+        throw protocol.BusinessException(message: 'Utilisateur non trouvé');
+      }
       // 1. Get cart items
       final cartItems = await protocol.CartItem.db.find(
         session,
         where: (t) => t.userId.equals(userId),
+        transaction: transaction,
       );
 
       if (cartItems.isEmpty) {
         throw protocol.BusinessException(message: 'Le panier est vide');
+      }
+      final productIds =
+          cartItems.map((item) => item.productId).toSet().toList()..sort();
+      for (final id in productIds) {
+        await protocol.Product.db.findById(
+          session,
+          id,
+          transaction: transaction,
+          lockMode: LockMode.forUpdate,
+        );
       }
 
       // 2. Calculate total and verify stock
@@ -112,6 +126,7 @@ class TransactionEndpoint extends Endpoint {
         final product = await protocol.Product.db.findById(
           session,
           cartItem.productId,
+          transaction: transaction,
         );
 
         if (product == null) {
@@ -135,6 +150,7 @@ class TransactionEndpoint extends Endpoint {
           final portion = await protocol.ProductPortion.db.findById(
             session,
             cartItem.productPortionId!,
+            transaction: transaction,
           );
 
           if (portion != null) {
@@ -200,7 +216,7 @@ class TransactionEndpoint extends Endpoint {
       // 4. Debit user account
       user.balance -= totalAmount;
       user.updatedAt = DateTime.now();
-      await protocol.User.db.updateRow(session, user);
+      await protocol.User.db.updateRow(session, user, transaction: transaction);
 
       // 5. Create transaction
       final trans = protocol.Transaction(
@@ -215,12 +231,17 @@ class TransactionEndpoint extends Endpoint {
       final createdTransaction = await protocol.Transaction.db.insertRow(
         session,
         trans,
+        transaction: transaction,
       );
 
       // 6. Create transaction items
       for (final item in transactionItems) {
         item.transactionId = createdTransaction.id!;
-        await protocol.TransactionItem.db.insertRow(session, item);
+        await protocol.TransactionItem.db.insertRow(
+          session,
+          item,
+          transaction: transaction,
+        );
       }
 
       // 7. Update stock and create stock movements (only for products with stock tracking)
@@ -228,6 +249,7 @@ class TransactionEndpoint extends Endpoint {
         final product = await protocol.Product.db.findById(
           session,
           cartItem.productId,
+          transaction: transaction,
         );
 
         if (product != null && product.trackStock) {
@@ -239,6 +261,7 @@ class TransactionEndpoint extends Endpoint {
             final portion = await protocol.ProductPortion.db.findById(
               session,
               cartItem.productPortionId!,
+              transaction: transaction,
             );
 
             if (portion != null && product.bulkTotalQuantity != null) {
@@ -306,7 +329,11 @@ class TransactionEndpoint extends Endpoint {
           }
 
           product.updatedAt = DateTime.now();
-          await protocol.Product.db.updateRow(session, product);
+          await protocol.Product.db.updateRow(
+            session,
+            product,
+            transaction: transaction,
+          );
 
           // Log stock movement with actual deducted quantity
           final stockMovement = protocol.StockMovement(
@@ -318,7 +345,11 @@ class TransactionEndpoint extends Endpoint {
             notes: movementNote,
           );
 
-          await protocol.StockMovement.db.insertRow(session, stockMovement);
+          await protocol.StockMovement.db.insertRow(
+            session,
+            stockMovement,
+            transaction: transaction,
+          );
 
           // Check if stock alert needed
           if (product.stockQuantity <= product.minStockAlert) {
@@ -335,6 +366,7 @@ class TransactionEndpoint extends Endpoint {
       await protocol.CartItem.db.deleteWhere(
         session,
         where: (t) => t.userId.equals(userId),
+        transaction: transaction,
       );
 
       return createdTransaction;
@@ -353,6 +385,8 @@ class TransactionEndpoint extends Endpoint {
         final originalTrans = await protocol.Transaction.db.findById(
           session,
           transactionId,
+          transaction: transaction,
+          lockMode: LockMode.forUpdate,
         );
 
         if (originalTrans == null) {
@@ -372,6 +406,7 @@ class TransactionEndpoint extends Endpoint {
         final existingRefunds = await protocol.Transaction.db.find(
           session,
           where: (t) => t.refundedTransactionId.equals(transactionId),
+          transaction: transaction,
         );
 
         if (existingRefunds.isNotEmpty) {
@@ -382,6 +417,8 @@ class TransactionEndpoint extends Endpoint {
         final user = await protocol.User.db.findById(
           session,
           originalTrans.userId!,
+          transaction: transaction,
+          lockMode: LockMode.forUpdate,
         );
 
         if (user == null) {
@@ -390,21 +427,51 @@ class TransactionEndpoint extends Endpoint {
 
         user.balance += originalTrans.totalAmount;
         user.updatedAt = DateTime.now();
-        await protocol.User.db.updateRow(session, user);
+        await protocol.User.db.updateRow(
+          session,
+          user,
+          transaction: transaction,
+        );
 
         // 3. Get transaction items to restore stock
         final items = await protocol.TransactionItem.db.find(
           session,
           where: (t) => t.transactionId.equals(transactionId),
+          transaction: transaction,
         );
+        final productIds = items.map((item) => item.productId).toSet().toList()
+          ..sort();
+        for (final id in productIds) {
+          await protocol.Product.db.findById(
+            session,
+            id,
+            transaction: transaction,
+            lockMode: LockMode.forUpdate,
+          );
+        }
 
         // 4. Restore stock (only for products with stock tracking)
         for (final item in items) {
           final product = await protocol.Product.db.findById(
             session,
             item.productId,
+            transaction: transaction,
           );
 
+          if (item.stockWasTracked == false) {
+            continue;
+          }
+          if (item.stockWasTracked == true &&
+              (product == null ||
+                  !product.trackStock ||
+                  product.isBulkProduct != item.stockWasBulk ||
+                  (item.stockWasBulk == true &&
+                      product.bulkTotalQuantity != item.stockBulkCapacity))) {
+            throw protocol.BusinessException(
+              message:
+                  'Le stock du produit ${item.productName} a changé de configuration. Rétablissez sa configuration avant le remboursement.',
+            );
+          }
           if (product != null && product.trackStock) {
             // Restore stock based on product type
             if (product.isBulkProduct && item.stockDeduction != null) {
@@ -425,7 +492,11 @@ class TransactionEndpoint extends Endpoint {
               }
 
               product.updatedAt = DateTime.now();
-              await protocol.Product.db.updateRow(session, product);
+              await protocol.Product.db.updateRow(
+                session,
+                product,
+                transaction: transaction,
+              );
 
               // Log stock movement
               final stockMovement = protocol.StockMovement(
@@ -437,12 +508,20 @@ class TransactionEndpoint extends Endpoint {
                 notes: 'Remboursement - Transaction #$transactionId',
               );
 
-              await protocol.StockMovement.db.insertRow(session, stockMovement);
+              await protocol.StockMovement.db.insertRow(
+                session,
+                stockMovement,
+                transaction: transaction,
+              );
             } else {
               // For regular products, restore quantity directly
               product.stockQuantity += item.quantity;
               product.updatedAt = DateTime.now();
-              await protocol.Product.db.updateRow(session, product);
+              await protocol.Product.db.updateRow(
+                session,
+                product,
+                transaction: transaction,
+              );
 
               // Log stock movement
               final stockMovement = protocol.StockMovement(
@@ -454,7 +533,11 @@ class TransactionEndpoint extends Endpoint {
                 notes: 'Remboursement - Transaction #$transactionId',
               );
 
-              await protocol.StockMovement.db.insertRow(session, stockMovement);
+              await protocol.StockMovement.db.insertRow(
+                session,
+                stockMovement,
+                transaction: transaction,
+              );
             }
           }
         }
@@ -469,7 +552,11 @@ class TransactionEndpoint extends Endpoint {
           refundedTransactionId: transactionId,
         );
 
-        return await protocol.Transaction.db.insertRow(session, refundTrans);
+        return await protocol.Transaction.db.insertRow(
+          session,
+          refundTrans,
+          transaction: transaction,
+        );
       });
     } catch (e) {
       session.log('Refund transaction error: $e', level: LogLevel.error);

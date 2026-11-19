@@ -16,6 +16,8 @@ import 'package:airbar_backend_server/src/generated/cashier/cash_sale_item_data.
     as _ixitvqwz;
 import 'package:airbar_backend_server/src/generated/stock/movement_type.dart'
     as _i5adme9x;
+import 'package:airbar_backend_server/src/generated/transactions/batch_billing_line.dart'
+    as _ihzes5l1;
 import 'package:airbar_backend_server/src/generated/transactions/payment_method.dart'
     as _ih7ym03i;
 import 'package:airbar_backend_server/src/generated/transactions/transaction_type.dart'
@@ -35,6 +37,7 @@ import '../endpoints/shop/category_endpoint.dart' as _inzllmtt;
 import '../endpoints/shop/product_endpoint.dart' as _ivjc3dqs;
 import '../endpoints/shop/product_portion_endpoint.dart' as _iwkuoqdv;
 import '../endpoints/stock/stock_endpoint.dart' as _ibmp800i;
+import '../endpoints/transactions/batch_billing_endpoint.dart' as _i6chao2a;
 import '../endpoints/transactions/transaction_endpoint.dart' as _iiprezx9;
 import '../greetings/greeting_endpoint.dart' as _il624ik7;
 
@@ -100,6 +103,12 @@ class Endpoints extends _is.EndpointDispatch {
         ..initialize(
           server,
           'stock',
+          null,
+        ),
+      'batchBilling': _i6chao2a.BatchBillingEndpoint()
+        ..initialize(
+          server,
+          'batchBilling',
           null,
         ),
       'transaction': _iiprezx9.TransactionEndpoint()
@@ -1248,6 +1257,11 @@ class Endpoints extends _is.EndpointDispatch {
               type: _is.getType<bool?>(),
               nullable: true,
             ),
+            'expectedUpdatedAt': _is.ParameterDescription(
+              name: 'expectedUpdatedAt',
+              type: _is.getType<DateTime?>(),
+              nullable: true,
+            ),
           },
           call:
               (
@@ -1269,6 +1283,7 @@ class Endpoints extends _is.EndpointDispatch {
                     stockQuantity: params['stockQuantity'],
                     currentUnitRemaining: params['currentUnitRemaining'],
                     trackStock: params['trackStock'],
+                    expectedUpdatedAt: params['expectedUpdatedAt'],
                   ),
         ),
         'deleteProduct': _is.MethodConnector(
@@ -1668,6 +1683,88 @@ class Endpoints extends _is.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async => (endpoints['stock'] as _ibmp800i.StockEndpoint)
                   .getLowStockProducts(session),
+        ),
+      },
+    );
+    connectors['batchBilling'] = _is.EndpointConnector(
+      name: 'batchBilling',
+      endpoint: endpoints['batchBilling']!,
+      methodConnectors: {
+        'cancel': _is.MethodConnector(
+          name: 'cancel',
+          params: {
+            'requestKey': _is.ParameterDescription(
+              name: 'requestKey',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'adminId': _is.ParameterDescription(
+              name: 'adminId',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'adminPin': _is.ParameterDescription(
+              name: 'adminPin',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'lines': _is.ParameterDescription(
+              name: 'lines',
+              type: _is.getType<List<_ihzes5l1.BatchBillingLine>>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['batchBilling'] as _i6chao2a.BatchBillingEndpoint)
+                      .cancel(
+                        session,
+                        params['requestKey'],
+                        params['adminId'],
+                        params['adminPin'],
+                        params['lines'],
+                      ),
+        ),
+        'charge': _is.MethodConnector(
+          name: 'charge',
+          params: {
+            'requestKey': _is.ParameterDescription(
+              name: 'requestKey',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'adminId': _is.ParameterDescription(
+              name: 'adminId',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'adminPin': _is.ParameterDescription(
+              name: 'adminPin',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'lines': _is.ParameterDescription(
+              name: 'lines',
+              type: _is.getType<List<_ihzes5l1.BatchBillingLine>>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['batchBilling'] as _i6chao2a.BatchBillingEndpoint)
+                      .charge(
+                        session,
+                        params['requestKey'],
+                        params['adminId'],
+                        params['adminPin'],
+                        params['lines'],
+                      ),
         ),
       },
     );

@@ -9,6 +9,9 @@ fields:
   unitPrice: double
   subtotal: double
   stockDeduction: double?, default=0  # Actual stock deducted (for bulk products with portions)
+  stockWasTracked: bool?
+  stockWasBulk: bool?
+  stockBulkCapacity: double?
 
 indexes:
   transaction_items_transaction_idx:

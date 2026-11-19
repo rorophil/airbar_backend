@@ -24,6 +24,8 @@ import 'package:airbar_backend_client/src/protocol/shop/product_portion.dart'
     as _ikci3ida;
 import 'package:airbar_backend_client/src/protocol/stock/stock_movement.dart'
     as _idkbt7jq;
+import 'package:airbar_backend_client/src/protocol/transactions/batch_billing_line.dart'
+    as _ii85k2x6;
 import 'package:airbar_backend_client/src/protocol/transactions/transaction.dart'
     as _igfbiu5t;
 import 'package:airbar_backend_client/src/protocol/transactions/transaction_item.dart'
@@ -44,6 +46,8 @@ import 'shop/product_category.dart' as _ioy1aw0v;
 import 'shop/product_portion.dart' as _ip205i9w;
 import 'stock/movement_type.dart' as _iu46gsdm;
 import 'stock/stock_movement.dart' as _iq6rmlux;
+import 'transactions/batch_billing_line.dart' as _inxqvj6y;
+import 'transactions/batch_billing_request.dart' as _i3qyxuqj;
 import 'transactions/payment_method.dart' as _iaa3e0kl;
 import 'transactions/transaction.dart' as _iqhl4hru;
 import 'transactions/transaction_item.dart' as _i37amypa;
@@ -59,6 +63,8 @@ export 'shop/product_category.dart';
 export 'shop/product_portion.dart';
 export 'stock/movement_type.dart';
 export 'stock/stock_movement.dart';
+export 'transactions/batch_billing_line.dart';
+export 'transactions/batch_billing_request.dart';
 export 'transactions/payment_method.dart';
 export 'transactions/transaction.dart';
 export 'transactions/transaction_item.dart';
@@ -132,6 +138,12 @@ class Protocol extends _isc.SerializationManager {
     if (t == _iq6rmlux.StockMovement) {
       return _iq6rmlux.StockMovement.fromJson(data) as T;
     }
+    if (t == _inxqvj6y.BatchBillingLine) {
+      return _inxqvj6y.BatchBillingLine.fromJson(data) as T;
+    }
+    if (t == _i3qyxuqj.BatchBillingRequest) {
+      return _i3qyxuqj.BatchBillingRequest.fromJson(data) as T;
+    }
     if (t == _iaa3e0kl.PaymentMethod) {
       return _iaa3e0kl.PaymentMethod.fromJson(data) as T;
     }
@@ -180,6 +192,16 @@ class Protocol extends _isc.SerializationManager {
     }
     if (t == _isc.getType<_iq6rmlux.StockMovement?>()) {
       return (data != null ? _iq6rmlux.StockMovement.fromJson(data) : null)
+          as T;
+    }
+    if (t == _isc.getType<_inxqvj6y.BatchBillingLine?>()) {
+      return (data != null ? _inxqvj6y.BatchBillingLine.fromJson(data) : null)
+          as T;
+    }
+    if (t == _isc.getType<_i3qyxuqj.BatchBillingRequest?>()) {
+      return (data != null
+              ? _i3qyxuqj.BatchBillingRequest.fromJson(data)
+              : null)
           as T;
     }
     if (t == _isc.getType<_iaa3e0kl.PaymentMethod?>()) {
@@ -243,6 +265,12 @@ class Protocol extends _isc.SerializationManager {
               .toList()
           as T;
     }
+    if (t == List<_ii85k2x6.BatchBillingLine>) {
+      return (data as List)
+              .map((e) => deserialize<_ii85k2x6.BatchBillingLine>(e))
+              .toList()
+          as T;
+    }
     if (t == List<_i596jxbt.TransactionItem>) {
       return (data as List)
               .map((e) => deserialize<_i596jxbt.TransactionItem>(e))
@@ -271,6 +299,8 @@ class Protocol extends _isc.SerializationManager {
       _ip205i9w.ProductPortion => 'ProductPortion',
       _iu46gsdm.MovementType => 'MovementType',
       _iq6rmlux.StockMovement => 'StockMovement',
+      _inxqvj6y.BatchBillingLine => 'BatchBillingLine',
+      _i3qyxuqj.BatchBillingRequest => 'BatchBillingRequest',
       _iaa3e0kl.PaymentMethod => 'PaymentMethod',
       _iqhl4hru.Transaction => 'Transaction',
       _i37amypa.TransactionItem => 'TransactionItem',
@@ -314,6 +344,10 @@ class Protocol extends _isc.SerializationManager {
         return 'MovementType';
       case _iq6rmlux.StockMovement():
         return 'StockMovement';
+      case _inxqvj6y.BatchBillingLine():
+        return 'BatchBillingLine';
+      case _i3qyxuqj.BatchBillingRequest():
+        return 'BatchBillingRequest';
       case _iaa3e0kl.PaymentMethod():
         return 'PaymentMethod';
       case _iqhl4hru.Transaction():
@@ -376,6 +410,12 @@ class Protocol extends _isc.SerializationManager {
     }
     if (dataClassName == 'StockMovement') {
       return deserialize<_iq6rmlux.StockMovement>(data['data']);
+    }
+    if (dataClassName == 'BatchBillingLine') {
+      return deserialize<_inxqvj6y.BatchBillingLine>(data['data']);
+    }
+    if (dataClassName == 'BatchBillingRequest') {
+      return deserialize<_i3qyxuqj.BatchBillingRequest>(data['data']);
     }
     if (dataClassName == 'PaymentMethod') {
       return deserialize<_iaa3e0kl.PaymentMethod>(data['data']);

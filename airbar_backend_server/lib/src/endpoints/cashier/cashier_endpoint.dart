@@ -39,6 +39,16 @@ class CashierEndpoint extends Endpoint {
 
       // 2. Execute atomic transaction
       return await session.db.transaction((transaction) async {
+        final productIds = items.map((item) => item.productId).toSet().toList()
+          ..sort();
+        for (final id in productIds) {
+          await protocol.Product.db.findById(
+            session,
+            id,
+            transaction: transaction,
+            lockMode: LockMode.forUpdate,
+          );
+        }
         // 3. Calculate total and verify stock
         double totalAmount = 0;
         final transactionItems = <protocol.TransactionItem>[];
@@ -47,6 +57,7 @@ class CashierEndpoint extends Endpoint {
           final product = await protocol.Product.db.findById(
             session,
             item.productId,
+            transaction: transaction,
           );
 
           if (product == null) {
@@ -71,6 +82,7 @@ class CashierEndpoint extends Endpoint {
             final portion = await protocol.ProductPortion.db.findById(
               session,
               item.productPortionId!,
+              transaction: transaction,
             );
 
             if (portion != null) {
@@ -146,6 +158,7 @@ class CashierEndpoint extends Endpoint {
         final createdTransaction = await protocol.Transaction.db.insertRow(
           session,
           trans,
+          transaction: transaction,
         );
 
         // 5. Create transaction items and update stock
@@ -154,6 +167,7 @@ class CashierEndpoint extends Endpoint {
           final product = await protocol.Product.db.findById(
             session,
             item.productId,
+            transaction: transaction,
           );
 
           if (product != null && product.trackStock) {
@@ -166,6 +180,7 @@ class CashierEndpoint extends Endpoint {
               final portion = await protocol.ProductPortion.db.findById(
                 session,
                 item.productPortionId!,
+                transaction: transaction,
               );
 
               if (portion != null && product.bulkTotalQuantity != null) {
@@ -240,7 +255,11 @@ class CashierEndpoint extends Endpoint {
             }
 
             product.updatedAt = DateTime.now();
-            await protocol.Product.db.updateRow(session, product);
+            await protocol.Product.db.updateRow(
+              session,
+              product,
+              transaction: transaction,
+            );
 
             // Log stock movement with seller as userId
             final stockMovement = protocol.StockMovement(
@@ -253,7 +272,11 @@ class CashierEndpoint extends Endpoint {
               notes: movementNote,
             );
 
-            await protocol.StockMovement.db.insertRow(session, stockMovement);
+            await protocol.StockMovement.db.insertRow(
+              session,
+              stockMovement,
+              transaction: transaction,
+            );
 
             // Check if stock alert needed
             if (product.stockQuantity <= product.minStockAlert) {
@@ -269,6 +292,7 @@ class CashierEndpoint extends Endpoint {
           await protocol.TransactionItem.db.insertRow(
             session,
             transactionItems[itemIndex],
+            transaction: transaction,
           );
 
           itemIndex++;

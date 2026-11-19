@@ -92,7 +92,11 @@ class AuthEndpoint extends Endpoint {
       // Update PIN
       user.pin = _hashPassword(newPin);
       user.updatedAt = DateTime.now();
-      await User.db.updateRow(session, user);
+      await User.db.updateRow(
+        session,
+        user,
+        columns: (t) => [t.pin, t.updatedAt],
+      );
     } catch (e) {
       session.log('Change PIN error: $e', level: LogLevel.warning);
       rethrow;

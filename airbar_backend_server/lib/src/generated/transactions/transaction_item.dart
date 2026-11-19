@@ -23,6 +23,9 @@ abstract class TransactionItem
     required this.unitPrice,
     required this.subtotal,
     double? stockDeduction,
+    this.stockWasTracked,
+    this.stockWasBulk,
+    this.stockBulkCapacity,
   }) : stockDeduction = stockDeduction ?? 0.0;
 
   factory TransactionItem({
@@ -34,6 +37,9 @@ abstract class TransactionItem
     required double unitPrice,
     required double subtotal,
     double? stockDeduction,
+    bool? stockWasTracked,
+    bool? stockWasBulk,
+    double? stockBulkCapacity,
   }) = _TransactionItemImpl;
 
   factory TransactionItem.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -46,6 +52,16 @@ abstract class TransactionItem
       unitPrice: (jsonSerialization['unitPrice'] as num).toDouble(),
       subtotal: (jsonSerialization['subtotal'] as num).toDouble(),
       stockDeduction: (jsonSerialization['stockDeduction'] as num?)?.toDouble(),
+      stockWasTracked: jsonSerialization['stockWasTracked'] == null
+          ? null
+          : _is.BoolJsonExtension.fromJson(
+              jsonSerialization['stockWasTracked'],
+            ),
+      stockWasBulk: jsonSerialization['stockWasBulk'] == null
+          ? null
+          : _is.BoolJsonExtension.fromJson(jsonSerialization['stockWasBulk']),
+      stockBulkCapacity: (jsonSerialization['stockBulkCapacity'] as num?)
+          ?.toDouble(),
     );
   }
 
@@ -70,6 +86,12 @@ abstract class TransactionItem
 
   double? stockDeduction;
 
+  bool? stockWasTracked;
+
+  bool? stockWasBulk;
+
+  double? stockBulkCapacity;
+
   @override
   _is.Table<int?> get table => t;
 
@@ -85,6 +107,9 @@ abstract class TransactionItem
     double? unitPrice,
     double? subtotal,
     double? stockDeduction,
+    bool? stockWasTracked,
+    bool? stockWasBulk,
+    double? stockBulkCapacity,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -98,6 +123,9 @@ abstract class TransactionItem
       'unitPrice': unitPrice,
       'subtotal': subtotal,
       if (stockDeduction != null) 'stockDeduction': stockDeduction,
+      if (stockWasTracked != null) 'stockWasTracked': stockWasTracked,
+      if (stockWasBulk != null) 'stockWasBulk': stockWasBulk,
+      if (stockBulkCapacity != null) 'stockBulkCapacity': stockBulkCapacity,
     };
   }
 
@@ -113,6 +141,9 @@ abstract class TransactionItem
       'unitPrice': unitPrice,
       'subtotal': subtotal,
       if (stockDeduction != null) 'stockDeduction': stockDeduction,
+      if (stockWasTracked != null) 'stockWasTracked': stockWasTracked,
+      if (stockWasBulk != null) 'stockWasBulk': stockWasBulk,
+      if (stockBulkCapacity != null) 'stockBulkCapacity': stockBulkCapacity,
     };
   }
 
@@ -156,6 +187,9 @@ class _TransactionItemImpl extends TransactionItem {
     required double unitPrice,
     required double subtotal,
     double? stockDeduction,
+    bool? stockWasTracked,
+    bool? stockWasBulk,
+    double? stockBulkCapacity,
   }) : super._(
          id: id,
          transactionId: transactionId,
@@ -165,6 +199,9 @@ class _TransactionItemImpl extends TransactionItem {
          unitPrice: unitPrice,
          subtotal: subtotal,
          stockDeduction: stockDeduction,
+         stockWasTracked: stockWasTracked,
+         stockWasBulk: stockWasBulk,
+         stockBulkCapacity: stockBulkCapacity,
        );
 
   /// Returns a shallow copy of this [TransactionItem]
@@ -180,6 +217,9 @@ class _TransactionItemImpl extends TransactionItem {
     double? unitPrice,
     double? subtotal,
     Object? stockDeduction = _Undefined,
+    Object? stockWasTracked = _Undefined,
+    Object? stockWasBulk = _Undefined,
+    Object? stockBulkCapacity = _Undefined,
   }) {
     return TransactionItem(
       id: id is int? ? id : this.id,
@@ -192,6 +232,13 @@ class _TransactionItemImpl extends TransactionItem {
       stockDeduction: stockDeduction is double?
           ? stockDeduction
           : this.stockDeduction,
+      stockWasTracked: stockWasTracked is bool?
+          ? stockWasTracked
+          : this.stockWasTracked,
+      stockWasBulk: stockWasBulk is bool? ? stockWasBulk : this.stockWasBulk,
+      stockBulkCapacity: stockBulkCapacity is double?
+          ? stockBulkCapacity
+          : this.stockBulkCapacity,
     );
   }
 }
@@ -234,6 +281,22 @@ class TransactionItemUpdateTable extends _is.UpdateTable<TransactionItemTable> {
         table.stockDeduction,
         value,
       );
+
+  _is.ColumnValue<bool, bool> stockWasTracked(bool? value) => _is.ColumnValue(
+    table.stockWasTracked,
+    value,
+  );
+
+  _is.ColumnValue<bool, bool> stockWasBulk(bool? value) => _is.ColumnValue(
+    table.stockWasBulk,
+    value,
+  );
+
+  _is.ColumnValue<double, double> stockBulkCapacity(double? value) =>
+      _is.ColumnValue(
+        table.stockBulkCapacity,
+        value,
+      );
 }
 
 class TransactionItemTable extends _is.Table<int?> {
@@ -269,6 +332,18 @@ class TransactionItemTable extends _is.Table<int?> {
       this,
       hasDefault: true,
     );
+    stockWasTracked = _is.ColumnBool(
+      'stockWasTracked',
+      this,
+    );
+    stockWasBulk = _is.ColumnBool(
+      'stockWasBulk',
+      this,
+    );
+    stockBulkCapacity = _is.ColumnDouble(
+      'stockBulkCapacity',
+      this,
+    );
   }
 
   late final TransactionItemUpdateTable updateTable;
@@ -287,6 +362,12 @@ class TransactionItemTable extends _is.Table<int?> {
 
   late final _is.ColumnDouble stockDeduction;
 
+  late final _is.ColumnBool stockWasTracked;
+
+  late final _is.ColumnBool stockWasBulk;
+
+  late final _is.ColumnDouble stockBulkCapacity;
+
   @override
   List<_is.Column> get columns => [
     id,
@@ -297,6 +378,9 @@ class TransactionItemTable extends _is.Table<int?> {
     unitPrice,
     subtotal,
     stockDeduction,
+    stockWasTracked,
+    stockWasBulk,
+    stockBulkCapacity,
   ];
 }
 

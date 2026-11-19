@@ -101,7 +101,11 @@ class UserEndpoint extends Endpoint {
       user.role = role;
       user.updatedAt = DateTime.now();
 
-      return await protocol.User.db.updateRow(session, user);
+      return await protocol.User.db.updateRow(
+        session,
+        user,
+        columns: (t) => [t.email, t.firstName, t.lastName, t.role, t.updatedAt],
+      );
     } catch (e) {
       session.log('Update user error: $e', level: LogLevel.warning);
       rethrow;
@@ -120,7 +124,11 @@ class UserEndpoint extends Endpoint {
       user.isActive = false;
       user.updatedAt = DateTime.now();
 
-      await protocol.User.db.updateRow(session, user);
+      await protocol.User.db.updateRow(
+        session,
+        user,
+        columns: (t) => [t.isActive, t.updatedAt],
+      );
     } catch (e) {
       session.log('Deactivate user error: $e', level: LogLevel.warning);
       rethrow;
@@ -139,7 +147,11 @@ class UserEndpoint extends Endpoint {
       user.isActive = true;
       user.updatedAt = DateTime.now();
 
-      await protocol.User.db.updateRow(session, user);
+      await protocol.User.db.updateRow(
+        session,
+        user,
+        columns: (t) => [t.isActive, t.updatedAt],
+      );
     } catch (e) {
       session.log('Reactivate user error: $e', level: LogLevel.warning);
       rethrow;
@@ -163,7 +175,11 @@ class UserEndpoint extends Endpoint {
       user.passwordHash = _hashPassword(newPassword);
       user.updatedAt = DateTime.now();
 
-      await protocol.User.db.updateRow(session, user);
+      await protocol.User.db.updateRow(
+        session,
+        user,
+        columns: (t) => [t.passwordHash, t.updatedAt],
+      );
       session.log('Password reset for user ${user.id}', level: LogLevel.info);
     } catch (e) {
       session.log('Reset password error: $e', level: LogLevel.warning);
@@ -188,7 +204,11 @@ class UserEndpoint extends Endpoint {
       user.pin = _hashPassword(newPin);
       user.updatedAt = DateTime.now();
 
-      await protocol.User.db.updateRow(session, user);
+      await protocol.User.db.updateRow(
+        session,
+        user,
+        columns: (t) => [t.pin, t.updatedAt],
+      );
       session.log('PIN reset for user ${user.id}', level: LogLevel.info);
     } catch (e) {
       session.log('Reset PIN error: $e', level: LogLevel.warning);
@@ -239,7 +259,12 @@ class UserEndpoint extends Endpoint {
 
       return await session.db.transaction((transaction) async {
         // Get user
-        final user = await protocol.User.db.findById(session, userId);
+        final user = await protocol.User.db.findById(
+          session,
+          userId,
+          transaction: transaction,
+          lockMode: LockMode.forUpdate,
+        );
 
         if (user == null) {
           throw Exception('Utilisateur non trouvé');
@@ -248,7 +273,11 @@ class UserEndpoint extends Endpoint {
         // L'administrateur peut librement mettre le compte en négatif
         user.balance += amount;
         user.updatedAt = DateTime.now();
-        await protocol.User.db.updateRow(session, user);
+        await protocol.User.db.updateRow(
+          session,
+          user,
+          transaction: transaction,
+        );
 
         // Create transaction record
         final trans = protocol.Transaction(
@@ -260,7 +289,11 @@ class UserEndpoint extends Endpoint {
           refundedTransactionId: null,
         );
 
-        return await protocol.Transaction.db.insertRow(session, trans);
+        return await protocol.Transaction.db.insertRow(
+          session,
+          trans,
+          transaction: transaction,
+        );
       });
     } catch (e) {
       session.log('Credit/Debit account error: $e', level: LogLevel.warning);

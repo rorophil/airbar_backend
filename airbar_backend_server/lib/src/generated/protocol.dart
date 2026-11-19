@@ -25,6 +25,8 @@ import 'package:airbar_backend_server/src/generated/shop/product_portion.dart'
     as _in4gaz80;
 import 'package:airbar_backend_server/src/generated/stock/stock_movement.dart'
     as _ivsz30e3;
+import 'package:airbar_backend_server/src/generated/transactions/batch_billing_line.dart'
+    as _ihzes5l1;
 import 'package:airbar_backend_server/src/generated/transactions/transaction.dart'
     as _igjc5le3;
 import 'package:airbar_backend_server/src/generated/transactions/transaction_item.dart'
@@ -46,6 +48,8 @@ import 'shop/product_category.dart' as _ioy1aw0v;
 import 'shop/product_portion.dart' as _ip205i9w;
 import 'stock/movement_type.dart' as _iu46gsdm;
 import 'stock/stock_movement.dart' as _iq6rmlux;
+import 'transactions/batch_billing_line.dart' as _inxqvj6y;
+import 'transactions/batch_billing_request.dart' as _i3qyxuqj;
 import 'transactions/payment_method.dart' as _iaa3e0kl;
 import 'transactions/transaction.dart' as _iqhl4hru;
 import 'transactions/transaction_item.dart' as _i37amypa;
@@ -61,6 +65,8 @@ export 'shop/product_category.dart';
 export 'shop/product_portion.dart';
 export 'stock/movement_type.dart';
 export 'stock/stock_movement.dart';
+export 'transactions/batch_billing_line.dart';
+export 'transactions/batch_billing_request.dart';
 export 'transactions/payment_method.dart';
 export 'transactions/transaction.dart';
 export 'transactions/transaction_item.dart';
@@ -74,6 +80,68 @@ class Protocol extends _is.DatabaseSerializationManager {
   static final Protocol _instance = Protocol._().._registerHostProtocols();
 
   static List<_isp.TableDefinition> get targetTableDefinitions => [
+    _isp.TableDefinition(
+      name: 'batch_billing_requests',
+      dartName: 'BatchBillingRequest',
+      schema: 'public',
+      module: 'airbar_backend',
+      columns: [
+        _isp.ColumnDefinition(
+          name: 'id',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'requestKey',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'adminId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'requestHash',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'transactionIds',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _isp.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _isp.IndexDefinition(
+          indexName: 'batch_billing_request_key_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'requestKey',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
     _isp.TableDefinition(
       name: 'cart_items',
       dartName: 'CartItem',
@@ -599,6 +667,24 @@ class Protocol extends _is.DatabaseSerializationManager {
           dartType: 'double?',
           columnDefault: '0',
         ),
+        _isp.ColumnDefinition(
+          name: 'stockWasTracked',
+          columnType: _isp.ColumnType.boolean,
+          isNullable: true,
+          dartType: 'bool?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'stockWasBulk',
+          columnType: _isp.ColumnType.boolean,
+          isNullable: true,
+          dartType: 'bool?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'stockBulkCapacity',
+          columnType: _isp.ColumnType.doublePrecision,
+          isNullable: true,
+          dartType: 'double?',
+        ),
       ],
       foreignKeys: [],
       indexes: [
@@ -902,6 +988,12 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _iq6rmlux.StockMovement) {
       return _iq6rmlux.StockMovement.fromJson(data) as T;
     }
+    if (t == _inxqvj6y.BatchBillingLine) {
+      return _inxqvj6y.BatchBillingLine.fromJson(data) as T;
+    }
+    if (t == _i3qyxuqj.BatchBillingRequest) {
+      return _i3qyxuqj.BatchBillingRequest.fromJson(data) as T;
+    }
     if (t == _iaa3e0kl.PaymentMethod) {
       return _iaa3e0kl.PaymentMethod.fromJson(data) as T;
     }
@@ -950,6 +1042,16 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _is.getType<_iq6rmlux.StockMovement?>()) {
       return (data != null ? _iq6rmlux.StockMovement.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_inxqvj6y.BatchBillingLine?>()) {
+      return (data != null ? _inxqvj6y.BatchBillingLine.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_i3qyxuqj.BatchBillingRequest?>()) {
+      return (data != null
+              ? _i3qyxuqj.BatchBillingRequest.fromJson(data)
+              : null)
           as T;
     }
     if (t == _is.getType<_iaa3e0kl.PaymentMethod?>()) {
@@ -1013,6 +1115,12 @@ class Protocol extends _is.DatabaseSerializationManager {
               .toList()
           as T;
     }
+    if (t == List<_ihzes5l1.BatchBillingLine>) {
+      return (data as List)
+              .map((e) => deserialize<_ihzes5l1.BatchBillingLine>(e))
+              .toList()
+          as T;
+    }
     if (t == List<_iqa92bwu.TransactionItem>) {
       return (data as List)
               .map((e) => deserialize<_iqa92bwu.TransactionItem>(e))
@@ -1044,6 +1152,8 @@ class Protocol extends _is.DatabaseSerializationManager {
       _ip205i9w.ProductPortion => 'ProductPortion',
       _iu46gsdm.MovementType => 'MovementType',
       _iq6rmlux.StockMovement => 'StockMovement',
+      _inxqvj6y.BatchBillingLine => 'BatchBillingLine',
+      _i3qyxuqj.BatchBillingRequest => 'BatchBillingRequest',
       _iaa3e0kl.PaymentMethod => 'PaymentMethod',
       _iqhl4hru.Transaction => 'Transaction',
       _i37amypa.TransactionItem => 'TransactionItem',
@@ -1087,6 +1197,10 @@ class Protocol extends _is.DatabaseSerializationManager {
         return 'MovementType';
       case _iq6rmlux.StockMovement():
         return 'StockMovement';
+      case _inxqvj6y.BatchBillingLine():
+        return 'BatchBillingLine';
+      case _i3qyxuqj.BatchBillingRequest():
+        return 'BatchBillingRequest';
       case _iaa3e0kl.PaymentMethod():
         return 'PaymentMethod';
       case _iqhl4hru.Transaction():
@@ -1154,6 +1268,12 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (dataClassName == 'StockMovement') {
       return deserialize<_iq6rmlux.StockMovement>(data['data']);
     }
+    if (dataClassName == 'BatchBillingLine') {
+      return deserialize<_inxqvj6y.BatchBillingLine>(data['data']);
+    }
+    if (dataClassName == 'BatchBillingRequest') {
+      return deserialize<_i3qyxuqj.BatchBillingRequest>(data['data']);
+    }
     if (dataClassName == 'PaymentMethod') {
       return deserialize<_iaa3e0kl.PaymentMethod>(data['data']);
     }
@@ -1219,6 +1339,8 @@ class Protocol extends _is.DatabaseSerializationManager {
         return _ip205i9w.ProductPortion.t;
       case _iq6rmlux.StockMovement:
         return _iq6rmlux.StockMovement.t;
+      case _i3qyxuqj.BatchBillingRequest:
+        return _i3qyxuqj.BatchBillingRequest.t;
       case _iqhl4hru.Transaction:
         return _iqhl4hru.Transaction.t;
       case _i37amypa.TransactionItem:

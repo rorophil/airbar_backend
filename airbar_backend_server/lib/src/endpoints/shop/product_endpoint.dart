@@ -133,53 +133,87 @@ class ProductEndpoint extends Endpoint {
     int? stockQuantity,
     double? currentUnitRemaining,
     bool? trackStock,
+    DateTime? expectedUpdatedAt,
   }) async {
     try {
-      final product = await Product.db.findById(session, productId);
+      return await session.db.transaction((transaction) async {
+        final product = await Product.db.findById(
+          session,
+          productId,
+          transaction: transaction,
+          lockMode: LockMode.forUpdate,
+        );
 
-      if (product == null) {
-        throw Exception('Produit non trouvé');
-      }
-
-      if (price < 0) {
-        throw Exception('Le prix ne peut pas être négatif');
-      }
-
-      // Validate bulk product fields
-      final isBulk = isBulkProduct ?? product.isBulkProduct;
-      if (isBulk) {
-        final unit = bulkUnit ?? product.bulkUnit;
-        final quantity = bulkTotalQuantity ?? product.bulkTotalQuantity;
-
-        if (unit == null || unit.isEmpty) {
-          throw Exception('L\'unité est requise pour un produit en vrac');
+        if (product == null) {
+          throw Exception('Produit non trouvé');
         }
-        if (quantity == null || quantity <= 0) {
-          throw Exception('La quantité totale doit être positive');
+        if (expectedUpdatedAt != null &&
+            !product.updatedAt.isAtSameMomentAs(expectedUpdatedAt)) {
+          throw BusinessException(
+            message:
+                'Le produit a changé. Rechargez-le avant de l’enregistrer.',
+          );
         }
-      }
 
-      product.name = name;
-      product.description = description;
-      product.price = price;
-      product.categoryId = categoryId;
-      product.minStockAlert = minStockAlert;
-      product.imageUrl = imageUrl;
-      product.isBulkProduct = isBulkProduct ?? product.isBulkProduct;
-      product.bulkUnit = bulkUnit;
-      product.bulkTotalQuantity = bulkTotalQuantity;
-      if (stockQuantity != null) {
-        product.stockQuantity = stockQuantity;
-      }
-      if (currentUnitRemaining != null) {
-        product.currentUnitRemaining = currentUnitRemaining;
-      }
-      if (trackStock != null) {
-        product.trackStock = trackStock;
-      }
-      product.updatedAt = DateTime.now();
+        if (price < 0) {
+          throw Exception('Le prix ne peut pas être négatif');
+        }
 
-      return await Product.db.updateRow(session, product);
+        // Validate bulk product fields
+        final isBulk = isBulkProduct ?? product.isBulkProduct;
+        if (isBulk) {
+          final unit = bulkUnit ?? product.bulkUnit;
+          final quantity = bulkTotalQuantity ?? product.bulkTotalQuantity;
+
+          if (unit == null || unit.isEmpty) {
+            throw Exception('L\'unité est requise pour un produit en vrac');
+          }
+          if (quantity == null || quantity <= 0) {
+            throw Exception('La quantité totale doit être positive');
+          }
+        }
+
+        product.name = name;
+        product.description = description;
+        product.price = price;
+        product.categoryId = categoryId;
+        product.minStockAlert = minStockAlert;
+        product.imageUrl = imageUrl;
+        product.isBulkProduct = isBulkProduct ?? product.isBulkProduct;
+        product.bulkUnit = bulkUnit;
+        product.bulkTotalQuantity = bulkTotalQuantity;
+        if (stockQuantity != null) {
+          product.stockQuantity = stockQuantity;
+        }
+        if (currentUnitRemaining != null) {
+          product.currentUnitRemaining = currentUnitRemaining;
+        }
+        if (trackStock != null) {
+          product.trackStock = trackStock;
+        }
+        product.updatedAt = DateTime.now();
+
+        return await Product.db.updateRow(
+          session,
+          product,
+          transaction: transaction,
+          columns: (t) => [
+            t.name,
+            t.description,
+            t.price,
+            t.categoryId,
+            t.minStockAlert,
+            t.imageUrl,
+            t.isBulkProduct,
+            t.bulkUnit,
+            t.bulkTotalQuantity,
+            if (stockQuantity != null) t.stockQuantity,
+            if (currentUnitRemaining != null) t.currentUnitRemaining,
+            if (trackStock != null) t.trackStock,
+            t.updatedAt,
+          ],
+        );
+      });
     } catch (e) {
       session.log('Update product error: $e', level: LogLevel.warning);
       rethrow;
@@ -200,7 +234,11 @@ class ProductEndpoint extends Endpoint {
       product.isActive = false;
       product.updatedAt = DateTime.now();
 
-      await Product.db.updateRow(session, product);
+      await Product.db.updateRow(
+        session,
+        product,
+        columns: (t) => [t.isDeleted, t.isActive, t.updatedAt],
+      );
     } catch (e) {
       session.log('Delete product error: $e', level: LogLevel.warning);
       rethrow;
@@ -228,7 +266,11 @@ class ProductEndpoint extends Endpoint {
       product.isActive = isActive;
       product.updatedAt = DateTime.now();
 
-      return await Product.db.updateRow(session, product);
+      return await Product.db.updateRow(
+        session,
+        product,
+        columns: (t) => [t.isActive, t.updatedAt],
+      );
     } catch (e) {
       session.log('Toggle active status error: $e', level: LogLevel.warning);
       rethrow;
@@ -256,7 +298,11 @@ class ProductEndpoint extends Endpoint {
       product.stockQuantity = newStockQuantity;
       product.updatedAt = DateTime.now();
 
-      return await Product.db.updateRow(session, product);
+      return await Product.db.updateRow(
+        session,
+        product,
+        columns: (t) => [t.stockQuantity, t.updatedAt],
+      );
     } catch (e) {
       session.log('Update stock error: $e', level: LogLevel.warning);
       rethrow;

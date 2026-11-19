@@ -71,7 +71,11 @@ class CategoryEndpoint extends Endpoint {
         if (!validCategoryIds.contains(product.categoryId)) {
           product.categoryId = uncategorized.id!;
           product.updatedAt = DateTime.now();
-          await Product.db.updateRow(session, product);
+          await Product.db.updateRow(
+            session,
+            product,
+            columns: (t) => [t.categoryId, t.updatedAt],
+          );
           session.log(
             'Assigned orphan product ${product.name} to "Sans catégorie"',
           );
@@ -176,7 +180,11 @@ class CategoryEndpoint extends Endpoint {
       for (var product in products) {
         product.categoryId = uncategorized.id!;
         product.updatedAt = DateTime.now();
-        await Product.db.updateRow(session, product);
+        await Product.db.updateRow(
+          session,
+          product,
+          columns: (t) => [t.categoryId, t.updatedAt],
+        );
       }
 
       // Delete the category

@@ -23,6 +23,9 @@ abstract class TransactionItem
     required this.unitPrice,
     required this.subtotal,
     double? stockDeduction,
+    this.stockWasTracked,
+    this.stockWasBulk,
+    this.stockBulkCapacity,
   }) : stockDeduction = stockDeduction ?? 0.0;
 
   factory TransactionItem({
@@ -34,6 +37,9 @@ abstract class TransactionItem
     required double unitPrice,
     required double subtotal,
     double? stockDeduction,
+    bool? stockWasTracked,
+    bool? stockWasBulk,
+    double? stockBulkCapacity,
   }) = _TransactionItemImpl;
 
   factory TransactionItem.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -46,6 +52,16 @@ abstract class TransactionItem
       unitPrice: (jsonSerialization['unitPrice'] as num).toDouble(),
       subtotal: (jsonSerialization['subtotal'] as num).toDouble(),
       stockDeduction: (jsonSerialization['stockDeduction'] as num?)?.toDouble(),
+      stockWasTracked: jsonSerialization['stockWasTracked'] == null
+          ? null
+          : _isc.BoolJsonExtension.fromJson(
+              jsonSerialization['stockWasTracked'],
+            ),
+      stockWasBulk: jsonSerialization['stockWasBulk'] == null
+          ? null
+          : _isc.BoolJsonExtension.fromJson(jsonSerialization['stockWasBulk']),
+      stockBulkCapacity: (jsonSerialization['stockBulkCapacity'] as num?)
+          ?.toDouble(),
     );
   }
 
@@ -68,6 +84,12 @@ abstract class TransactionItem
 
   double? stockDeduction;
 
+  bool? stockWasTracked;
+
+  bool? stockWasBulk;
+
+  double? stockBulkCapacity;
+
   /// Returns a shallow copy of this [TransactionItem]
   /// with some or all fields replaced by the given arguments.
   @_isc.useResult
@@ -80,6 +102,9 @@ abstract class TransactionItem
     double? unitPrice,
     double? subtotal,
     double? stockDeduction,
+    bool? stockWasTracked,
+    bool? stockWasBulk,
+    double? stockBulkCapacity,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -93,6 +118,9 @@ abstract class TransactionItem
       'unitPrice': unitPrice,
       'subtotal': subtotal,
       if (stockDeduction != null) 'stockDeduction': stockDeduction,
+      if (stockWasTracked != null) 'stockWasTracked': stockWasTracked,
+      if (stockWasBulk != null) 'stockWasBulk': stockWasBulk,
+      if (stockBulkCapacity != null) 'stockBulkCapacity': stockBulkCapacity,
     };
   }
 
@@ -108,6 +136,9 @@ abstract class TransactionItem
       'unitPrice': unitPrice,
       'subtotal': subtotal,
       if (stockDeduction != null) 'stockDeduction': stockDeduction,
+      if (stockWasTracked != null) 'stockWasTracked': stockWasTracked,
+      if (stockWasBulk != null) 'stockWasBulk': stockWasBulk,
+      if (stockBulkCapacity != null) 'stockBulkCapacity': stockBulkCapacity,
     };
   }
 
@@ -129,6 +160,9 @@ class _TransactionItemImpl extends TransactionItem {
     required double unitPrice,
     required double subtotal,
     double? stockDeduction,
+    bool? stockWasTracked,
+    bool? stockWasBulk,
+    double? stockBulkCapacity,
   }) : super._(
          id: id,
          transactionId: transactionId,
@@ -138,6 +172,9 @@ class _TransactionItemImpl extends TransactionItem {
          unitPrice: unitPrice,
          subtotal: subtotal,
          stockDeduction: stockDeduction,
+         stockWasTracked: stockWasTracked,
+         stockWasBulk: stockWasBulk,
+         stockBulkCapacity: stockBulkCapacity,
        );
 
   /// Returns a shallow copy of this [TransactionItem]
@@ -153,6 +190,9 @@ class _TransactionItemImpl extends TransactionItem {
     double? unitPrice,
     double? subtotal,
     Object? stockDeduction = _Undefined,
+    Object? stockWasTracked = _Undefined,
+    Object? stockWasBulk = _Undefined,
+    Object? stockBulkCapacity = _Undefined,
   }) {
     return TransactionItem(
       id: id is int? ? id : this.id,
@@ -165,6 +205,13 @@ class _TransactionItemImpl extends TransactionItem {
       stockDeduction: stockDeduction is double?
           ? stockDeduction
           : this.stockDeduction,
+      stockWasTracked: stockWasTracked is bool?
+          ? stockWasTracked
+          : this.stockWasTracked,
+      stockWasBulk: stockWasBulk is bool? ? stockWasBulk : this.stockWasBulk,
+      stockBulkCapacity: stockBulkCapacity is double?
+          ? stockBulkCapacity
+          : this.stockBulkCapacity,
     );
   }
 }

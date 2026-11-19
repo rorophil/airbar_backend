@@ -30,6 +30,8 @@ import 'package:airbar_backend_client/src/protocol/stock/movement_type.dart'
     as _inbvfeaz;
 import 'package:airbar_backend_client/src/protocol/stock/stock_movement.dart'
     as _idkbt7jq;
+import 'package:airbar_backend_client/src/protocol/transactions/batch_billing_line.dart'
+    as _ii85k2x6;
 import 'package:airbar_backend_client/src/protocol/transactions/payment_method.dart'
     as _i2kgb2e9;
 import 'package:airbar_backend_client/src/protocol/transactions/transaction.dart'
@@ -731,6 +733,7 @@ class EndpointProduct extends _isc.EndpointRef {
     int? stockQuantity,
     double? currentUnitRemaining,
     bool? trackStock,
+    DateTime? expectedUpdatedAt,
   }) => caller.callServerEndpoint<_i0zhxdfi.Product>(
     'product',
     'updateProduct',
@@ -748,6 +751,7 @@ class EndpointProduct extends _isc.EndpointRef {
       'stockQuantity': stockQuantity,
       'currentUnitRemaining': currentUnitRemaining,
       'trackStock': trackStock,
+      'expectedUpdatedAt': expectedUpdatedAt,
     },
   );
 
@@ -950,6 +954,46 @@ class EndpointStock extends _isc.EndpointRef {
       );
 }
 
+/// {@category Endpoint}
+class EndpointBatchBilling extends _isc.EndpointRef {
+  EndpointBatchBilling(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'batchBilling';
+
+  _ida.Future<List<_igfbiu5t.Transaction>> cancel(
+    String requestKey,
+    int adminId,
+    String adminPin,
+    List<_ii85k2x6.BatchBillingLine> lines,
+  ) => caller.callServerEndpoint<List<_igfbiu5t.Transaction>>(
+    'batchBilling',
+    'cancel',
+    {
+      'requestKey': requestKey,
+      'adminId': adminId,
+      'adminPin': adminPin,
+      'lines': lines,
+    },
+  );
+
+  _ida.Future<List<_igfbiu5t.Transaction>> charge(
+    String requestKey,
+    int adminId,
+    String adminPin,
+    List<_ii85k2x6.BatchBillingLine> lines,
+  ) => caller.callServerEndpoint<List<_igfbiu5t.Transaction>>(
+    'batchBilling',
+    'charge',
+    {
+      'requestKey': requestKey,
+      'adminId': adminId,
+      'adminPin': adminPin,
+      'lines': lines,
+    },
+  );
+}
+
 /// Endpoint for transaction management and checkout
 /// {@category Endpoint}
 class EndpointTransaction extends _isc.EndpointRef {
@@ -1113,6 +1157,7 @@ class Client extends _isc.ServerpodClientShared {
     product = EndpointProduct(this);
     productPortion = EndpointProductPortion(this);
     stock = EndpointStock(this);
+    batchBilling = EndpointBatchBilling(this);
     transaction = EndpointTransaction(this);
     greeting = EndpointGreeting(this);
     modules = Modules(this);
@@ -1138,6 +1183,8 @@ class Client extends _isc.ServerpodClientShared {
 
   late final EndpointStock stock;
 
+  late final EndpointBatchBilling batchBilling;
+
   late final EndpointTransaction transaction;
 
   late final EndpointGreeting greeting;
@@ -1156,6 +1203,7 @@ class Client extends _isc.ServerpodClientShared {
     'product': product,
     'productPortion': productPortion,
     'stock': stock,
+    'batchBilling': batchBilling,
     'transaction': transaction,
     'greeting': greeting,
   };

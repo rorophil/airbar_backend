@@ -1,0 +1,6 @@
+class: BatchBillingLine
+fields:
+  userId: int
+  productId: int
+  productPortionId: int?
+  quantity: int

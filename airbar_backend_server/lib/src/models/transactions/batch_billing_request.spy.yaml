@@ -1,0 +1,12 @@
+class: BatchBillingRequest
+table: batch_billing_requests
+fields:
+  requestKey: String
+  adminId: int
+  requestHash: String
+  transactionIds: String
+  createdAt: DateTime
+indexes:
+  batch_billing_request_key_idx:
+    fields: requestKey
+    unique: true

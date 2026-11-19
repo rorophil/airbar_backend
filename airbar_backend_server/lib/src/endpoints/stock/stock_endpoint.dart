@@ -18,7 +18,12 @@ class StockEndpoint extends Endpoint {
 
       await session.db.transaction((transaction) async {
         // Get product
-        final product = await Product.db.findById(session, productId);
+        final product = await Product.db.findById(
+          session,
+          productId,
+          transaction: transaction,
+          lockMode: LockMode.forUpdate,
+        );
 
         if (product == null) {
           throw Exception('Produit non trouvé');
@@ -33,7 +38,7 @@ class StockEndpoint extends Endpoint {
         // Update stock
         product.stockQuantity += quantity;
         product.updatedAt = DateTime.now();
-        await Product.db.updateRow(session, product);
+        await Product.db.updateRow(session, product, transaction: transaction);
 
         // Log stock movement
         final stockMovement = StockMovement(
@@ -45,7 +50,11 @@ class StockEndpoint extends Endpoint {
           notes: notes ?? 'Réapprovisionnement',
         );
 
-        await StockMovement.db.insertRow(session, stockMovement);
+        await StockMovement.db.insertRow(
+          session,
+          stockMovement,
+          transaction: transaction,
+        );
       });
     } catch (e) {
       session.log('Restock product error: $e', level: LogLevel.warning);
@@ -68,7 +77,12 @@ class StockEndpoint extends Endpoint {
 
       await session.db.transaction((transaction) async {
         // Get product
-        final product = await Product.db.findById(session, productId);
+        final product = await Product.db.findById(
+          session,
+          productId,
+          transaction: transaction,
+          lockMode: LockMode.forUpdate,
+        );
 
         if (product == null) {
           throw Exception('Produit non trouvé');
@@ -86,7 +100,7 @@ class StockEndpoint extends Endpoint {
         // Update stock
         product.stockQuantity = newQuantity;
         product.updatedAt = DateTime.now();
-        await Product.db.updateRow(session, product);
+        await Product.db.updateRow(session, product, transaction: transaction);
 
         // Log stock movement
         final stockMovement = StockMovement(
@@ -98,7 +112,11 @@ class StockEndpoint extends Endpoint {
           notes: 'Ajustement inventaire: $reason',
         );
 
-        await StockMovement.db.insertRow(session, stockMovement);
+        await StockMovement.db.insertRow(
+          session,
+          stockMovement,
+          transaction: transaction,
+        );
       });
     } catch (e) {
       session.log('Adjust stock error: $e', level: LogLevel.warning);
